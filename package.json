@@ -1,0 +1,44 @@
+{
+  "name": "minimon.js",
+  "version": "1.0.0",
+  "description": "My personal webpage",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "NODE_ENV=development node server",
+    "build": "NODE_ENV=production webpack"
+  },
+  "keywords": [],
+  "author": "Bryon Vandiver",
+  "license": "Apache-2.0",
+  "babel": {
+    "plugins": [
+      "inferno"
+    ]
+  },
+  "bin": {
+    "minimon.js": "app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/asterick/minimon.js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/asterick/minimon.js/issues"
+  },
+  "homepage": "https://github.com/asterick/minimon.js#readme",
+  "dependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.4",
+    "babel-plugin-inferno": "^5.0.0",
+    "ejs": "^2.6.1",
+    "express": "^4.16.3",
+    "express-ws": "^4.0.0",
+    "inferno": "^5.0.0",
+    "inferno-component": "^5.0.0",
+    "raw-loader": "^0.5.1",
+    "text-encoding": "^0.6.4",
+    "webpack": "^4.16.1",
+    "webpack-cli": "^3.1.0",
+    "winston": "^3.0.0"
+  }
+}
