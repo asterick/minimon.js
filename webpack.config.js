@@ -16,11 +16,6 @@ module.exports = {
         port: 9000
     },
     plugins: [
-        new webpack.DefinePlugin({
-            'process.env': {
-                'NODE_ENV': JSON.stringify(mode)
-            }
-        }),
         new webpack.IgnorePlugin(/^text-encoding$/),
         new webpack.IgnorePlugin(/^fs$/)
     ],
