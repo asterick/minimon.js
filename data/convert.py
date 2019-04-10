@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 from json import dumps
 import csv
 
@@ -78,23 +78,20 @@ ARGUMENTS = {
 }
 
 def format(op, arg1, arg2):
-    try:
-        condition = None
-        if arg1 in CONDITIONS:
-            condition, arg1, arg2 = CONDITIONS[arg1], arg2, None
+    condition = None
+    if arg1 in CONDITIONS:
+        condition, arg1, arg2 = CONDITIONS[arg1], arg2, None
 
-    	return { 
-            "op": op, 
-            "condition": condition, 
-            "args": [ARGUMENTS[arg] for arg in arg1, arg2 if arg]
-        }
-    except Exception as e:
-        return e
+    return { 
+        "op": op, 
+        "condition": condition, 
+        "args": [ARGUMENTS[arg] for arg in [arg1, arg2] if arg]
+    }
 
 all_ops = []
 all_args = []
 
-with file('s1c88.csv', 'rb') as csvfile:
+with open('s1c88.csv', 'r') as csvfile:
     spamreader = csv.reader(csvfile)
 
     next(spamreader)
@@ -113,4 +110,4 @@ with file('s1c88.csv', 'rb') as csvfile:
         all_ops += [op0, op1, op2]
         all_args += [arg0_1, arg0_2, arg1_1, arg1_2, arg2_1, arg2_2]
 
-print dumps(op0s, indent=4)
+print (dumps(op0s, indent=4))
