@@ -1,17 +1,21 @@
-import Inferno from 'inferno';
-import Component from 'inferno-component';
+import React, { Component } from "react";
+import Button from '@material-ui/core/Button';
 
-export default class extends Component {
-	constructor(props) {
-		super(props);
+class FormContainer extends Component {
+	constructor() {
+		super();
 
 		this.state = {
-		}
+			title: ""
+		};
 	}
-
 	render() {
-		return <div>
-			Blerp
-		</div>;
+		return (
+			<Button variant="contained" color="primary">
+      			Hello World
+    		</Button>
+		);
 	}
 }
+
+export default FormContainer;

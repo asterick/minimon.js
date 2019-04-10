@@ -1,8 +1,6 @@
-import { render } from 'inferno';
-import UI from  "./ui/index.jsx";
+import React, { Component } from "react";
+import ReactDOM from "react-dom";
 
-console.log(require("./system/bios"));
+import UI from "./ui";
 
-(async _ => {
-	render(<UI />, document.getElementById("container"));
-})();
+ReactDOM.render(<UI />, document.getElementById("container"));

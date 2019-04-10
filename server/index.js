@@ -5,11 +5,8 @@ const Config = require("../config.json");
 
 // === Main ===
 const app = express();
-const expressWs = require('express-ws')(app);
 
 app.engine('html', require('ejs').renderFile);
-
-console.log(app.get('views'));
 
 app.get("/", (req, res) => {
 	res.render('index.html', {

@@ -5,14 +5,15 @@
   "main": "server/index.js",
   "scripts": {
     "start": "NODE_ENV=development node server",
-    "build": "NODE_ENV=production webpack"
+    "build": "webpack --mode production"
   },
   "keywords": [],
   "author": "Bryon Vandiver",
   "license": "Apache-2.0",
   "babel": {
-    "plugins": [
-      "inferno"
+    "presets": [
+      "@babel/preset-env",
+      "@babel/preset-react"
     ]
   },
   "bin": {
@@ -27,16 +28,17 @@
   },
   "homepage": "https://github.com/asterick/minimon.js#readme",
   "dependencies": {
-    "babel-core": "^6.26.0",
-    "babel-loader": "^7.1.4",
-    "babel-plugin-inferno": "^5.0.0",
+    "@babel/core": "^7.4.3",
+    "@babel/preset-env": "^7.4.3",
+    "@babel/preset-react": "^7.0.0",
+    "@material-ui/core": "^3.9.3",
+    "@material-ui/icons": "^3.0.2",
+    "babel-loader": "^8.0.5",
     "ejs": "^2.6.1",
     "express": "^4.16.3",
-    "express-ws": "^4.0.0",
-    "inferno": "^5.0.0",
-    "inferno-component": "^5.0.0",
-    "raw-loader": "^0.5.1",
-    "text-encoding": "^0.6.4",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-virtualized": "^9.21.0",
     "webpack": "^4.16.1",
     "webpack-cli": "^3.1.0",
     "winston": "^3.0.0"
