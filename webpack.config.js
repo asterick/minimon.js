@@ -7,8 +7,13 @@ module.exports = {
     mode: mode,
     entry: './client/index.jsx',
     output: {
-        path: path.join(__dirname, './assets'),
+        path: path.join(__dirname, 'public'),
         filename: 'app.js',
+    },
+    devServer: {
+        contentBase: path.join(__dirname, 'public'),
+        compress: true,
+        port: 9000
     },
     plugins: [
         new webpack.DefinePlugin({

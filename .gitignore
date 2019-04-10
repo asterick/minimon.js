@@ -3,3 +3,4 @@ node_modules
 npm-debug.log
 temp.*
 config.json
+public/app.js
