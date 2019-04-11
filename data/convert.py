@@ -79,14 +79,14 @@ ARGUMENTS = {
 
 def format(op, arg1, arg2):
     condition = None
+    
     if arg1 in CONDITIONS:
         condition, arg1, arg2 = CONDITIONS[arg1], arg2, None
 
-    return { 
-        "op": op, 
-        "condition": condition, 
-        "args": [ARGUMENTS[arg] for arg in [arg1, arg2] if arg]
-    }
+    args = [arg for arg in [arg1, arg2] if arg]
+
+    # add conditions
+    return '{ "op": %s, "args": [%s] }' % (op, ', '.join(args))
 
 all_ops = []
 all_args = []
