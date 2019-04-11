@@ -21,16 +21,17 @@ class MemoryCell extends Component {
 
 function rowRenderer ({ key, style, index, parent }) {
 	const { system, memoryBottom, memoryTop, bytesPerRow } = parent.props;
+	const addrLength = memoryTop.toString(16).length;
+	const data = [];
 
 	let address = index * bytesPerRow + memoryBottom;
 
-	const data = [<span className={classes['address']} key={-1}>{toHex(address,6)}</span>]
-
-	for (let i = 0; i < bytesPerRow && address <= memoryTop; i++, address++) 
-		data.push(<MemoryCell key={address} value={system.read(address)} />);
+	for (let i = 0, a = address; i < bytesPerRow && a <= memoryTop; i++, a++) 
+		data.push(<MemoryCell key={a} value={system.read(a)} />);
 
 	return (
 		<div key={key} style={style}>
+			<span className={classes['address']}>{toHex(address, addrLength)}</span>
 			{ data }
 		</div>
 	)
