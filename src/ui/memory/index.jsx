@@ -55,7 +55,8 @@ class MemoryEditor extends Component {
 							height={height}
 							rowCount={Math.ceil((this.props.memoryTop - this.props.memoryBottom) / bytesPerRow)}
 							rowHeight={20}
-							rowRenderer={rowRenderer} />
+							rowRenderer={rowRenderer}
+							/>
 					)
 				}}
 			</AutoSizer>
