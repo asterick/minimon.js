@@ -1,0 +1,3 @@
+table.h
+*.o
+*.wasm

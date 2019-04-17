@@ -1,0 +1,16 @@
+.address {
+	width: 66px;
+	text-align: left;
+	display: inline-block;
+	color: #cf0;
+}
+
+.byte-cell {
+	width: 22px;
+	text-align: center;
+	display: inline-block;
+}
+
+.byte-cell:nth-child(odd) {
+	color: cyan;
+}

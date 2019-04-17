@@ -10,6 +10,10 @@ class Minimon {
 
 		return 0xCD;
 	}
+
+	translate(pc) {
+		return pc;
+	}
 }
 
 export default Minimon;

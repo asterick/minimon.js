@@ -1,16 +1,20 @@
 import React, { Component } from "react";
-import MemoryEditor from "./memory";
-
 import 'react-virtualized/styles.css';
+
+import MemoryEditor from "./memory";
+import Disassembler from "./disassemble";
+
 import style from "./style.css";
 
 class MinimonDebugger extends Component {
 	render() {
 		return (
 			<div className={style.debugger}>
-				<MemoryEditor system={this.props.system}/>
+				<Disassembler system={this.props.system} />
+				
 			</div>
 		);
+		//<MemoryEditor system={this.props.system}/>
 	}
 }
 
