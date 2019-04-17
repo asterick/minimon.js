@@ -4,3 +4,4 @@ npm-debug.log
 temp.*
 config.json
 public/app.js
+*.wasm

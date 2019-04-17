@@ -1,5 +1,5 @@
 OBJECTS=main.o blitter.o operations.o machine.o
-TARGET=libminimon.wasm
+TARGET=../public/libminimon.wasm
 
 LD=$(WASI)/wasm-ld
 CC=$(WASI)/clang
@@ -20,13 +20,13 @@ dasm: $(TARGET)
 $(TARGET): $(OBJECTS)
 	$(LD) $(LDFLAGS) $(OBJECTS) -o $@
 
-table.h: ../data/table.py ../data/s1c88.csv
+include/table.h: ../data/table.py ../data/s1c88.csv
 	python3 ../data/table.py > $@
 
-%.o: %.c table.h
+%.o: %.c include/table.h
 	$(CC) $(CFLAGS) $< -c -o $@
 
-%.o: %.cc table.h
+%.o: %.cc include/table.h
 	$(CPP) $(CPPFLAGS) $< -c -o $@
 
 .phony: all clean disassembly
