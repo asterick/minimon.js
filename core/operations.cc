@@ -5,8 +5,20 @@
 typedef void (*InstructionCall)(ProcessorState& cpu);
 
 /**
- * S1C88 Immediate values
+ * S1C88 Memory access helpers
  **/
+
+static inline uint16_t cpu_read16(ProcessorState& cpu, uint32_t address) {
+	uint16_t lo = cpu_read8(cpu, address);
+	address = ((address + 1) & 0xFFFF) | (address & 0xFF0000);
+	return (cpu_read8(cpu, address) << 8) | lo;
+}
+
+static inline void cpu_write16(ProcessorState& cpu, uint16_t data, uint32_t address) {
+	cpu_write8(cpu, (uint8_t) data, address);
+	address = ((address + 1) & 0xFFFF) | (address & 0xFF0000);
+	cpu_write8(cpu, data >> 8, address);
+}
 
 static inline uint8_t cpu_imm8(ProcessorState& cpu) {
 	uint32_t address = cpu.reg.pc++;
