@@ -23,6 +23,8 @@ union ProcessorRegisters {
 		uint8_t ep;
 		uint8_t xp;
 		uint8_t yp;
+
+		uint8_t cb;
 		uint8_t nb;
 
 		union {

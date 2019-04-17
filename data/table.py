@@ -141,11 +141,11 @@ def format(op, *args):
             if ind:
                 print ("\tauto addr%i = calc_%s(cpu);" % (i, nam))
                 if "Read" in directions[i]:
-                    print ("\tauto data%i = cpu_read%s(cpu, addr%i);" % (i, size, i))
+                    print ("\tuint%i_t data%i = cpu_read%s(cpu, addr%i);" % (size, i, size, i))
                 else:
-                    print ("\tuint%i_t data%i;" % (default_size, i))
+                    print ("\tuint%i_t data%i;" % (size, i))
             elif mem:
-                print ("\tauto data%i = cpu_imm%i(cpu);" % (i, siz))
+                print ("\tuint%i_t data%i = cpu_imm%i(cpu);" % (size, i, siz))
 
 
         if condition:
@@ -183,4 +183,4 @@ for i, t in enumerate([op0s, op1s, op2s]):
     print ("static InstructionCall inst_table%i[] = {" % i)
     for inst in t:
         print ("\t%s," % (inst or "inst_undefined"))
-    print ("};\n")
+    print ("};")
