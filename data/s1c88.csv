@@ -244,7 +244,7 @@ F1,JRS,rr,,,CARS,LE,rr,,LD,SP,HL
 F2,CARL,qqrr,,,CARS,GT,rr,,LD,SP,IX
 F3,JRL,qqrr,,,CARS,GE,rr,,LD,SP,IY
 F4,JP,HL,,,CARS,V,rr,,LD,HL,SP
-F5,DJP,NZ,rr,,CARS,NV,rr,,LD,HL,PC
+F5,DJR,NZ,rr,,CARS,NV,rr,,LD,HL,PC
 F6,SWAP,A,,,CARS,P,rr,,undefined,,
 F7,SWAP,[HL],,,CARS,M,rr,,undefined,,
 F8,RET,,,,CARS,F0,rr,,LD,BA,SP

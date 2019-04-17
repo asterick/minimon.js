@@ -342,51 +342,79 @@ static void inst_pop_ale(ProcessorState& cpu) {
  **/
 
 static inline void op_jrs8(ProcessorState& cpu, uint8_t& t) {
-	// TODO
-}
-
-static inline void op_jr16(ProcessorState& cpu, uint16_t& t) {
-	// TODO
+	cpu.reg.cb = cpu.reg.nb;
+	cpu.reg.pc += (int8_t)t - 1;
 }
 
 static inline void op_jrl16(ProcessorState& cpu, uint16_t& t) {
-	// TODO
+	cpu.reg.cb = cpu.reg.nb;
+	cpu.reg.pc += t - 1;
 }
 
 static inline void op_jp16(ProcessorState& cpu, uint16_t& t) {
-	// TODO
+	cpu.reg.cb = cpu.reg.nb;
+	cpu.reg.pc = t;
 }
 
-static inline void op_djp8(ProcessorState& cpu, uint8_t& t) {
-	// TODO
-}
-
-static inline void op_carl16(ProcessorState& cpu, uint16_t& t) {
-	// TODO
+static inline void op_djr8(ProcessorState& cpu, uint8_t& t) {
+	cpu.reg.flag.z = --cpu.reg.b == 0;
+	if (cpu.reg.flag.z) {
+		cpu.reg.cb = cpu.reg.nb;
+		cpu.reg.pc += (int8_t)t - 1;
+	}
 }
 
 static inline void op_cars8(ProcessorState& cpu, uint8_t& t) {
-	// TODO
+	op_push8(cpu, cpu.reg.cb);
+	op_push16(cpu, cpu.reg.pc);
+
+	cpu.reg.pc += (int8_t)t - 1;
+	cpu.reg.cb = cpu.reg.nb;
 }
 
-static inline void op_call8(ProcessorState& cpu, uint8_t& t) {
-	// TODO
+static inline void op_carl16(ProcessorState& cpu, uint16_t& t) {
+	op_push8(cpu, cpu.reg.cb);
+	op_push16(cpu, cpu.reg.pc);
+
+	cpu.reg.pc += (int16_t)t - 1;
+	cpu.reg.cb = cpu.reg.nb;
+}
+
+static inline void op_call16(ProcessorState& cpu, uint16_t& t) {
+	op_push8(cpu, cpu.reg.cb);
+	op_push16(cpu, cpu.reg.pc);
+
+	cpu.reg.pc = t;
+	cpu.reg.cb = cpu.reg.nb;
 }
 
 static inline void op_int16(ProcessorState& cpu, uint16_t& t) {
-	// TODO
+	op_push8(cpu, cpu.reg.cb);
+	op_push16(cpu, cpu.reg.pc);
+	op_push8(cpu, cpu.reg.sc);
+
+	cpu.reg.pc = t;
+	cpu.reg.cb = cpu.reg.nb;
 }
 
 static void inst_ret(ProcessorState& cpu) {
-	// TODO
+	op_pop16(cpu, cpu.reg.pc);
+	op_pop8(cpu, cpu.reg.cb);
+	cpu.reg.nb = cpu.reg.cb;
 }
 
 static void inst_rete(ProcessorState& cpu) {
-	// TODO
+	op_pop8(cpu, cpu.reg.sc);
+	op_pop16(cpu, cpu.reg.pc);
+	op_pop8(cpu, cpu.reg.cb);
+	cpu.reg.nb = cpu.reg.cb;
 }
 
 static void inst_rets(ProcessorState& cpu) {
-	// TODO
+	op_pop16(cpu, cpu.reg.pc);
+	op_pop8(cpu, cpu.reg.cb);
+	cpu.reg.nb = cpu.reg.cb;
+	cpu.reg.pc += 2;
 }
 
 /**

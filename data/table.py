@@ -96,13 +96,13 @@ OPERATIONS = {
     'CP': (8, 'Read', 'Read'),
     'BIT': (8, 'Read', 'Read'),
 
-    'CALL': (8, 'Read'),
+    'CALL': (16, 'Read'),
     'CARS': (8, 'Read'),
     'CARL': (8, 'Read'),
     'JRS': (8, 'Read'),
     'JRL': (8, 'Read'),
     'JP': (8, 'Read'),
-    'DJP': (8, 'Read'),
+    'DJR': (8, 'Read'),
     'INT': (8, 'Read'),
 
     'PUSH': (-1, 'Read'),
