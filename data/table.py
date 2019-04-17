@@ -180,7 +180,7 @@ with open(CSV_LOCATION, 'r') as csvfile:
         	op2s[code] = format(op2, arg2_1, arg2_2)
 
 for i, t in enumerate([op0s, op1s, op2s]):
-    print ("InstructionCall inst_table%i[] = {" % i)
+    print ("static InstructionCall inst_table%i[] = {" % i)
     for inst in t:
         print ("\t%s," % (inst or "inst_undefined"))
     print ("};\n")

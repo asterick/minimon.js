@@ -2,13 +2,27 @@
 
 #include "system.h"
 
+typedef void (*InstructionCall)(ProcessorState& cpu);
+
+/**
+ * S1C88 Immediate values
+ **/
+
+static inline uint8_t cpu_imm8(ProcessorState& cpu) {
+	return cpu_read8(cpu, cpu.reg.pc++);
+}
+
+static inline uint16_t cpu_imm16(ProcessorState& cpu) {
+	return cpu_read8(cpu, cpu.reg.pc++);
+}
+
 /**
  * S1C88 Effective address calculations
  **/
 
 static inline uint32_t calc_vect(ProcessorState& cpu) {
 	// TODO
-	return 0;
+	return cpu_imm8();
 }
 
 static inline uint32_t calc_ind16(ProcessorState& cpu) {
@@ -59,18 +73,6 @@ static inline uint32_t calc_indIIX(ProcessorState& cpu) {
 static inline uint32_t calc_indIIY(ProcessorState& cpu) {
 	// TODO
 	return 0;
-}
-
-/**
- * S1C88 Immediate values
- **/
-
-static inline uint8_t cpu_imm8(ProcessorState& cpu) {
-	return cpu_read8(cpu, cpu.reg.pc++);
-}
-
-static inline uint16_t cpu_imm16(ProcessorState& cpu) {
-	return cpu_read8(cpu, cpu.reg.pc++);
 }
 
 /**
@@ -265,12 +267,8 @@ static inline void op_int16(ProcessorState& cpu, uint16_t& t) {
  * Special purpose instructions
  **/
 
-static void inst_extended_ce(ProcessorState& cpu) {
-	
-}
+static void inst_nop(ProcessorState& cpu) {
 
-static void inst_extended_cf(ProcessorState& cpu) {
-	
 }
 
 static void inst_pack(ProcessorState& cpu) {
@@ -290,10 +288,6 @@ static void inst_rete(ProcessorState& cpu) {
 }
 
 static void inst_rets(ProcessorState& cpu) {
-
-}
-
-static void inst_nop(ProcessorState& cpu) {
 
 }
 
@@ -334,8 +328,23 @@ static void inst_slp(ProcessorState& cpu) {
 }
 
 static void inst_undefined(ProcessorState& cpu) {
-
 }
 
-// This is here for my benefit
+static void inst_extended_ce(ProcessorState& cpu);
+static void inst_extended_cf(ProcessorState& cpu);
+
+// Generated compound instructions and tables
 #include "table.h"
+
+static void inst_extended_ce(ProcessorState& cpu) {
+	inst_table1[cpu_imm8(cpu)](cpu);
+}
+
+static void inst_extended_cf(ProcessorState& cpu) {
+	inst_table2[cpu_imm8(cpu)](cpu);
+}
+
+__attribute__ ((visibility ("default")))
+void step_cpu(ProcessorState& cpu) {
+	inst_table0[cpu_imm8(cpu)](cpu);
+}

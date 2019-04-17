@@ -4,6 +4,13 @@
 
 union ProcessorRegisters {
 	struct {
+		uint8_t a;
+		uint8_t b;
+		uint8_t l;
+		uint8_t h;
+	};
+
+	struct {
 		uint16_t ba;
 		uint16_t hl;
 		uint16_t ix;
@@ -37,22 +44,15 @@ union ProcessorRegisters {
 			} flag;
 		} ;
 	};
-
-	struct {
-		uint8_t a;
-		uint8_t b;
-		uint8_t l;
-		uint8_t h;
-	};
 };
 
 struct ProcessorState {
 	 ProcessorRegisters reg;
 };
 
-typedef void (*InstructionCall)(ProcessorState& cpu);
-
 uint8_t cpu_read8(ProcessorState& cpu, uint32_t address);
 uint16_t cpu_read16(ProcessorState& cpu, uint32_t address);
 uint8_t cpu_write8(ProcessorState& cpu, uint8_t data, uint32_t address);
 uint16_t cpu_write16(ProcessorState& cpu, uint16_t data, uint32_t address);
+
+void step_cpu(ProcessorState& cpu);
