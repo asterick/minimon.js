@@ -432,12 +432,12 @@ static inline void op_pop16(ProcessorState& cpu, uint16_t& t) {
 	t = (top << 8) | bottom;
 }
 
-static void inst_push_ip(ProcessorState& cpu) {
+static inline void inst_push_ip(ProcessorState& cpu) {
 	op_push8(cpu, cpu.reg.xp);
 	op_push8(cpu, cpu.reg.yp);
 }
 
-static void inst_push_all(ProcessorState& cpu) {
+static inline void inst_push_all(ProcessorState& cpu) {
 	op_push16(cpu, cpu.reg.ba);
 	op_push16(cpu, cpu.reg.hl);
 	op_push16(cpu, cpu.reg.ix);
@@ -446,22 +446,16 @@ static void inst_push_all(ProcessorState& cpu) {
 }
 
 static void inst_push_ale(ProcessorState& cpu) {
-	op_push16(cpu, cpu.reg.ba);
-	op_push16(cpu, cpu.reg.hl);
-	op_push16(cpu, cpu.reg.ix);
-	op_push16(cpu, cpu.reg.iy);
-	op_push8(cpu, cpu.reg.br);
-	op_push8(cpu, cpu.reg.ep);
-	op_push8(cpu, cpu.reg.xp);
-	op_push8(cpu, cpu.reg.yp);
+	inst_push_all(cpu);
+	inst_push_ip(cpu);
 }
 
-static void inst_pop_ip(ProcessorState& cpu) {
+static inline void inst_pop_ip(ProcessorState& cpu) {
 	op_pop8(cpu, cpu.reg.yp);
 	op_pop8(cpu, cpu.reg.xp);
 }
 
-static void inst_pop_all(ProcessorState& cpu) {
+static inline void inst_pop_all(ProcessorState& cpu) {
 	op_pop8(cpu, cpu.reg.br);
 	op_pop16(cpu, cpu.reg.iy);
 	op_pop16(cpu, cpu.reg.ix);
@@ -470,14 +464,8 @@ static void inst_pop_all(ProcessorState& cpu) {
 }
 
 static void inst_pop_ale(ProcessorState& cpu) {
-	op_pop8(cpu, cpu.reg.yp);
-	op_pop8(cpu, cpu.reg.xp);
-	op_pop8(cpu, cpu.reg.ep);
-	op_pop8(cpu, cpu.reg.br);
-	op_pop16(cpu, cpu.reg.iy);
-	op_pop16(cpu, cpu.reg.ix);
-	op_pop16(cpu, cpu.reg.hl);
-	op_pop16(cpu, cpu.reg.ba);
+	inst_pop_ip(cpu);
+	inst_pop_all(cpu);
 }
 
 /**
