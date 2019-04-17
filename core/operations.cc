@@ -104,43 +104,141 @@ static inline void op_swap8(ProcessorState& cpu, uint8_t& t) {
  **/
 
 static inline void op_add8(ProcessorState& cpu, uint8_t& t, uint8_t s) {
-	// TODO
+	if (cpu.reg.flag.d) {
+		unsigned int uo;
+
+		uo = (t & 0xF) + (s & 0xF);
+		if (uo >= 0x0A) uo += 0x6;
+		uo += (t & 0xF0) + (s & 0xF0);
+		if (uo >= 0xA0) uo += 0x60;
+
+		t = (uint8_t) uo;
+
+		cpu.reg.flag.n = 0;
+		cpu.reg.flag.v = 0;
+		cpu.reg.flag.c = uo >= 0x100;
+		cpu.reg.flag.z = t == 0;
+	} else {
+		unsigned int uo = t + s;
+
+		cpu.reg.flag.v = ((t & s) & (~uo & t) & 0x80) != 0;
+		t = (uint8_t)uo;
+		cpu.reg.flag.z = t == 0;
+		cpu.reg.flag.c = uo >= 0x100;
+		cpu.reg.flag.n = (t & 0x80) != 0;
+	}
 }
 
 static inline void op_adc8(ProcessorState& cpu, uint8_t& t, uint8_t s) {
-	// TODO
+	if (cpu.reg.flag.d) {
+		unsigned int uo;
+
+		uo = (t & 0xF) + (s & 0xF) + cpu.reg.flag.c;
+		if (uo >= 0x0A) uo += 0x6;
+		uo += (t & 0xF0) + (s & 0xF0);
+		if (uo >= 0xA0) uo += 0x60;
+
+		t = (uint8_t) uo;
+
+		cpu.reg.flag.n = 0;
+		cpu.reg.flag.v = 0;
+		cpu.reg.flag.c = uo >= 0x100;
+		cpu.reg.flag.z = t == 0;
+	} else {
+		unsigned int uo = t + s + cpu.reg.flag.c;
+
+		cpu.reg.flag.v = ((t & s) & (~uo & t) & 0x80) != 0;
+		t = (uint8_t)uo;
+		cpu.reg.flag.z = t == 0;
+		cpu.reg.flag.c = uo >= 0x100;
+		cpu.reg.flag.n = (t & 0x80) != 0;
+	}
 }
 
 static inline void op_sub8(ProcessorState& cpu, uint8_t& t, uint8_t s) {
-	// TODO
+	if (cpu.reg.flag.d) {
+		// TODO
+	} else {
+		unsigned int uo = t - s;
+
+		cpu.reg.flag.v = ((t & ~s) & (~uo & t) & 0x80) != 0;
+		t = (uint8_t)uo;
+		cpu.reg.flag.z = t == 0;
+		cpu.reg.flag.c = uo >= 0x100;
+		cpu.reg.flag.n = (t & 0x80) != 0;
+	}
 }
 
 static inline void op_sbc8(ProcessorState& cpu, uint8_t& t, uint8_t s) {
-	// TODO
+	if (cpu.reg.flag.d) {
+		// TODO
+	} else {
+		unsigned int uo = t - s - cpu.reg.flag.c;
+
+		cpu.reg.flag.v = ((t & ~s) & (~uo & t) & 0x80) != 0;
+		t = (uint8_t)uo;
+		cpu.reg.flag.z = t == 0;
+		cpu.reg.flag.c = uo >= 0x100;
+		cpu.reg.flag.n = (t & 0x80) != 0;
+	}
 }
 
 static inline void op_add16(ProcessorState& cpu, uint16_t& t, uint16_t s) {
-	// TODO
+	unsigned int uo = t + s;
+
+	cpu.reg.flag.v = ((t & s) & (~uo & t) & 0x80) != 0;
+	t = (uint8_t)uo;
+	cpu.reg.flag.z = t == 0;
+	cpu.reg.flag.c = uo >= 0x10000;
+	cpu.reg.flag.n = (t & 0x8000) != 0;
 }
 
 static inline void op_adc16(ProcessorState& cpu, uint16_t& t, uint16_t s) {
-	// TODO
+	unsigned int uo = t + s + cpu.reg.flag.c;
+
+	cpu.reg.flag.v = ((t & s) & (~uo & t) & 0x8000) != 0;
+	t = (uint16_t)uo;
+	cpu.reg.flag.z = t == 0;
+	cpu.reg.flag.c = uo >= 0x10000;
+	cpu.reg.flag.n = (t & 0x8000) != 0;
 }
 
 static inline void op_sub16(ProcessorState& cpu, uint16_t& t, uint16_t s) {
-	// TODO
+	unsigned int uo = t - s;
+
+	cpu.reg.flag.v = ((t & ~s) & (~uo & t) & 0x8000) != 0;
+	t = (uint16_t)uo;
+	cpu.reg.flag.z = t == 0;
+	cpu.reg.flag.c = uo >= 0x10000;
+	cpu.reg.flag.n = (t & 0x8000) != 0;
 }
 
 static inline void op_sbc16(ProcessorState& cpu, uint16_t& t, uint16_t s) {
-	// TODO
+	unsigned int uo = t - s - cpu.reg.flag.c;
+
+	cpu.reg.flag.v = ((t & ~s) & (~uo & t) & 0x8000) != 0;
+	t = (uint16_t)uo;
+	cpu.reg.flag.z = t == 0;
+	cpu.reg.flag.c = uo >= 0x10000;
+	cpu.reg.flag.n = (t & 0x8000) != 0;
 }
 
 static inline void op_cp8(ProcessorState& cpu, uint8_t t, uint8_t s) {
-	// TODO
+	unsigned int uo = t - s;
+
+	cpu.reg.flag.z = (uo & 0xFF) == 0;
+	cpu.reg.flag.c = uo >= 0x100;
+	cpu.reg.flag.n = (t & 0x80) != 0;
+	cpu.reg.flag.v = ((t & ~s) & (~uo & t) & 0x80) != 0;
 }
 
 static inline void op_cp16(ProcessorState& cpu, uint16_t t, uint16_t s) {
-	// TODO
+	unsigned int uo = t - s;
+
+	cpu.reg.flag.z = (uo & 0xFFFF) == 0;
+	cpu.reg.flag.c = uo >= 0x10000;
+	cpu.reg.flag.n = (t & 0x8000) != 0;
+	cpu.reg.flag.v = ((t & ~s) & (~uo & t) & 0x8000) != 0;
 }
 
 static inline void op_inc8(ProcessorState& cpu, uint8_t& t) {
@@ -175,7 +273,24 @@ static void inst_mul(ProcessorState& cpu) {
 }
 
 static void inst_div(ProcessorState& cpu) {
-	// TODO
+	if (cpu.reg.a == 0) {
+		// TODO: DIVIDE BY ZERO EXCEPTION HERE
+		return ;
+	}
+
+	int div = cpu.reg.hl / cpu.reg.a;
+
+	cpu.reg.flag.c = 0;
+	cpu.reg.flag.z = (div & 0xFF) == 0;
+	cpu.reg.flag.n = (div & 0x80) != 0;
+
+	if (div < 0x100) {
+		cpu.reg.h = cpu.reg.hl % cpu.reg.a;
+		cpu.reg.l = (uint8_t)div;
+		cpu.reg.flag.v = 0;
+	} else {
+		cpu.reg.flag.v = 1;
+	}
 }
 
 /**
