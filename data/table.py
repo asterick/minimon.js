@@ -41,7 +41,6 @@ ARGUMENTS = {
     'BR': (8, False, False, 'br'),
     'SC': (8, False, False, 'sc'),
     'EP': (8, False, False, 'ep'),
-    'IP': (8, False, False, 'ip'),
     'XP': (8, False, False, 'xp'),
     'YP': (8, False, False, 'yp'),
     'NB': (8, False, False, 'nb'),

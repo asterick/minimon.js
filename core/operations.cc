@@ -432,6 +432,11 @@ static inline void op_pop16(ProcessorState& cpu, uint16_t& t) {
 	t = (top << 8) | bottom;
 }
 
+static void inst_push_ip(ProcessorState& cpu) {
+	op_push8(cpu, cpu.reg.xp);
+	op_push8(cpu, cpu.reg.yp);
+}
+
 static void inst_push_all(ProcessorState& cpu) {
 	op_push16(cpu, cpu.reg.ba);
 	op_push16(cpu, cpu.reg.hl);
@@ -447,7 +452,13 @@ static void inst_push_ale(ProcessorState& cpu) {
 	op_push16(cpu, cpu.reg.iy);
 	op_push8(cpu, cpu.reg.br);
 	op_push8(cpu, cpu.reg.ep);
-	op_push8(cpu, cpu.reg.ip);
+	op_push8(cpu, cpu.reg.xp);
+	op_push8(cpu, cpu.reg.yp);
+}
+
+static void inst_pop_ip(ProcessorState& cpu) {
+	op_pop8(cpu, cpu.reg.yp);
+	op_pop8(cpu, cpu.reg.xp);
 }
 
 static void inst_pop_all(ProcessorState& cpu) {
@@ -459,7 +470,8 @@ static void inst_pop_all(ProcessorState& cpu) {
 }
 
 static void inst_pop_ale(ProcessorState& cpu) {
-	op_pop8(cpu, cpu.reg.ip);
+	op_pop8(cpu, cpu.reg.yp);
+	op_pop8(cpu, cpu.reg.xp);
 	op_pop8(cpu, cpu.reg.ep);
 	op_pop8(cpu, cpu.reg.br);
 	op_pop16(cpu, cpu.reg.iy);

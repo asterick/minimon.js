@@ -19,7 +19,6 @@ union ProcessorRegisters {
 		uint16_t sp;
 
 		uint8_t br;
-		uint8_t ip;
 		uint8_t ep;
 		uint8_t xp;
 		uint8_t yp;
