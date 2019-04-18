@@ -5,37 +5,6 @@
 typedef void (*InstructionCall)(ProcessorState& cpu);
 
 /**
- * S1C88 Memory access helpers
- **/
-
-static inline uint16_t cpu_read16(ProcessorState& cpu, uint32_t address) {
-	uint16_t lo = cpu_read8(cpu, address);
-	address = ((address + 1) & 0xFFFF) | (address & 0xFF0000);
-	return (cpu_read8(cpu, address) << 8) | lo;
-}
-
-static inline void cpu_write16(ProcessorState& cpu, uint16_t data, uint32_t address) {
-	cpu_write8(cpu, (uint8_t) data, address);
-	address = ((address + 1) & 0xFFFF) | (address & 0xFF0000);
-	cpu_write8(cpu, data >> 8, address);
-}
-
-static inline uint8_t cpu_imm8(ProcessorState& cpu) {
-	uint32_t address = cpu.reg.pc++;
-
-	if (address & 0x8000) {
-		address = (address & 0x7FFF) | (cpu.reg.cb << 15);
-	}
-
-	return cpu_read8(cpu, address);
-}
-
-static inline uint16_t cpu_imm16(ProcessorState& cpu) {
-	uint8_t lo = cpu_imm8(cpu);
-	return (cpu_imm8(cpu) << 8) | lo;
-}
-
-/**
  * S1C88 Effective address calculations
  **/
 
@@ -302,7 +271,7 @@ static void inst_mul(ProcessorState& cpu) {
 
 static void inst_div(ProcessorState& cpu) {
 	if (cpu.reg.a == 0) {
-		// TODO: DIVIDE BY ZERO EXCEPTION HERE
+		cpu_int(cpu, IRQ_DIV_ZERO);
 		return ;
 	}
 
@@ -424,37 +393,33 @@ static inline void op_rlc8(ProcessorState& cpu, uint8_t& t) {
  **/
 
 static inline void op_push8(ProcessorState& cpu, uint8_t t) {
-	cpu_write8(cpu, t, (uint16_t)--cpu.reg.sp);
+	cpu_push8(cpu, t);
 }
 
 static inline void op_pop8(ProcessorState& cpu, uint8_t& t) {
-	t = cpu_read8(cpu, cpu.reg.sp++);
+	t = cpu_pop8(cpu);
 }
 
 static inline void op_push16(ProcessorState& cpu, uint16_t t) {
-	op_push8(cpu, (uint8_t)t);
-	op_push8(cpu, t >> 8);
+	cpu_push16(cpu, t);
 }
 
 static inline void op_pop16(ProcessorState& cpu, uint16_t& t) {
-	uint8_t top;
-	uint8_t bottom;
-	op_pop8(cpu, top);
-	op_pop8(cpu, bottom);
-	t = (top << 8) | bottom;
+	t = cpu_pop8(cpu) << 8;
+	t |= cpu_pop8(cpu);
 }
 
 static inline void inst_push_ip(ProcessorState& cpu) {
-	op_push8(cpu, cpu.reg.xp);
-	op_push8(cpu, cpu.reg.yp);
+	cpu_push8(cpu, cpu.reg.xp);
+	cpu_push8(cpu, cpu.reg.yp);
 }
 
 static inline void inst_push_all(ProcessorState& cpu) {
-	op_push16(cpu, cpu.reg.ba);
-	op_push16(cpu, cpu.reg.hl);
-	op_push16(cpu, cpu.reg.ix);
-	op_push16(cpu, cpu.reg.iy);
-	op_push8(cpu, cpu.reg.br);
+	cpu_push16(cpu, cpu.reg.ba);
+	cpu_push16(cpu, cpu.reg.hl);
+	cpu_push16(cpu, cpu.reg.ix);
+	cpu_push16(cpu, cpu.reg.iy);
+	cpu_push8(cpu, cpu.reg.br);
 }
 
 static void inst_push_ale(ProcessorState& cpu) {
@@ -463,16 +428,16 @@ static void inst_push_ale(ProcessorState& cpu) {
 }
 
 static inline void inst_pop_ip(ProcessorState& cpu) {
-	op_pop8(cpu, cpu.reg.yp);
-	op_pop8(cpu, cpu.reg.xp);
+	cpu.reg.yp = cpu_pop8(cpu);
+	cpu.reg.xp = cpu_pop8(cpu);
 }
 
 static inline void inst_pop_all(ProcessorState& cpu) {
-	op_pop8(cpu, cpu.reg.br);
-	op_pop16(cpu, cpu.reg.iy);
-	op_pop16(cpu, cpu.reg.ix);
-	op_pop16(cpu, cpu.reg.hl);
-	op_pop16(cpu, cpu.reg.ba);
+	cpu.reg.br = cpu_pop8(cpu);
+	cpu.reg.iy = cpu_pop16(cpu);
+	cpu.reg.ix = cpu_pop16(cpu);
+	cpu.reg.hl = cpu_pop16(cpu);
+	cpu.reg.ba = cpu_pop16(cpu);
 }
 
 static void inst_pop_ale(ProcessorState& cpu) {
@@ -508,54 +473,54 @@ static inline void op_djr8(ProcessorState& cpu, uint8_t& t) {
 }
 
 static inline void op_cars8(ProcessorState& cpu, uint8_t& t) {
-	op_push8(cpu, cpu.reg.cb);
-	op_push16(cpu, cpu.reg.pc);
+	cpu_push8(cpu, cpu.reg.cb);
+	cpu_push16(cpu, cpu.reg.pc);
 
 	cpu.reg.pc += (int8_t)t - 1;
 	cpu.reg.cb = cpu.reg.nb;
 }
 
 static inline void op_carl16(ProcessorState& cpu, uint16_t& t) {
-	op_push8(cpu, cpu.reg.cb);
-	op_push16(cpu, cpu.reg.pc);
+	cpu_push8(cpu, cpu.reg.cb);
+	cpu_push16(cpu, cpu.reg.pc);
 
 	cpu.reg.pc += (int16_t)t - 1;
 	cpu.reg.cb = cpu.reg.nb;
 }
 
 static inline void op_call16(ProcessorState& cpu, uint16_t& t) {
-	op_push8(cpu, cpu.reg.cb);
-	op_push16(cpu, cpu.reg.pc);
+	cpu_push8(cpu, cpu.reg.cb);
+	cpu_push16(cpu, cpu.reg.pc);
 
 	cpu.reg.pc = t;
 	cpu.reg.cb = cpu.reg.nb;
 }
 
 static inline void op_int16(ProcessorState& cpu, uint16_t& t) {
-	op_push8(cpu, cpu.reg.cb);
-	op_push16(cpu, cpu.reg.pc);
-	op_push8(cpu, cpu.reg.sc);
+	cpu_push8(cpu, cpu.reg.cb);
+	cpu_push16(cpu, cpu.reg.pc);
+	cpu_push8(cpu, cpu.reg.sc);
 
 	cpu.reg.pc = t;
 	cpu.reg.cb = cpu.reg.nb;
 }
 
 static void inst_ret(ProcessorState& cpu) {
-	op_pop16(cpu, cpu.reg.pc);
-	op_pop8(cpu, cpu.reg.cb);
+	cpu.reg.pc = cpu_pop16(cpu);
+	cpu.reg.cb = cpu_pop8(cpu);
 	cpu.reg.nb = cpu.reg.cb;
 }
 
 static void inst_rete(ProcessorState& cpu) {
-	op_pop8(cpu, cpu.reg.sc);
-	op_pop16(cpu, cpu.reg.pc);
-	op_pop8(cpu, cpu.reg.cb);
+	cpu.reg.sc = cpu_pop8(cpu);
+	cpu.reg.pc = cpu_pop16(cpu);
+	cpu.reg.cb = cpu_pop8(cpu);
 	cpu.reg.nb = cpu.reg.cb;
 }
 
 static void inst_rets(ProcessorState& cpu) {
-	op_pop16(cpu, cpu.reg.pc);
-	op_pop8(cpu, cpu.reg.cb);
+	cpu.reg.pc = cpu_pop16(cpu);
+	cpu.reg.cb = cpu_pop8(cpu);
 	cpu.reg.nb = cpu.reg.cb;
 	cpu.reg.pc += 2;
 }
@@ -608,6 +573,6 @@ static void inst_extended_cf(ProcessorState& cpu) {
 }
 
 __attribute__ ((visibility ("default")))
-void step_cpu(ProcessorState& cpu) {
+void cpu_step(ProcessorState& cpu) {
 	inst_table0[cpu_imm8(cpu)](cpu);
 }
