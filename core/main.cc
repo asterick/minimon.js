@@ -10,7 +10,7 @@ ProcessorState* const get_machine() {
 
 __attribute__ ((visibility ("default"))) extern "C"
 uint8_t* const get_bios() {
-	return &bios;
+	return bios;
 }
 
 __attribute__ ((visibility ("default"))) extern "C"

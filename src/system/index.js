@@ -6,9 +6,15 @@ class Minimon {
 		this._exports = this._module.instance.exports;
 		this._cpu_state = this._exports.get_machine();
 
-		const bios = await fetch("bios.min");
-		const bytes = await bios.arrayBuffer();
+		// Copy in our bios image
+		const biosSource = new Uint8Array(await (await fetch("bios.min")).arrayBuffer());
+		const biosTarget = new Uint8Array(this._exports.memory.buffer, this._exports.get_bios(), biosSource.length);
 
+		for (let i = 0; i < biosSource.length; i++) {
+			biosTarget[i] = biosSource[i];
+		}
+
+		// Reset our CPU
 		this.reset();
 	}	
 
