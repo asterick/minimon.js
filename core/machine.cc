@@ -5,6 +5,7 @@
 
 __attribute__ ((visibility ("default"))) extern "C"
 void cpu_reset(ProcessorState& cpu) {
+	// TODO
 }
 
 __attribute__ ((visibility ("default"))) extern "C"
@@ -14,15 +15,6 @@ uint32_t cpu_translate(ProcessorState& cpu, uint16_t address) {
 	} else {
 		return address;
 	}
-}
-
-__attribute__ ((visibility ("default"))) extern "C"
-uint8_t cpu_read8(ProcessorState& cpu, uint32_t address) {
-	return 0;
-}
-
-__attribute__ ((visibility ("default"))) extern "C"
-void cpu_write8(ProcessorState& cpu, uint8_t data, uint32_t address) {
 }
 
 void cpu_interrupt(ProcessorState& cpu, InterruptVector irq) {
@@ -56,7 +48,7 @@ uint8_t cpu_imm8(ProcessorState& cpu) {
 		address = (address & 0x7FFF) | (cpu.reg.cb << 15);
 	}
 
-	return cpu_read8(cpu, address);
+	return cpu_read8(cpu, cpu_translate(cpu, address));
 }
 
 uint16_t cpu_imm16(ProcessorState& cpu) {

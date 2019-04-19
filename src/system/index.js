@@ -1,25 +1,27 @@
-import Bios from "./bios.js";
-
 class Minimon {
 	async init() {
 		const data = await fetch("./libminimon.wasm");
-
-		this._module = await WebAssembly.instantiate(await data.arrayBuffer(), {
-			"env": {
-				cpu_read8: () => 0,
-				cpu_write8: () => 0
-			}
-		});
+		this._module = await WebAssembly.instantiate(await data.arrayBuffer());
 
 		this._exports = this._module.instance.exports;
+		this._cpu_state = this._exports.get_machine();
+
+		const bios = await fetch("bios.min");
+		const bytes = await bios.arrayBuffer();
+
+		this.reset();
 	}	
 
-	read(address) {
-
+	reset() {
+		this._exports.cpu_reset(this._cpu_state);
 	}
 
-	translate(pc) {
-		return pc;
+	read(address) {
+		return this._exports.cpu_read8(this._cpu_state, address);
+	}
+
+	translate(address) {
+		return this._exports.cpu_translate(this._cpu_state, address);
 	}
 }
 
