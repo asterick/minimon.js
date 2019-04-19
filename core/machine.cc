@@ -1,14 +1,36 @@
 #include <stdint.h>
 
 #include "system.h"
+#include "machine.h"
 
-void cpu_int(ProcessorState& cpu, InterruptVector irq, int priority) {
+__attribute__ ((visibility ("default"))) extern "C"
+void cpu_reset(ProcessorState& cpu) {
+}
+
+__attribute__ ((visibility ("default"))) extern "C"
+uint32_t cpu_translate(ProcessorState& cpu, uint16_t address) {
+	if (address & 0x8000) {
+		return (cpu.reg.cb << 15) | (address & 0x7FFF);
+	} else {
+		return address;
+	}
+}
+
+__attribute__ ((visibility ("default"))) extern "C"
+uint8_t cpu_read8(ProcessorState& cpu, uint32_t address) {
+	return 0;
+}
+
+__attribute__ ((visibility ("default"))) extern "C"
+void cpu_write8(ProcessorState& cpu, uint8_t data, uint32_t address) {
+}
+
+void cpu_interrupt(ProcessorState& cpu, InterruptVector irq) {
 	cpu_push8(cpu, cpu.reg.cb);
 	cpu_push16(cpu, cpu.reg.pc);
 	cpu_push8(cpu, cpu.reg.sc);
 
 	cpu.reg.pc = cpu_read16(cpu, 2 * (int) irq);
-	cpu.reg.flag.i = priority;
 }
 
 /**

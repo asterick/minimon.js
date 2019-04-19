@@ -6,4 +6,10 @@ import Minimon from "./system";
 
 const system = new Minimon();
 
-ReactDOM.render(<UI system={system}/>, document.querySelector(".container"));
+async function main() {
+	await system.init();
+
+	ReactDOM.render(<UI system={system}/>, document.querySelector(".container"));
+}
+
+main();

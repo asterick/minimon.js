@@ -1,6 +1,7 @@
 #include <stdint.h>
 
 #include "system.h"
+#include "machine.h"
 
 typedef void (*InstructionCall)(ProcessorState& cpu);
 
@@ -271,7 +272,7 @@ static void inst_mul(ProcessorState& cpu) {
 
 static void inst_div(ProcessorState& cpu) {
 	if (cpu.reg.a == 0) {
-		cpu_int(cpu, IRQ_DIV_ZERO);
+		cpu_interrupt(cpu, IRQ_DIV_ZERO);
 		return ;
 	}
 

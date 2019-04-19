@@ -9,7 +9,7 @@ CFLAGS=--target=wasm32-unknown-unknown-wasm -O2 -Iinclude
 CPPFLAGS=$(CFLAGS) -std=c++17
 LDFLAGS = --allow-undefined --export-dynamic --no-entry -s
 
-all: $(TARGET)
+all: $(DEPDIR) $(TARGET)
 
 clean:
 	rm -Rf $(TARGET) $(OBJECTS)
@@ -23,10 +23,13 @@ $(TARGET): $(OBJECTS)
 include/table.h: ../data/table.py ../data/s1c88.csv
 	python3 ../data/table.py > $@
 
-%.o: %.c include/table.h
+%.o: %.c include/*.h
 	$(CC) $(CFLAGS) $< -c -o $@
 
-%.o: %.cc include/table.h
+%.o: %.cc include/*.h
 	$(CPP) $(CPPFLAGS) $< -c -o $@
+
+$(DEPDIR):
+	mkdir -p $(DEPDIR)
 
 .phony: all clean disassembly
