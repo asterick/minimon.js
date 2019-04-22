@@ -3,6 +3,7 @@ import 'react-virtualized/styles.css';
 
 import MemoryEditor from "./memory";
 import Disassembler from "./disassemble";
+import Registers from "./registers";
 
 import style from "./style.css";
 
