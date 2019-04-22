@@ -1,6 +1,14 @@
 .disasm {
 	min-height: 8ch;
-	
+
+}
+
+tr.active {
+	background: #444;
+}
+
+.disasm td {
+	white-space: nowrap;
 }
 
 .address {
@@ -14,6 +22,7 @@
 	width: 22px;
 	text-align: center;
 	display: inline-block;
+	color: #FCF;
 }
 
 .byte-cell:nth-child(odd) {

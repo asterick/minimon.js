@@ -10,7 +10,7 @@ union ProcessorRegisters {
 		uint8_t h;
 	};
 
-	struct {
+	struct __attribute__((packed)) {
 		uint16_t ba;
 		uint16_t hl;
 		uint16_t ix;

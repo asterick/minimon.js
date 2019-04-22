@@ -8,11 +8,23 @@ import Registers from "./registers";
 import style from "./style.css";
 
 class MinimonDebugger extends Component {
+	step() {
+		this.props.system.step();
+		this.setState({});
+	}
+
+	reset() {
+		this.props.system.reset();
+		this.setState({});
+	}
+
 	render() {
 		return (
 			<div className={style.debugger}>
-				<MemoryEditor bytesPerRow={0x20} system={this.props.system} />
-				
+				<button onClick={() => this.step()}>Step</button>
+				<button onClick={() => this.reset()}>Reset</button>
+				<Registers system={this.props.system} />
+				<Disassembler system={this.props.system} pc={this.props.system.pc} />
 			</div>
 		);
 		

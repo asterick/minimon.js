@@ -5,7 +5,12 @@
 
 __attribute__ ((visibility ("default"))) extern "C"
 void cpu_reset(ProcessorState& cpu) {
-	// TODO
+	cpu.reg.pc = cpu_read16(cpu, 0x0000);
+	cpu.reg.sc = 0xC0;
+	cpu.reg.ep = 0x00;
+	cpu.reg.xp = 0x00;
+	cpu.reg.yp = 0x00;
+	cpu.reg.nb = 0x01;
 }
 
 __attribute__ ((visibility ("default"))) extern "C"
