@@ -116,6 +116,46 @@ class Disassembler {
 
 	_processCondition(cond) {
 		switch (cond) {
+		case CONDITION_LESS_THAN:
+			return "LT";
+		case CONDITION_LESS_EQUAL:
+			return "LE";
+		case CONDITION_GREATER_THAN:
+			return "GT";
+		case CONDITION_GREATER_EQUAL:
+			return "LE";
+		case CONDITION_OVERFLOW:
+			return "V";
+		case CONDITION_NOT_OVERFLOW:
+			return "NV";
+		case CONDITION_POSITIVE:
+			return "P";
+		case CONDITION_MINUS:
+			return "M";
+		case CONDITION_CARRY:
+			return "C";
+		case CONDITION_NOT_CARRY:
+			return "NC";
+		case CONDITION_ZERO:
+			return "Z";
+		case CONDITION_NOT_ZERO:
+			return "NZ";
+		case CONDITION_SPECIAL_FLAG_0:
+			return "F0";
+		case CONDITION_SPECIAL_FLAG_1:
+			return "F1";
+		case CONDITION_SPECIAL_FLAG_2:
+			return "F2";
+		case CONDITION_SPECIAL_FLAG_3:
+			return "F3";
+		case CONDITION_NOT_SPECIAL_FLAG_0:
+			return "NF0";
+		case CONDITION_NOT_SPECIAL_FLAG_1:
+			return "NF1";
+		case CONDITION_NOT_SPECIAL_FLAG_2:
+			return "NF2";
+		case CONDITION_NOT_SPECIAL_FLAG_3:
+			return "NF3";
 		default:
 			throw new Error(cond);
 		}

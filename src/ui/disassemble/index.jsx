@@ -30,18 +30,20 @@ class Disassembly extends Component {
 		const lines = disasm.process(this.state.address, this.props.rowCount);
 
 		return (
-			<tbody>
-				{
-				lines.map(line =>
-					<tr key={line.address}>
-						<td>{toHex(this.props.system.translate(line.address), 6)}</td>
-						<td>{line.op}</td>
-						<td>{line.args.join(", ")}</td>
-						<td>{line.data.map(v => <span> {toHex(v, 2)}</span>)}</td>
-						<td>{line.comment}</td>
-					</tr>)
-				}
-			</tbody>
+			<table className={classes['disasm']}>
+				<tbody>
+					{
+					lines.map(line =>
+						<tr key={line.address}>
+							<td>{toHex(this.props.system.translate(line.address), 6)}</td>
+							<td>{line.op}</td>
+							<td>{line.args.join(", ")}</td>
+							<td>{line.data.map(v => <span> {toHex(v, 2)}</span>)}</td>
+							<td>{line.comment}</td>
+						</tr>)
+					}
+				</tbody>
+			</table>
 		);
 	}
 }
@@ -49,27 +51,18 @@ class Disassembly extends Component {
 class DisassemblyView extends Component {
 	render() {
 		return (
-			<table className={classes['disasm']}>
-				<Disassembly
-					system={this.props.system}
-					pc={0x9A}
+			<AutoSizer>
+				{({ height, width }) => 
+					(
+					<Disassembly
+						system={this.props.system}
+						pc={0x9A}
 
-					rowCount={800}
-					/>
-			</table>
-			/*
-			<AutoSizer className={classes['disasm']}>
-				{({ height, width }) => (
-						<Disassembly
-							system={this.props.system}
-							pc={0x9D}
-
-							rowCount={height / 20}
-							/>
+						rowCount={height / 20}
+						/>
 					)
-				}}
+				}
 			</AutoSizer>
-			*/
 		);
 	}
 }

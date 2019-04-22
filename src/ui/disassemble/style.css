@@ -1,3 +1,8 @@
+.disasm {
+	min-height: 8ch;
+	
+}
+
 .address {
 	width: 66px;
 	text-align: left;

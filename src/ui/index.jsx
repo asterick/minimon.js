@@ -10,11 +10,11 @@ class MinimonDebugger extends Component {
 	render() {
 		return (
 			<div className={style.debugger}>
-				<Disassembler system={this.props.system} />
+				<MemoryEditor bytesPerRow={0x20} system={this.props.system} />
 				
 			</div>
 		);
-		//<MemoryEditor system={this.props.system}/>
+		
 	}
 }
 

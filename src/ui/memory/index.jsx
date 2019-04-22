@@ -42,18 +42,16 @@ class MemoryEditor extends Component {
 		return (
 			<AutoSizer className={classes['memory']}>
 				{({ height, width }) => {
-					const bytesPerRow = Math.floor((width - 66 - 15) / 22) || 1;
-
 					return (
 						<List
 							system={this.props.system}
-							bytesPerRow={bytesPerRow}
+							bytesPerRow={this.props.bytesPerRow}
 							memoryTop={this.props.memoryTop}
 							memoryBottom={this.props.memoryBottom}
 
 							width={width}
 							height={height}
-							rowCount={Math.ceil((this.props.memoryTop - this.props.memoryBottom) / bytesPerRow)}
+							rowCount={Math.ceil((this.props.memoryTop - this.props.memoryBottom) / this.props.bytesPerRow)}
 							rowHeight={20}
 							rowRenderer={rowRenderer}
 							/>
@@ -65,6 +63,7 @@ class MemoryEditor extends Component {
 }
 
 MemoryEditor.defaultProps = {
+	bytesPerRow: 0x8,
 	memoryBottom: 0,
 	memoryTop: TOP_OF_MEMORY
 };
