@@ -1,5 +1,10 @@
 #include "system.h"
 
+static const uint8_t bios[0x2000] = {
+	#include "bios.h"
+};
+
+static uint8_t ram[0x100];
 static ProcessorState minimon;
 static uint8_t memory[0x20000];
 
@@ -9,23 +14,19 @@ ProcessorState* const get_machine() {
 }
 
 __attribute__ ((visibility ("default"))) extern "C"
-uint8_t* const get_bios() {
-	return memory;
-}
-
-__attribute__ ((visibility ("default"))) extern "C"
 uint8_t cpu_read8(ProcessorState& cpu, uint32_t address) {
-	if (address < 0x2000 || address >= 0x2100) {
-		// NOTE: This does not properly handle wrap around
-		return memory[address];
+	if (address < 0x1000) {
+		return bios[address];
+	}  if (address < 0x2000) {
+		return ram[address & 0xFFF];
 	} else {
-		return 0;
+		return memory[address & 0x1FFFFF];
 	}
 }
 
 __attribute__ ((visibility ("default"))) extern "C"
 void cpu_write8(ProcessorState& cpu, uint8_t data, uint32_t address) {
 	if (address >= 0x1000 && address < 0x2000) {
-		memory[address] = data;
+		ram[address & 0xFFF] = data;
 	}
 }
