@@ -102,7 +102,7 @@ static inline void add8(ProcessorState& cpu, uint8_t& t, uint8_t s, int carry) {
 		cpu.reg.flag.n = 0;
 		cpu.reg.flag.v = 0;
 	} else {
-		cpu.reg.flag.v = ((t ^ s) & (~uo ^ t) & 0x80) != 0;
+		cpu.reg.flag.v = ((t ^ s) & (t ^ ~uo) & 0x80) != 0;
 		cpu.reg.flag.n = (uo & 0x80) != 0;
 	}
 
@@ -132,7 +132,7 @@ static inline void sub8(ProcessorState& cpu, uint8_t& t, uint8_t s, int carry) {
 		cpu.reg.flag.n = 0;
 		cpu.reg.flag.v = 0;
 	} else {
-		cpu.reg.flag.v = ((t ^ ~s) & (~uo ^ t) & 0x80) != 0;
+		cpu.reg.flag.v = ((t ^ ~s) & (t ^ ~uo) & 0x80) != 0;
 		cpu.reg.flag.n = (t & 0x80) != 0;
 	}
 
@@ -140,6 +140,7 @@ static inline void sub8(ProcessorState& cpu, uint8_t& t, uint8_t s, int carry) {
 	if (cpu.reg.flag.u) {
 		t >>= 4;
 	}
+
 	cpu.reg.flag.c = uo >= 0x100;
 	cpu.reg.flag.z = t == 0;
 }
