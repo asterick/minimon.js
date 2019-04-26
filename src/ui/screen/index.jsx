@@ -6,7 +6,7 @@ import FragmentShader from "./shaders/fragment.glsl";
 import classes from "./style.css";
 
 const VRAM_WIDTH  = 96;
-const VRAM_HEIGHT = 64;
+const VRAM_HEIGHT = 8;
 
 class Registers extends Component {
 	constructor(props) {
@@ -15,6 +15,12 @@ class Registers extends Component {
 		this._memory = new Uint8Array(VRAM_WIDTH * VRAM_HEIGHT);
 
 		this._ref = React.createRef();
+
+		setInterval(() => {
+			crypto.getRandomValues(this._memory);
+			for (let i = 0; i < 96; i++) this._memory[i] = i;
+			this._updateTexture(this._memory);
+		}, 20);
 	}
 
 	componentDidMount() {
@@ -24,6 +30,20 @@ class Registers extends Component {
 	componentWillUnmount() {
 		cancelAnimationFrame(this._af);
 		this._ctx = null;
+	}
+
+	_updateTexture(memory) {
+		const gl = this._ctx;
+
+		this._flip = !this._flip;
+		gl.bindTexture(gl.TEXTURE_2D, this._vram);
+
+		gl.texSubImage2D(
+			gl.TEXTURE_2D, 0, 
+			0, this._flip ? VRAM_HEIGHT : 0, 
+			VRAM_WIDTH, VRAM_HEIGHT, 
+			gl.RED_INTEGER, gl.UNSIGNED_BYTE, 
+			memory, 0);
 	}
 
 	init() {
@@ -140,23 +160,18 @@ class Registers extends Component {
 
 			gl.useProgram(this._shader.program);
 
-			crypto.getRandomValues(this._memory);
-			gl.bindTexture(gl.TEXTURE_2D, this._vram);
-			gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, VRAM_WIDTH, VRAM_HEIGHT, gl.RED_INTEGER, gl.UNSIGNED_BYTE, this._memory, 0);
-
 			gl.activeTexture(gl.TEXTURE0);
 			gl.bindTexture(gl.TEXTURE_2D, this._vram);
-			gl.uniform1i(this._shader.uniforms.memory, 0);
 
 			gl.uniform1f(this._shader.uniforms.time, delta);
+			gl.uniform1i(this._shader.uniforms.frame, this._flip ? VRAM_HEIGHT : 0);
+			gl.uniform3f(this._shader.uniforms.background, 0.75, 0.86, 0.63);
+			gl.uniform3f(this._shader.uniforms.foreground, 0.05, 0.05, 0.05);
 
 			gl.enableVertexAttribArray(this._shader.attributes.vertex);
 			gl.bindBuffer(gl.ARRAY_BUFFER, this._copyBuffer);
 			gl.vertexAttribPointer(this._shader.attributes.position, 2, gl.FLOAT, false, 0, 0);
 			gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-
-			gl.bindTexture(gl.TEXTURE_2D, this._vram);
-			gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, VRAM_HEIGHT, VRAM_WIDTH, VRAM_HEIGHT, gl.RED_INTEGER, gl.UNSIGNED_BYTE, this._memory, 0);
 
 			this._repainter();
 		});
