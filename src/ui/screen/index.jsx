@@ -11,8 +11,10 @@ class Registers extends Component {
 	constructor(props) {
 		super(props);
 
-		this._memory = new Uint8Array(DATA_WORDS);
+		this._memory = new Uint32Array(DATA_WORDS);
 		this._ref = React.createRef();
+
+		this._byte = 0x55;
 	}
 
 	componentDidMount() {
@@ -30,9 +32,12 @@ class Registers extends Component {
 		gl.disable(gl.STENCIL_TEST);
 		gl.disable(gl.DEPTH_TEST);
 		gl.disable(gl.DITHER);
-		gl.colorMask(true, true, true, true);
-		gl.clearColor(0, 0, 0, 1);
 
+		gl.enable(gl.BLEND);
+		gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+		
+		gl.colorMask(true, true, true, false);
+		gl.clearColor(0.0, 0.0, 0.0, 1.0);
 		gl.clear(gl.COLOR_BUFFER_BIT);
 
 		this._shader = this._createShader(VertexShader, FragmentShader);
@@ -98,11 +103,14 @@ class Registers extends Component {
 	}
 
 	_repainter() {
-		let time = 0;
+		var time = 0;
 
 		this._af = requestAnimationFrame(() => {
 			if (this._previousRef != this._ref.current) {
-				this._ctx = this._ref.current.getContext("webgl2");
+				this._ctx = this._ref.current.getContext("webgl2", { 
+					preserveDrawingBuffer: true,
+					alpha: false
+				});
 				this._previousRef = this._ref.current;
 			
 				this.init();
@@ -111,7 +119,12 @@ class Registers extends Component {
 			const gl = this._ctx;
 			const width = this._ref.current.clientWidth;
 			const height = this._ref.current.clientHeight;
-			const now = Date.now()
+			const now = Date.now();
+			const delta = (now - this._time) / 1000;
+
+			this._byte = (now & 0x10) ? 0x55 : 0xAA;
+
+			this._time = now;
 
 			this._ref.current.width = width;
 			this._ref.current.height = height;
@@ -121,21 +134,16 @@ class Registers extends Component {
 				this.g = true;
 			}
 
-			for (let i = 0; i < this._memory.length; i++) {
-				this._memory[i] = Math.random() * 0xFF;
-			}
-
 			// Select vram as our source texture
-			gl.enableVertexAttribArray(this._shader.attributes.vertex);
 			gl.useProgram(this._shader.program);
 
+			gl.uniform1f(this._shader.uniforms.bb, this._byte);
+			gl.uniform1iv(this._shader.uniforms.memory, this._memory);
+			gl.uniform1f(this._shader.uniforms.time, delta);
+
+			gl.enableVertexAttribArray(this._shader.attributes.vertex);
 			gl.bindBuffer(gl.ARRAY_BUFFER, this._copyBuffer);
-			gl.vertexAttribPointer(this._shader.attributes.aVertex, 2, gl.FLOAT, false, 0, 0);
-
-			gl.uniform1fv(this._shader.uniforms.memory, this._memory);
-			gl.uniform1f(this._shader.uniforms.time, Math.min(1, (now - time) / 1000));
-			time = now;
-
+			gl.vertexAttribPointer(this._shader.attributes.position, 2, gl.FLOAT, false, 0, 0);
 			gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
 			this._repainter();
