@@ -122,7 +122,7 @@ class Registers extends Component {
 			const now = Date.now();
 			const delta = (now - this._time) / 1000;
 
-			this._byte = (now & 0x10) ? 0x55 : 0xAA;
+			this._byte = (now & 0x20) ? 0x55 : 0xAA;
 
 			this._time = now;
 
@@ -145,6 +145,8 @@ class Registers extends Component {
 			gl.bindBuffer(gl.ARRAY_BUFFER, this._copyBuffer);
 			gl.vertexAttribPointer(this._shader.attributes.position, 2, gl.FLOAT, false, 0, 0);
 			gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+
+			gl.uniform1iv(this._shader.uniforms.previous, this._memory);
 
 			this._repainter();
 		});

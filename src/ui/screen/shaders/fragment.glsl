@@ -4,6 +4,7 @@ precision mediump float;
 
 uniform float bb;
 uniform uint memory[768];
+uniform uint previous[768];
 uniform float time;
 
 in vec2 position;

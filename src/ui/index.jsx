@@ -22,7 +22,7 @@ class MinimonDebugger extends Component {
 	render() {
 		return (
 			<div className={style.debugger}>
-				<div style={{ width: "192px" }}>
+				<div style={{ width: "576px" }}>
 					<Screen system={this.props.system} width={96} height={64} />
 				</div>
 				<button onClick={() => this.step()}>Step</button>
