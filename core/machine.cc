@@ -31,7 +31,7 @@ void cpu_interrupt(ProcessorState& cpu, InterruptVector irq) {
 }
 
 /**
- * S1C88 Memory access functions
+ * S1C88 Memory access helper functions
  **/
 
 uint16_t cpu_read16(ProcessorState& cpu, uint32_t address) {

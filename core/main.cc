@@ -1,16 +1,17 @@
 #include "system.h"
 
+static ProcessorState state;
+
 static const uint8_t bios[0x2000] = {
 	#include "bios.h"
 };
 
-static uint8_t ram[0x100];
-static ProcessorState minimon;
+static uint8_t ram[0x1000];
 static uint8_t memory[0x20000];
 
 __attribute__ ((visibility ("default"))) extern "C"
 ProcessorState* const get_machine() {
-	return &minimon;
+	return &state;
 }
 
 __attribute__ ((visibility ("default"))) extern "C"

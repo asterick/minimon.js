@@ -134,7 +134,6 @@ class Registers extends Component {
 				this.g = true;
 			}
 
-			// Select vram as our source texture
 			gl.useProgram(this._shader.program);
 
 			gl.uniform1f(this._shader.uniforms.bb, this._byte);
