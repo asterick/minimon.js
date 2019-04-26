@@ -2,19 +2,27 @@
 
 precision mediump float;
 
-uniform float bb;
-uniform uint memory[768];
-uniform uint previous[768];
+uniform mediump usampler2D vram;
 uniform float time;
+
+const vec3 background = vec3(0.75, 0.86, 0.63);
+const vec3 foreground = vec3(0.05);
 
 in vec2 position;
 out vec4 fragColor;
 
-void main(void) {
-	uvec2 pixel = uvec2((position + 1.0) * vec2(96.0, 64.0) / 2.0);
-	uint address = (pixel.y / 8u) * 96u + pixel.y;
-	uint toggle = uint(bb) & (1u << (pixel.y % 8u));
-	vec3 color = (toggle >= 1u) ? vec3(0.0) : vec3(255.0);
+bool toggle(ivec2 pixel) {
+	uint byte = texelFetch(vram, ivec2(pixel.x, pixel.y / 8), 0).r;
+	return (byte & uint(1 << (pixel.y % 8)))  >= 1u;
+}
 
-	fragColor = vec4(color, time * (1000.0f / 60.0f));
+void main(void) {
+	vec2 pixel = vec2((position + 1.0) * vec2(96.0, 64.0) / 2.0);
+	float distance = 1.0 - length(fract(pixel) - vec2(0.5));
+	float intensity = toggle(ivec2(pixel)) ? distance : 0.0;
+	float alpha = time * (1000.0 / 30.0);
+
+	vec3 color = (foreground * intensity) + (background * (1.0 - intensity));
+
+	fragColor = vec4(color, alpha);
 }

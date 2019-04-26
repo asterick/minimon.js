@@ -18,7 +18,7 @@ uint8_t cpu_read8(ProcessorState& cpu, uint32_t address) {
 	}  if (address < 0x2000) {
 		return cpu.ram[address & 0xFFF];
 	} else {
-		return cpu.memory[address & 0x1FFFFF];
+		return cpu.cartridge[address & 0x1FFFFF];
 	}
 }
 

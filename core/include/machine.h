@@ -51,7 +51,7 @@ struct ProcessorState {
 	ProcessorRegisters reg;
 
 	uint8_t ram[0x1000];
-	uint8_t memory[0x20000];
+	uint8_t cartridge[0x20000];
 };
 
 enum InterruptVector : uint8_t {

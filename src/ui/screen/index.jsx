@@ -5,16 +5,16 @@ import FragmentShader from "./shaders/fragment.glsl";
 
 import classes from "./style.css";
 
-const DATA_WORDS = 96 * 64 / 8;
+const VRAM_WIDTH  = 96;
+const VRAM_HEIGHT = 64;
 
 class Registers extends Component {
 	constructor(props) {
 		super(props);
 
-		this._memory = new Uint32Array(DATA_WORDS);
-		this._ref = React.createRef();
+		this._memory = new Uint8Array(VRAM_WIDTH * VRAM_HEIGHT);
 
-		this._byte = 0x55;
+		this._ref = React.createRef();
 	}
 
 	componentDidMount() {
@@ -45,6 +45,12 @@ class Registers extends Component {
 		this._copyBuffer = gl.createBuffer();
 		gl.bindBuffer(gl.ARRAY_BUFFER, this._copyBuffer);
 		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([ 1, 1, 1,-1,-1, 1,-1,-1]), gl.STATIC_DRAW);
+
+		this._vram = gl.createTexture();
+		gl.bindTexture(gl.TEXTURE_2D, this._vram);
+		gl.texImage2D(gl.TEXTURE_2D, 0, gl.R8UI, 256, 256, 0, gl.RED_INTEGER, gl.UNSIGNED_BYTE, new Uint8Array(0x10000));
+		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
 	}
 
 	_createShader (vertex, fragment) {
@@ -122,8 +128,6 @@ class Registers extends Component {
 			const now = Date.now();
 			const delta = (now - this._time) / 1000;
 
-			this._byte = (now & 0x20) ? 0x55 : 0xAA;
-
 			this._time = now;
 
 			this._ref.current.width = width;
@@ -136,8 +140,14 @@ class Registers extends Component {
 
 			gl.useProgram(this._shader.program);
 
-			gl.uniform1f(this._shader.uniforms.bb, this._byte);
-			gl.uniform1iv(this._shader.uniforms.memory, this._memory);
+			crypto.getRandomValues(this._memory);
+			gl.bindTexture(gl.TEXTURE_2D, this._vram);
+			gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, VRAM_WIDTH, VRAM_HEIGHT, gl.RED_INTEGER, gl.UNSIGNED_BYTE, this._memory, 0);
+
+			gl.activeTexture(gl.TEXTURE0);
+			gl.bindTexture(gl.TEXTURE_2D, this._vram);
+			gl.uniform1i(this._shader.uniforms.memory, 0);
+
 			gl.uniform1f(this._shader.uniforms.time, delta);
 
 			gl.enableVertexAttribArray(this._shader.attributes.vertex);
@@ -145,7 +155,8 @@ class Registers extends Component {
 			gl.vertexAttribPointer(this._shader.attributes.position, 2, gl.FLOAT, false, 0, 0);
 			gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
-			gl.uniform1iv(this._shader.uniforms.previous, this._memory);
+			gl.bindTexture(gl.TEXTURE_2D, this._vram);
+			gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, VRAM_HEIGHT, VRAM_WIDTH, VRAM_HEIGHT, gl.RED_INTEGER, gl.UNSIGNED_BYTE, this._memory, 0);
 
 			this._repainter();
 		});
