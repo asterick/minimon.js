@@ -1,6 +1,5 @@
 #include <stdint.h>
 
-#include "system.h"
 #include "machine.h"
 
 __attribute__ ((visibility ("default"))) extern "C"

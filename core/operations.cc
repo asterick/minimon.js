@@ -1,6 +1,5 @@
 #include <stdint.h>
 
-#include "system.h"
 #include "machine.h"
 
 typedef void (*InstructionCall)(ProcessorState& cpu);
