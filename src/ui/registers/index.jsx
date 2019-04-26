@@ -10,18 +10,18 @@ function toHex(i, c) {
 
 class Registers extends Component {
 	render() {
-		const sc = this.props.system.sc;
+		const sc = this.props.system.registers.sc;
 
 		return (
 			<div>
 				<table>
 					<tbody>
-						<tr><td>BA</td><td>{toHex(this.props.system.ba, 4)}</td><td>BR</td><td>{toHex(this.props.system.br, 2)}</td></tr>
-						<tr><td>HL</td><td>{toHex(this.props.system.hl, 4)}</td><td>EP</td><td>{toHex(this.props.system.ep, 2)}</td></tr>
-						<tr><td>IX</td><td>{toHex(this.props.system.ix, 4)}</td><td>XP</td><td>{toHex(this.props.system.xp, 2)}</td></tr>
-						<tr><td>IY</td><td>{toHex(this.props.system.iy, 4)}</td><td>YP</td><td>{toHex(this.props.system.yp, 2)}</td></tr>
-						<tr><td>PC</td><td>{toHex(this.props.system.pc, 4)}</td><td>CB</td><td>{toHex(this.props.system.cb, 2)}</td></tr>
-						<tr><td>SP</td><td>{toHex(this.props.system.sp, 4)}</td><td>NB</td><td>{toHex(this.props.system.nb, 2)}</td></tr>
+						<tr><td>BA</td><td>{toHex(this.props.system.registers.ba, 4)}</td><td>BR</td><td>{toHex(this.props.system.registers.br, 2)}</td></tr>
+						<tr><td>HL</td><td>{toHex(this.props.system.registers.hl, 4)}</td><td>EP</td><td>{toHex(this.props.system.registers.ep, 2)}</td></tr>
+						<tr><td>IX</td><td>{toHex(this.props.system.registers.ix, 4)}</td><td>XP</td><td>{toHex(this.props.system.registers.xp, 2)}</td></tr>
+						<tr><td>IY</td><td>{toHex(this.props.system.registers.iy, 4)}</td><td>YP</td><td>{toHex(this.props.system.registers.yp, 2)}</td></tr>
+						<tr><td>PC</td><td>{toHex(this.props.system.registers.pc, 4)}</td><td>CB</td><td>{toHex(this.props.system.registers.cb, 2)}</td></tr>
+						<tr><td>SP</td><td>{toHex(this.props.system.registers.sp, 4)}</td><td>NB</td><td>{toHex(this.props.system.registers.nb, 2)}</td></tr>
 					</tbody>
 				</table>
 

@@ -7,14 +7,9 @@ tr.active {
 	background: #444;
 }
 
-.disasm td {
-	white-space: nowrap;
-}
-
 .address {
 	width: 66px;
 	text-align: left;
-	display: inline-block;
 	color: #cf0;
 }
 
@@ -27,4 +22,49 @@ tr.active {
 
 .byte-cell:nth-child(odd) {
 	color: cyan;
+}
+
+table.disasm {
+	table-layout: fixed;
+	width: 100%;
+	border-spacing: 0;
+}
+
+.disasm td {
+	white-space: nowrap;
+}
+
+.disasm td:nth-child(1) {
+	width: 8ch;
+	text-align: center;
+}
+
+.disasm td:nth-child(2) {
+	width: 12ch;
+}
+
+.disasm td:nth-child(3) {
+	width: 6ch;
+	color: #fff;
+}
+
+.disasm td:nth-child(4) {
+	width: 20ch;
+	color: #F0F;
+}
+
+.disasm td:nth-child(4) {
+	width: 20ch;
+	color: white;
+}
+
+.disasm td:nth-child(4) span:not(:first-child):before {
+	content: ', ';
+	display: inline;
+	color: #CCC;
+}
+
+.disasm td:nth-child(5) {
+	color: #888;
+	width: 100%;
 }

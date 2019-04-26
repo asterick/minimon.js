@@ -23,11 +23,11 @@ class Disassembler {
 	}
 
 	_sign8() {
-		return _read8() << 24 >> 24;
+		return this._read8() << 24 >> 24;
 	}
 
 	_sign16() {
-		return _read16() << 16 >> 16;
+		return this._read16() << 16 >> 16;
 	}
 
 	_pcRelative(p) {
@@ -96,19 +96,19 @@ class Disassembler {
 			val = this._sign8();
 			return `[IY${val > 0 ? "+" : ""}${val}]`;
 		case Table.MEM_ABS16:
-			return `[${toHex(this._read16(), 4)}]`;
+			return `[${toHex(this._read16(), 4)}h]`;
 		case Table.MEM_BR:
-			return `[BR:${toHex(this._read8(), 2)}]`;
+			return `[BR:${toHex(this._read8(), 2)}h]`;
 		case Table.MEM_VECTOR:
-			return `[${toHex(this._read8(), 2)}]`;
+			return `[${toHex(this._read8(), 2)}h]`;
 		case Table.IMM_8:
-			return `#${this._read8().toString(16)}`;
+			return `#0${this._read8().toString(16).toUpperCase()}h`;
 		case Table.IMM_16:
-			return `#${this._read16().toString(16)}`;
+			return `#0${this._read16().toString(16).toUpperCase()}h`;
 		case Table.REL_8:
-			return `#${toHex(this._pcRelative(this._read8()), 6)}`
+			return `#${toHex(this._pcRelative(this._sign8()), 6)}h`
 		case Table.REL_16:
-			return `#${toHex(this._pcRelative(this._read16()), 6)}`
+			return `#${toHex(this._pcRelative(this._sign16()), 6)}h`
 		default:
 			throw new Error(arg);
 		}
@@ -116,45 +116,45 @@ class Disassembler {
 
 	_processCondition(cond) {
 		switch (cond) {
-		case CONDITION_LESS_THAN:
+		case Table.CONDITION_LESS_THAN:
 			return "LT";
-		case CONDITION_LESS_EQUAL:
+		case Table.CONDITION_LESS_EQUAL:
 			return "LE";
-		case CONDITION_GREATER_THAN:
+		case Table.CONDITION_GREATER_THAN:
 			return "GT";
-		case CONDITION_GREATER_EQUAL:
+		case Table.CONDITION_GREATER_EQUAL:
 			return "LE";
-		case CONDITION_OVERFLOW:
+		case Table.CONDITION_OVERFLOW:
 			return "V";
-		case CONDITION_NOT_OVERFLOW:
+		case Table.CONDITION_NOT_OVERFLOW:
 			return "NV";
-		case CONDITION_POSITIVE:
+		case Table.CONDITION_POSITIVE:
 			return "P";
-		case CONDITION_MINUS:
+		case Table.CONDITION_MINUS:
 			return "M";
-		case CONDITION_CARRY:
+		case Table.CONDITION_CARRY:
 			return "C";
-		case CONDITION_NOT_CARRY:
+		case Table.CONDITION_NOT_CARRY:
 			return "NC";
-		case CONDITION_ZERO:
+		case Table.CONDITION_ZERO:
 			return "Z";
-		case CONDITION_NOT_ZERO:
+		case Table.CONDITION_NOT_ZERO:
 			return "NZ";
-		case CONDITION_SPECIAL_FLAG_0:
+		case Table.CONDITION_SPECIAL_FLAG_0:
 			return "F0";
-		case CONDITION_SPECIAL_FLAG_1:
+		case Table.CONDITION_SPECIAL_FLAG_1:
 			return "F1";
-		case CONDITION_SPECIAL_FLAG_2:
+		case Table.CONDITION_SPECIAL_FLAG_2:
 			return "F2";
-		case CONDITION_SPECIAL_FLAG_3:
+		case Table.CONDITION_SPECIAL_FLAG_3:
 			return "F3";
-		case CONDITION_NOT_SPECIAL_FLAG_0:
+		case Table.CONDITION_NOT_SPECIAL_FLAG_0:
 			return "NF0";
-		case CONDITION_NOT_SPECIAL_FLAG_1:
+		case Table.CONDITION_NOT_SPECIAL_FLAG_1:
 			return "NF1";
-		case CONDITION_NOT_SPECIAL_FLAG_2:
+		case Table.CONDITION_NOT_SPECIAL_FLAG_2:
 			return "NF2";
-		case CONDITION_NOT_SPECIAL_FLAG_3:
+		case Table.CONDITION_NOT_SPECIAL_FLAG_3:
 			return "NF3";
 		default:
 			throw new Error(cond);
@@ -184,7 +184,7 @@ class Disassembler {
 			args = args.map(a => this._processArg(a))
 
 			if (condition !== Table.CONDITION_NONE) {
-				args.shift(this._processArg(condition))
+				args.unshift(this._processCondition(condition))
 			}
 
 			lines.push({

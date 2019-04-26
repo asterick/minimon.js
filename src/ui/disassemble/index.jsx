@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { AutoSizer, List } from 'react-virtualized';
 
 import classes from "./style.css";
 
@@ -28,29 +27,34 @@ class Disassembly extends Component {
 		const disasm = new Disassembler(this.props.system);
 
 		const lines = disasm.process(this.state.address, this.props.rowCount);
-		let match = this.props.system.pc;
 
-		for (let i = 0; i < lines.length; i++) {
-			if (lines[i].address == this.props.system.pc) {
-				match = lines[Math.max(0, i - this.props.rowCount / 2) | 0].address;
+		if (this.props.follow_pc) {
+			let match = this.props.system.registers.pc;
+
+			for (let i = 0; i < lines.length; i++) {
+				if (lines[i].address == this.props.system.registers.pc) {
+					match = lines[Math.max(0, i - this.props.rowCount / 2) | 0].address;
+				}
+			}
+
+			if (match !== this.state.address) {
+				this.setState({ address: match });
 			}
 		}
 
-		if (match !== this.state.address) {
-			this.setState({ address: match })
-		}
+		const { width, height } = this.props;
 
 		return (
-			<table className={classes['disasm']}>
+			<table  className={classes['disasm']}>
 				<tbody>
 					{
 					lines.map(line =>
-						<tr key={line.address} className={(this.props.system.pc == line.address) ? classes['active'] : ''}>
+						<tr key={line.address} className={(this.props.system.registers.pc == line.address) ? classes['active'] : ''}>
 							<td className={classes["address"]}>{toHex(this.props.system.translate(line.address), 6)}</td>
-							<td>{line.op}</td>
-							<td>{line.args.join(", ")}</td>
 							<td>{line.data.map((v, i) => <span className={classes['byte-cell']} key={i}>{toHex(v, 2)}&nbsp;</span>)}</td>
-							<td>{line.comment}</td>
+							<td>{line.op}</td>
+							<td>{line.args.map(s => <span>{s}</span>)}</td>
+							<td>{line.comment || "; This is a comment"}</td>
 						</tr>)
 					}
 				</tbody>
@@ -59,23 +63,9 @@ class Disassembly extends Component {
 	}
 }
 
-class DisassemblyView extends Component {
-	render() {
-		return (
-			<AutoSizer>
-				{({ height, width }) => 
-					(
-					<Disassembly
-						system={this.props.system}
-						pc={0x9A}
+Disassembly.defaultProps = {
+	rowCount: 21,
+	follow_pc: true
+};
 
-						rowCount={height / 20}
-						/>
-					)
-				}
-			</AutoSizer>
-		);
-	}
-}
-
-export default DisassemblyView;
+export default Disassembly;
