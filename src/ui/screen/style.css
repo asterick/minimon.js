@@ -1,0 +1,19 @@
+.screen {
+	position: relative;
+	width: 100%;
+	padding-top: 66%;
+	background: white;
+}
+
+.screen .container {
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+}
+
+.screen canvas {
+	width: 100%;
+	height: 100%;
+}

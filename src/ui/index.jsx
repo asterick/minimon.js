@@ -4,6 +4,7 @@ import 'react-virtualized/styles.css';
 import MemoryEditor from "./memory";
 import Disassembler from "./disassemble";
 import Registers from "./registers";
+import Screen from "./screen";
 
 import style from "./style.css";
 
@@ -21,6 +22,7 @@ class MinimonDebugger extends Component {
 	render() {
 		return (
 			<div className={style.debugger}>
+				<Screen system={this.props.system} width={96} height={64} />
 				<button onClick={() => this.step()}>Step</button>
 				<button onClick={() => this.reset()}>Reset</button>
 				<Registers system={this.props.system} />

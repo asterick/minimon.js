@@ -1,10 +1,13 @@
 import React, { Component } from "react";
 
+import classes from "./style.css";
+
 function toHex(i, c) {
 	let v = i.toString(16).toUpperCase();
 	while (v.length < c) v = "0" + v;
 	return v;
 }
+
 class Registers extends Component {
 	render() {
 		const sc = this.props.system.sc;

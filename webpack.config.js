@@ -22,6 +22,15 @@ module.exports = {
     module: {
         rules: [
             {
+                test: /\.glsl$/,
+                use: [
+                    {
+                        loader: 'raw-loader',
+                        options: {}
+                    }
+                ],
+            },
+            {
                 test: /\.css$/,
                 use: [
                     {
