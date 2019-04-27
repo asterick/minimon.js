@@ -9,6 +9,10 @@ uniform int frame;
 uniform vec3 background;
 uniform vec3 foreground;
 
+uniform bool simulate_gray;
+uniform bool dot_mask;
+uniform float analog;
+
 in vec2 position;
 out vec4 fragColor;
 
@@ -18,45 +22,40 @@ bool toggle(ivec2 pixel) {
 	return (byte & uint(1 << (pixel.y & 7)))  >= 1u;
 }
 
-bool current_pixel(vec2 pixel) {
-	if (frame > 0) {
-		return toggle(ivec2(pixel));
-	} else {
-		return toggle(ivec2(pixel) + ivec2(0, 64));
-	}
-}
+vec2 fetch(vec2 pixel) {
+	float a = toggle(ivec2(pixel)) ? 1.0 : 0.0;
+	float b = toggle(ivec2(pixel) + ivec2(0, 64)) ? 1.0 : 0.0;
 
-bool previous_pixel(vec2 pixel) {
 	if (frame > 0) {
-		return toggle(ivec2(pixel) + ivec2(0, 64));
+		return vec2(a, b);
 	} else {
-		return toggle(ivec2(pixel));
+		return vec2(b, a);
 	}
 }
 
 float lcd(vec2 pixel) {
-	float distance = clamp(1.0 - length(fract(pixel) - vec2(0.5)) * 0.75, 0.0, 1.0);
-
-	return current_pixel(pixel) ? distance : 0.0;
-}
-
-float simulated_gray(vec2 pixel) {
-	float intensity1 = current_pixel(pixel) ? 1.0 : 0.0;
-	float intensity2 = previous_pixel(pixel) ? 1.0 : 0.0;
-
-	return (intensity1 + intensity2) / 2.0;
-}
-
-float basic(vec2 pixel) {
-	return current_pixel(pixel) ? 1.0 : 0.0;
+	return clamp(1.0 - length(fract(pixel) - vec2(0.5)) * 0.75, 0.0, 1.0);
 }
 
 void main(void) {
 	vec2 pixel = vec2((position + 1.0) * vec2(96.0, 64.0) / 2.0);
-	float blur = time * (1000.0 / 30.0);
 
-	float intensity = lcd(pixel);
+	vec2 colors = fetch(pixel);
 
-	// Setting alpha to 100% will disable analog blending
-	fragColor = vec4(mix(background, foreground, vec3(intensity)), blur);
+	float intensity;
+
+	// simulated gray
+	if (simulate_gray) {
+		intensity = (colors.r + colors.g) / 2.0;
+	} else {
+		intensity = colors.r;
+	}
+
+	// Dot mask suport
+	if (dot_mask) {
+		intensity *= lcd(pixel);
+	}
+
+	fragColor.rgb = mix(background, foreground, vec3(intensity));
+	fragColor.a = time * (1000.0 / analog);
 }
