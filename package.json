@@ -4,6 +4,7 @@
   "description": "My personal webpage",
   "main": "server/index.js",
   "scripts": {
+    "core": "cd data; python table.py s1c88.csv > ../core/include/table.h; cd ../core; make",
     "start": "webpack-dev-server --open --mode development",
     "build": "webpack --mode production"
   },
