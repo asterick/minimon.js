@@ -1,12 +1,12 @@
 .address {
-	width: 66px;
+	width: calc(4ch + 4px);
 	text-align: left;
 	display: inline-block;
 	color: #cf0;
 }
 
 .byte-cell {
-	width: 22px;
+	width: calc(2ch + 3px);
 	text-align: center;
 	display: inline-block;
 }

@@ -7,5 +7,20 @@ body {
 
 .debugger {
 	text-align: left;
-	height: 480px;
+	width: 800px;
+	left: 50%;
+	margin-left: -400px;
+	height:100vh;
+	position: relative;
+}
+
+.sidebar {
+	display: inline-block;
+	height: 100%;
+	width: calc((4ch + 4px) + (2ch + 3px) * 8 + 2px);	/* Memory layour size */
+}
+
+.content {
+	display: inline-block;
+	height: 100%;
 }

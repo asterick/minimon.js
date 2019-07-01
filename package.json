@@ -28,19 +28,19 @@
   },
   "homepage": "https://github.com/asterick/minimon.js#readme",
   "dependencies": {
-    "@babel/core": "^7.4.3",
-    "@babel/preset-env": "^7.4.3",
+    "@babel/core": "^7.4.5",
+    "@babel/preset-env": "^7.4.5",
     "@babel/preset-react": "^7.0.0",
-    "babel-loader": "^8.0.5",
-    "css-loader": "^2.1.1",
-    "raw-loader": "^2.0.0",
+    "babel-loader": "^8.0.6",
+    "css-loader": "^3.0.0",
+    "raw-loader": "^3.0.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "react-virtualized": "^9.21.0",
+    "react-virtualized": "^9.21.1",
     "style-loader": "^0.23.1",
-    "webpack": "^4.16.1",
-    "webpack-cli": "^3.1.0",
-    "webpack-dev-server": "^3.3.1",
+    "webpack": "^4.35.2",
+    "webpack-cli": "^3.3.5",
+    "webpack-dev-server": "^3.7.2",
     "winston": "^3.0.0"
   }
 }

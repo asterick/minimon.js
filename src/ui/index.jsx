@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import 'react-virtualized/styles.css';
 
-import MemoryEditor from "./memory";
+import Memory from "./memory";
 import Disassembler from "./disassemble";
 import Registers from "./registers";
 import Screen from "./screen";
@@ -22,16 +22,20 @@ class MinimonDebugger extends Component {
 	render() {
 		return (
 			<div className={style.debugger}>
-				<div style={{ width: "480px" }}>
-					<Screen system={this.props.system} width={96} height={64} />
+				<div className={style.sidebar}>
+					<button onClick={() => this.step()}>Step</button>
+					<button onClick={() => this.reset()}>Reset</button>
+					<Screen system={this.props.system} />
+					<Registers registers={this.props.system.registers} />
+					<Memory memoryBottom={0x1000} memoryTop={0x2000} system={this.props.system} />
 				</div>
-				<button onClick={() => this.step()}>Step</button>
-				<button onClick={() => this.reset()}>Reset</button>
-				<Registers system={this.props.system} />
-				<Disassembler follow_pc={true} system={this.props.system} pc={this.props.system.pc} />
+				{/*
+				<div className={style.content}>
+					<Disassembler follow_pc={true} system={this.props.system} target={this.props.system.translate(this.props.system.registers.pc)} />
+				</div>
+				*/}
 			</div>
 		);
-		
 	}
 }
 

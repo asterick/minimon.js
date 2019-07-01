@@ -37,11 +37,12 @@ function rowRenderer ({ key, style, index, parent }) {
 	)
 }
 
-class MemoryEditor extends Component {
+class Memory extends Component {
 	render() {
 		return (
 			<AutoSizer className={classes['memory']}>
 				{({ height, width }) => {
+					console.log(height)
 					return (
 						<List
 							system={this.props.system}
@@ -62,10 +63,10 @@ class MemoryEditor extends Component {
 	}
 }
 
-MemoryEditor.defaultProps = {
+Memory.defaultProps = {
 	bytesPerRow: 0x8,
 	memoryBottom: 0,
 	memoryTop: TOP_OF_MEMORY
 };
 
-export default MemoryEditor;
+export default Memory;

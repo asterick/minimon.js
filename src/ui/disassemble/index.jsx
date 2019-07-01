@@ -11,11 +11,11 @@ function toHex(v, c) {
 }
 
 class Disassembly extends Component {
-	constructor() {
+	constructor(props) {
 		super();
 
 		this.state = {
-			address: 0
+			address: props.target
 		};
 	}
 
@@ -23,38 +23,46 @@ class Disassembly extends Component {
 		return [];
 	}
 
-	render() {
-		const disasm = new Disassembler(this.props.system);
+	componentDidUpdate(props) {
+		if (!this.props.follow_pc) {
+			return ;
+		}
 
-		const lines = disasm.process(this.state.address, this.props.rowCount);
+		const { system, target, rowCount} = this.props;
+		const disasm = new Disassembler(system);
 
-		if (this.props.follow_pc) {
-			let match = this.props.system.registers.pc;
+		const lines = disasm.process(this.state.address, rowCount);
 
-			for (let i = 0; i < lines.length; i++) {
-				if (lines[i].address == this.props.system.registers.pc) {
-					match = lines[Math.max(0, i - this.props.rowCount / 2) | 0].address;
-				}
-			}
+		let address = target;
 
-			if (match !== this.state.address) {
-				this.setState({ address: match });
+		for (let i = 0; i < lines.length; i++) {
+			if (lines[i].address == target) {
+				address = lines[Math.max(0, i - rowCount / 2) | 0].address;
 			}
 		}
 
-		const { width, height } = this.props;
+		if (address !== this.state.address) {
+			this.setState({ address });
+		}
+	}
+
+	render() {
+		const { width, height, target } = this.props;
+
+		const disasm = new Disassembler(this.props.system);
+		const lines = disasm.process(this.state.address, this.props.rowCount);
 
 		return (
 			<table  className={classes['disasm']}>
 				<tbody>
 					{
 					lines.map(line =>
-						<tr key={line.address} className={(this.props.system.registers.pc == line.address) ? classes['active'] : ''}>
+						<tr key={line.address} className={(target == line.address) ? classes['active'] : ''}>
 							<td className={classes["address"]}>{toHex(this.props.system.translate(line.address), 6)}</td>
 							<td>{line.data.map((v, i) => <span className={classes['byte-cell']} key={i}>{toHex(v, 2)}&nbsp;</span>)}</td>
 							<td>{line.op}</td>
-							<td>{line.args.map(s => <span>{s}</span>)}</td>
-							<td>{line.comment || "; This is a comment"}</td>
+							<td>{line.args.map((s, i) => <span key={i}>{s}</span>)}</td>
+							<td>{line.comment}</td>
 						</tr>)
 					}
 				</tbody>
