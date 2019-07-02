@@ -1,6 +1,6 @@
 import Registers from "./registers";
 
-class Minimon {
+export default class Minimon {
 	async init() {
 		const data = await fetch("./libminimon.wasm");
 		this._module = await WebAssembly.instantiate(await data.arrayBuffer());
@@ -35,5 +35,3 @@ class Minimon {
 		return this._exports.cpu_translate(this._cpu_state, address);
 	}
 }
-
-export default Minimon;

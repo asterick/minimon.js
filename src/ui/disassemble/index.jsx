@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { AutoSizer } from 'react-virtualized';
 
 import classes from "./style.css";
 
@@ -28,16 +29,16 @@ class Disassembly extends Component {
 			return ;
 		}
 
-		const { system, target, rowCount} = this.props;
+		const { system, target } = this.props;
 		const disasm = new Disassembler(system);
 
-		const lines = disasm.process(this.state.address, rowCount);
+		const lines = disasm.process(this.state.address, 21);
 
 		let address = target;
 
 		for (let i = 0; i < lines.length; i++) {
 			if (lines[i].address == target) {
-				address = lines[Math.max(0, i - rowCount / 2) | 0].address;
+				address = lines[Math.max(0, i - 21 / 2) | 0].address;
 			}
 		}
 
@@ -47,34 +48,40 @@ class Disassembly extends Component {
 	}
 
 	render() {
-		const { width, height, target } = this.props;
-
-		const disasm = new Disassembler(this.props.system);
-		const lines = disasm.process(this.state.address, this.props.rowCount);
+		const { target } = this.props;
 
 		return (
-			<div className={classes.disasm}>
-				<table>
-					<tbody>
-						{
-						lines.map(line =>
-							<tr key={line.address} className={(target == line.address) ? classes['active'] : ''}>
-								<td className={classes["address"]}>{toHex(this.props.system.translate(line.address), 6)}</td>
-								<td>{line.data.map((v, i) => <span className={classes['byte-cell']} key={i}>{toHex(v, 2)}&nbsp;</span>)}</td>
-								<td>{line.op}</td>
-								<td>{line.args.map((s, i) => <span key={i}>{s}</span>)}</td>
-								<td>{line.comment}</td>
-							</tr>)
-						}
-					</tbody>
-				</table>
-			</div>
+			<AutoSizer className={classes['memory']}>
+				{({ height, width }) => {
+					const rowCount = height / 24;
+
+					const disasm = new Disassembler(this.props.system);
+					const lines = disasm.process(this.state.address, rowCount);
+
+
+					return <div className={classes.disasm}>
+						<table>
+							<tbody>
+								{
+								lines.map(line =>
+									<tr key={line.address} className={(target == line.address) ? classes['active'] : ''}>
+										<td className={classes["address"]}>{toHex(this.props.system.translate(line.address), 6)}</td>
+										<td>{line.data.map((v, i) => <span className={classes['byte-cell']} key={i}>{toHex(v, 2)}&nbsp;</span>)}</td>
+										<td>{line.op}</td>
+										<td>{line.args.map((s, i) => <span key={i}>{s}</span>)}</td>
+										<td>{line.comment}</td>
+									</tr>)
+								}
+							</tbody>
+						</table>
+					</div>
+				}}
+			</AutoSizer>
 		);
 	}
 }
 
 Disassembly.defaultProps = {
-	rowCount: 21,
 	follow_pc: true
 };
 

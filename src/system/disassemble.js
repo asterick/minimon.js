@@ -6,7 +6,7 @@ function toHex(v, c) {
 	return v;
 }
 
-class Disassembler {
+export default class Disassembler {
 	constructor(system) {
 		this._system = system;
 	}
@@ -32,7 +32,7 @@ class Disassembler {
 
 	_pcRelative(p) {
 		return this._system.translate(p + this._address - 1);
-	}	
+	}
 
 	_processArg(arg) {
 		let val;
@@ -196,5 +196,3 @@ class Disassembler {
 		return lines;
 	}
 }
-
-export default Disassembler;
