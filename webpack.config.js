@@ -40,7 +40,12 @@ module.exports = {
                             modules: true
                         }
                     },
-                    'sass-loader'
+                    {
+                        loader: 'sass-loader',
+                        options: {
+                            includePaths: [path.join(__dirname, 'node_modules')]
+                        }
+                    }
                 ],
             },
             {

@@ -1,13 +1,15 @@
+@import "~normalize.css/normalize.css";
+
 $sidebar-width: calc((4ch + 4px) + (2ch + 3px) * 8 + 2px);
 
 body {
 	background: black;
 	color: white;
-
-	font-family: 'Roboto Mono', monospace;
 }
 
 .debugger {
+	font-family: 'Roboto Mono', monospace;
+
 	display: inline-block;
 	text-align: left;
 
