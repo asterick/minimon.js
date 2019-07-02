@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { AutoSizer, List } from 'react-virtualized';
 
-import classes from "./style.css";
+import classes from "./style.scss";
 
 const TOP_OF_MEMORY = 0x1FFFFF;
 

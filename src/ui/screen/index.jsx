@@ -3,7 +3,7 @@ import React, { Component } from "react";
 import VertexShader from "./shaders/vertex.glsl";
 import FragmentShader from "./shaders/fragment.glsl";
 
-import classes from "./style.css";
+import classes from "./style.scss";
 
 const VRAM_WIDTH  = 96;
 const VRAM_HEIGHT = 8;

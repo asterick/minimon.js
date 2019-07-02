@@ -6,7 +6,7 @@ import Disassembler from "./disassemble";
 import Registers from "./registers";
 import Screen from "./screen";
 
-import style from "./style.css";
+import style from "./style.scss";
 
 class MinimonDebugger extends Component {
 	constructor(props) {

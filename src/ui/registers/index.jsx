@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 
-import classes from "./style.css";
+import classes from "./style.scss";
 
 function toHex(i, c) {
 	let v = i.toString(16).toUpperCase();

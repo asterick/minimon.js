@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { AutoSizer } from 'react-virtualized';
 
-import classes from "./style.css";
+import classes from "./style.scss";
 
 import Disassembler from "../../system/disassemble.js";
 

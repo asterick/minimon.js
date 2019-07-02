@@ -1,3 +1,5 @@
+$sidebar-width: calc((4ch + 4px) + (2ch + 3px) * 8 + 2px);
+
 body {
 	background: black;
 	color: white;
@@ -20,7 +22,7 @@ body {
 .sidebar {
 	display: inline-block;
 	box-sizing: border-box;
-	width: calc((4ch + 4px) + (2ch + 3px) * 8 + 2px);	/* Memory layour size */
+	width: $sidebar-width;	/* Memory layour size */
 	margin-right: 80ch;
 }
 
@@ -30,5 +32,5 @@ body {
 	bottom: 0;
 	left: 0;
 	right: 0;
-	margin-left: calc((4ch + 4px) + (2ch + 3px) * 8 + 2px);
+	margin-left: $sidebar-width;
 }
