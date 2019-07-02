@@ -9,6 +9,12 @@ import Screen from "./screen";
 import style from "./style.css";
 
 class MinimonDebugger extends Component {
+	constructor(props) {
+		super(props);
+
+		setInterval(() => this.step(), 10)
+	}
+
 	step() {
 		this.props.system.step();
 		this.setState({});
@@ -29,11 +35,9 @@ class MinimonDebugger extends Component {
 					<Registers registers={this.props.system.registers} />
 					<Memory memoryBottom={0x1000} memoryTop={0x2000} system={this.props.system} />
 				</div>
-				{/*
 				<div className={style.content}>
 					<Disassembler follow_pc={true} system={this.props.system} target={this.props.system.translate(this.props.system.registers.pc)} />
 				</div>
-				*/}
 			</div>
 		);
 	}

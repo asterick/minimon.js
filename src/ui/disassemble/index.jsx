@@ -53,20 +53,22 @@ class Disassembly extends Component {
 		const lines = disasm.process(this.state.address, this.props.rowCount);
 
 		return (
-			<table  className={classes['disasm']}>
-				<tbody>
-					{
-					lines.map(line =>
-						<tr key={line.address} className={(target == line.address) ? classes['active'] : ''}>
-							<td className={classes["address"]}>{toHex(this.props.system.translate(line.address), 6)}</td>
-							<td>{line.data.map((v, i) => <span className={classes['byte-cell']} key={i}>{toHex(v, 2)}&nbsp;</span>)}</td>
-							<td>{line.op}</td>
-							<td>{line.args.map((s, i) => <span key={i}>{s}</span>)}</td>
-							<td>{line.comment}</td>
-						</tr>)
-					}
-				</tbody>
-			</table>
+			<div className={classes.disasm}>
+				<table>
+					<tbody>
+						{
+						lines.map(line =>
+							<tr key={line.address} className={(target == line.address) ? classes['active'] : ''}>
+								<td className={classes["address"]}>{toHex(this.props.system.translate(line.address), 6)}</td>
+								<td>{line.data.map((v, i) => <span className={classes['byte-cell']} key={i}>{toHex(v, 2)}&nbsp;</span>)}</td>
+								<td>{line.op}</td>
+								<td>{line.args.map((s, i) => <span key={i}>{s}</span>)}</td>
+								<td>{line.comment}</td>
+							</tr>)
+						}
+					</tbody>
+				</table>
+			</div>
 		);
 	}
 }

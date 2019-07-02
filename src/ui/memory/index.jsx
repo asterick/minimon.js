@@ -42,7 +42,6 @@ class Memory extends Component {
 		return (
 			<AutoSizer className={classes['memory']}>
 				{({ height, width }) => {
-					console.log(height)
 					return (
 						<List
 							system={this.props.system}

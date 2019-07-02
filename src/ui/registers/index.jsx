@@ -8,10 +8,6 @@ function toHex(i, c) {
 	return v;
 }
 
-class Register extends Component {
-	
-}
-
 class Registers extends Component {
 	render() {
 		const sc = this.props.registers.sc;

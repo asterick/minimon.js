@@ -1,6 +1,5 @@
 .disasm {
-	min-height: 8ch;
-
+	display: inline-block;
 }
 
 tr.active {
@@ -24,9 +23,9 @@ tr.active {
 	color: cyan;
 }
 
-table.disasm {
+.disasm table {
 	table-layout: fixed;
-	width: 100%;
+
 	border-spacing: 0;
 }
 
@@ -66,5 +65,5 @@ table.disasm {
 
 .disasm td:nth-child(5) {
 	color: #888;
-	width: 100%;
+	width: 20ch;
 }
