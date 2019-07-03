@@ -3,6 +3,7 @@
 body {
 	background: black;
 	color: white;
+	overflow-y: hidden;
 }
 
 .mainview {
@@ -29,9 +30,11 @@ body {
 	display: flex;
 	flex-direction: column;
 
-	background: #040;
+	background: #444;
 }
 
 .document {
-
+	display: flex;
+	flex-direction: column;
+	flex-grow: 1;
 }

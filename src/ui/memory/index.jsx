@@ -39,8 +39,8 @@ function rowRenderer ({ key, style, index, parent }) {
 
 class Memory extends Component {
 	render() {
-		return (
-			<AutoSizer className={classes['memory']}>
+		return <div className={classes['memory']}>
+			<AutoSizer>
 				{({ height, width }) => {
 					return (
 						<List
@@ -58,7 +58,7 @@ class Memory extends Component {
 					)
 				}}
 			</AutoSizer>
-		);
+		</div>
 	}
 }
 

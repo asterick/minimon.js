@@ -13,7 +13,7 @@ class Registers extends Component {
 		const sc = this.props.registers.sc;
 
 		return (
-			<div>
+			<div className={classes.registers}>
 				<table>
 					<tbody>
 						<tr><td>BA</td><td>{toHex(this.props.registers.ba, 4)}</td><td>BR</td><td>{toHex(this.props.registers.br, 2)}</td></tr>

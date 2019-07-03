@@ -1,5 +1,6 @@
 .disasm {
-	display: inline-block;
+	display: flex;
+	flex-grow: 1;
 }
 
 tr.active {

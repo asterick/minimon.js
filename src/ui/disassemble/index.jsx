@@ -51,16 +51,15 @@ class Disassembly extends Component {
 		const { target } = this.props;
 
 		return (
-			<AutoSizer className={classes['memory']}>
-				{({ height, width }) => {
-					const rowCount = height / 24;
+			<div className={classes.disasm}>
+				<AutoSizer>
+					{({ height, width }) => {
+						const rowCount = height / 20;
 
-					const disasm = new Disassembler(this.props.system);
-					const lines = disasm.process(this.state.address, rowCount);
+						const disasm = new Disassembler(this.props.system);
+						const lines = disasm.process(this.state.address, rowCount);
 
-
-					return <div className={classes.disasm}>
-						<table>
+						return <table>
 							<tbody>
 								{
 								lines.map(line =>
@@ -74,9 +73,9 @@ class Disassembly extends Component {
 								}
 							</tbody>
 						</table>
-					</div>
-				}}
-			</AutoSizer>
+					}}
+				</AutoSizer>
+			</div>
 		);
 	}
 }
