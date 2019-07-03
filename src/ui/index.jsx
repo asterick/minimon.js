@@ -35,7 +35,7 @@ class MinimonDebugger extends Component {
 				<div className={style.sidebar}>
 					<Screen system={this.props.system} />
 					<Registers registers={this.props.system.registers} />
-					<Memory memoryBottom={0x1000} memoryTop={0x2000} system={this.props.system} />
+					<Memory memoryBottom={0x1000} memoryTop={0x20FF} system={this.props.system} />
 				</div>
 				<div className={style.document}>
 					<Disassembler follow_pc={true} system={this.props.system} target={this.props.system.translate(this.props.system.registers.pc)} />
