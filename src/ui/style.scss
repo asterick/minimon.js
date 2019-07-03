@@ -1,38 +1,37 @@
 @import "~normalize.css/normalize.css";
 
-$sidebar-width: calc((4ch + 4px) + (2ch + 3px) * 8 + 2px);
-
 body {
 	background: black;
 	color: white;
 }
 
-.debugger {
+.mainview {
 	font-family: 'Roboto Mono', monospace;
 
-	display: inline-block;
-	text-align: left;
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+}
 
-	height:100vh;
+.menubar {
+	background: #444;
+}
 
-	left: 50%;
-	transform: translateX(-50%);
+.debugger {
+	display: flex;
+	flex-direction: row;
 
-	position: relative;
+	background: #400;
+	flex-grow: 1;
 }
 
 .sidebar {
-	display: inline-block;
-	box-sizing: border-box;
-	width: $sidebar-width;	/* Memory layour size */
-	margin-right: 80ch;
+	display: flex;
+	flex-direction: column;
+
+	background: #040;
 }
 
-.content {
-	position: absolute;
-	top: 0;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	margin-left: $sidebar-width;
+.document {
+
 }

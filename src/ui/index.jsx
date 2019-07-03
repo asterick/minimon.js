@@ -26,20 +26,22 @@ class MinimonDebugger extends Component {
 	}
 
 	render() {
-		return (
+		return <div className={style.mainview}>
+			<div className={style.menubar}>
+				<button onClick={() => this.step()}>Step</button>
+				<button onClick={() => this.reset()}>Reset</button>
+			</div>
 			<div className={style.debugger}>
 				<div className={style.sidebar}>
-					<button onClick={() => this.step()}>Step</button>
-					<button onClick={() => this.reset()}>Reset</button>
 					<Screen system={this.props.system} />
 					<Registers registers={this.props.system.registers} />
 					<Memory memoryBottom={0x1000} memoryTop={0x2000} system={this.props.system} />
 				</div>
-				<div className={style.content}>
+				<div className={style.document}>
 					<Disassembler follow_pc={true} system={this.props.system} target={this.props.system.translate(this.props.system.registers.pc)} />
 				</div>
 			</div>
-		);
+		</div>
 	}
 }
 

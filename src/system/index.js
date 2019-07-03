@@ -3,7 +3,12 @@ import Registers from "./registers";
 export default class Minimon {
 	async init() {
 		const data = await fetch("./libminimon.wasm");
-		this._module = await WebAssembly.instantiate(await data.arrayBuffer());
+		this._module = await WebAssembly.instantiate(await data.arrayBuffer(), {
+			env: {
+				cpu_read_cart: (cpu, address) => this.cpu_read_cart(address),
+				cpu_write_cart: (cpu, data, address) => this.cpu_write_cart(data, address)
+			}
+		});
 
 		this._exports = this._module.instance.exports;
 		this._cpu_state = this._exports.get_machine();
@@ -25,6 +30,14 @@ export default class Minimon {
 
 	read(address) {
 		return this._exports.cpu_read8(this._cpu_state, address);
+	}
+
+	cpu_read_cart(address) {
+		return 0xCD;
+	}
+
+	cpu_write_cart(data, address) {
+		// Unsupported
 	}
 
 	write(data, address) {

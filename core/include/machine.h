@@ -51,7 +51,6 @@ struct ProcessorState {
 	ProcessorRegisters reg;
 
 	uint8_t ram[0x1000];
-	uint8_t cartridge[0x20000];
 };
 
 enum InterruptVector : uint8_t {
@@ -59,6 +58,11 @@ enum InterruptVector : uint8_t {
 	IRQ_DIV_ZERO,
 	IRQ_WATCHDOG
 };
+
+extern "C" {
+	uint8_t cpu_read_cart(ProcessorState& cpu, uint32_t address);
+	void cpu_write_cart(ProcessorState& cpu, uint8_t data, uint32_t address);
+}
 
 extern "C" {
 	void cpu_interrupt(ProcessorState& cpu, InterruptVector irq);
