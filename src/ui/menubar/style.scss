@@ -33,6 +33,10 @@ $menu-bar-border: 2px solid $grey-dark;
 	z-index: 1;
 }
 
+.dropdown:not(:hover) .dropchildren {
+	display: none;
+}
+
 .dropchildren {
 	background: $background-menubar;
 	border: $menu-bar-border;
@@ -40,10 +44,6 @@ $menu-bar-border: 2px solid $grey-dark;
 	position: absolute;
 	left: 100%;
 	top: 0;
-}
-
-.dropdown:not(:hover) .dropchildren {
-	display: none;
 }
 
 .menubar > .dropdown > .dropchildren {
