@@ -1,3 +1,5 @@
+@import "../settings.scss";
+
 .memory {
 	min-width: 24ch;
 	text-align: center;
@@ -9,7 +11,7 @@
 	width: calc(4ch + 4px);
 	text-align: left;
 	display: inline-block;
-	color: #cf0;
+	color: $green;
 }
 
 .byte-cell {
@@ -19,5 +21,4 @@
 }
 
 .byte-cell:nth-child(odd) {
-	color: cyan;
 }

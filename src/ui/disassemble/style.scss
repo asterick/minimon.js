@@ -6,24 +6,22 @@
 }
 
 tr.active {
-	background: $selected-background;
+	background: $background-selected;
 }
 
 .address {
 	width: 66px;
 	text-align: left;
-	color: #cf0;
+	color: $green;
 }
 
 .byte-cell {
 	width: 22px;
 	text-align: center;
 	display: inline-block;
-	color: #FCF;
 }
 
 .byte-cell:nth-child(odd) {
-	color: cyan;
 }
 
 .disasm table {
@@ -47,26 +45,21 @@ tr.active {
 
 .disasm td:nth-child(3) {
 	width: 6ch;
-	color: #fff;
 }
 
 .disasm td:nth-child(4) {
 	width: 20ch;
-	color: #F0F;
 }
 
 .disasm td:nth-child(4) {
 	width: 20ch;
-	color: white;
 }
 
 .disasm td:nth-child(4) span:not(:first-child):before {
 	content: ', ';
 	display: inline;
-	color: #CCC;
 }
 
 .disasm td:nth-child(5) {
-	color: #888;
 	width: 20ch;
 }

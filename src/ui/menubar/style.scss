@@ -1,5 +1,52 @@
 @import "../settings.scss";
 
+$menu-bar-border: 2px solid $grey-dark;
+
 .menubar {
-	background: $menubar-background;
+	background: $background-menubar;
+	position: relative;
+	user-select: none;
+	padding: 0 1ch;
+	border-bottom: $menu-bar-border;
+}
+
+.seperator {
+	display: block;
+	margin: 0 0.5ch;
+	border: 1px solid $grey-dark;
+}
+
+.menuitem {
+	color: $yellow;
+	display: block;
+	padding: 4px 1ch;
+	cursor: pointer;
+}
+
+.menuitem:hover, .dropdown:hover {
+	background: $background-selected;
+}
+
+.dropdown {
+	display: inline-block;
+	position: relative;
+	z-index: 1;
+}
+
+.dropchildren {
+	background: $background-menubar;
+	border: $menu-bar-border;
+
+	position: absolute;
+	left: 100%;
+	top: 0;
+}
+
+.dropdown:not(:hover) .dropchildren {
+	display: none;
+}
+
+.menubar > .dropdown > .dropchildren {
+	top: 100%;
+	left: 0;
 }

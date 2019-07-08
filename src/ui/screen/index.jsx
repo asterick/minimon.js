@@ -168,9 +168,9 @@ class Registers extends Component {
 			gl.uniform3f(this._shader.uniforms.background, 0.75, 0.86, 0.63);
 			gl.uniform3f(this._shader.uniforms.foreground, 0.05, 0.05, 0.05);
 
-			gl.uniform1f(this._shader.uniforms.analog, 1);
-			gl.uniform1i(this._shader.uniforms.dot_mask, 1);
-			gl.uniform1i(this._shader.uniforms.simulate_gray, 0);
+			gl.uniform1f(this._shader.uniforms.analog, 0);
+			gl.uniform1i(this._shader.uniforms.dot_mask, 0);
+			gl.uniform1i(this._shader.uniforms.simulate_gray, 1);
 
 			gl.enableVertexAttribArray(this._shader.attributes.vertex);
 			gl.bindBuffer(gl.ARRAY_BUFFER, this._copyBuffer);
