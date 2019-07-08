@@ -13,18 +13,19 @@ class Registers extends Component {
 	static contextType = SystemContext;
 
 	render() {
-		const sc = this.props.registers.sc;
+		const system = this.context;
+		const sc = system.registers.sc;
 
 		return (
 			<div className={classes.registers}>
 				<table>
 					<tbody>
-						<tr><td>BA</td><td>{toHex(this.props.registers.ba, 4)}</td><td>BR</td><td>{toHex(this.props.registers.br, 2)}</td></tr>
-						<tr><td>HL</td><td>{toHex(this.props.registers.hl, 4)}</td><td>EP</td><td>{toHex(this.props.registers.ep, 2)}</td></tr>
-						<tr><td>IX</td><td>{toHex(this.props.registers.ix, 4)}</td><td>XP</td><td>{toHex(this.props.registers.xp, 2)}</td></tr>
-						<tr><td>IY</td><td>{toHex(this.props.registers.iy, 4)}</td><td>YP</td><td>{toHex(this.props.registers.yp, 2)}</td></tr>
-						<tr><td>PC</td><td>{toHex(this.props.registers.pc, 4)}</td><td>CB</td><td>{toHex(this.props.registers.cb, 2)}</td></tr>
-						<tr><td>SP</td><td>{toHex(this.props.registers.sp, 4)}</td><td>NB</td><td>{toHex(this.props.registers.nb, 2)}</td></tr>
+						<tr><td>BA</td><td>{toHex(system.registers.ba, 4)}</td><td>BR</td><td>{toHex(system.registers.br, 2)}</td></tr>
+						<tr><td>HL</td><td>{toHex(system.registers.hl, 4)}</td><td>EP</td><td>{toHex(system.registers.ep, 2)}</td></tr>
+						<tr><td>IX</td><td>{toHex(system.registers.ix, 4)}</td><td>XP</td><td>{toHex(system.registers.xp, 2)}</td></tr>
+						<tr><td>IY</td><td>{toHex(system.registers.iy, 4)}</td><td>YP</td><td>{toHex(system.registers.yp, 2)}</td></tr>
+						<tr><td>PC</td><td>{toHex(system.registers.pc, 4)}</td><td>CB</td><td>{toHex(system.registers.cb, 2)}</td></tr>
+						<tr><td>SP</td><td>{toHex(system.registers.sp, 4)}</td><td>NB</td><td>{toHex(system.registers.nb, 2)}</td></tr>
 					</tbody>
 				</table>
 				<table>

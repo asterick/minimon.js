@@ -4,26 +4,16 @@ import VertexShader from "./shaders/vertex.glsl";
 import FragmentShader from "./shaders/fragment.glsl";
 
 import classes from "./style.scss";
-import SystemContext from "../context";
 
 const VRAM_WIDTH  = 96;
 const VRAM_HEIGHT = 8;
 
 class Registers extends Component {
-	static contextType = SystemContext;
-
 	constructor(props) {
 		super(props);
 
 		this._memory = new Uint8Array(VRAM_WIDTH * VRAM_HEIGHT);
-
 		this._ref = React.createRef();
-
-		setInterval(() => {
-			crypto.getRandomValues(this._memory);
-			for (let i = 0; i < 96; i++) this._memory[i] = i;
-			this._updateTexture(this._memory);
-		}, 20);
 	}
 
 	componentDidMount() {

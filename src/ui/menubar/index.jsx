@@ -20,13 +20,17 @@ export default class MenuBar extends Component {
 	static contextType = SystemContext;
 
 	step() {
-		this.context.step();
-		this.parent.forceUpdate();
+		const system = this.context;
+
+		system.step();
+		this.props.repaint();
 	}
 
 	reset() {
-		this.context.reset();
-		this.forceUpdate();
+		const system = this.context;
+
+		system.reset();
+		this.props.repaint();
 	}
 
 	render() {

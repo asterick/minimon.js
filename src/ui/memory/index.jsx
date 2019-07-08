@@ -42,12 +42,14 @@ class Memory extends Component {
 	static contextType = SystemContext;
 
 	render() {
+		const system = this.context;
+
 		return <div className={classes['memory']}>
 			<AutoSizer>
 				{({ height, width }) => {
 					return (
 						<List
-							system={this.context}
+							system={system}
 							bytesPerRow={this.props.bytesPerRow}
 							memoryTop={this.props.memoryTop}
 							memoryBottom={this.props.memoryBottom}

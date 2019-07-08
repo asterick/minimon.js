@@ -14,16 +14,18 @@ export default class MinimonDebugger extends Component {
 	static contextType = SystemContext;
 
 	render() {
+		const system = this.context;
+
 		return <div className={style.mainview}>
-			<MenuBar />
+			<MenuBar repaint={() => this.forceUpdate()} />
 			<div className={style.debugger}>
 				<div className={style.sidebar}>
 					<Screen />
-					<Registers registers={this.context.registers} />
+					<Registers />
 					<Memory memoryBottom={0x1000} memoryTop={0x20FF} />
 				</div>
 				<div className={style.document}>
-					<Disassembler target={this.context.translate(this.context.registers.pc)} />
+					<Disassembler target={system.translate(system.registers.pc)} />
 				</div>
 			</div>
 		</div>
