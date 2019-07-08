@@ -1,13 +1,12 @@
 #include "machine.h"
 
-static ProcessorState state;
-
 static const uint8_t bios[0x2000] = {
 	#include "bios.h"
 };
 
 __attribute__ ((visibility ("default"))) extern "C"
 ProcessorState* const get_machine() {
+	static ProcessorState state;
 	return &state;
 }
 

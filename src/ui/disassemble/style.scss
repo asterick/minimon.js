@@ -1,10 +1,12 @@
+@import "../settings.scss";
+
 .disasm {
 	display: flex;
 	flex-grow: 1;
 }
 
 tr.active {
-	background: #444;
+	background: $selected-background;
 }
 
 .address {

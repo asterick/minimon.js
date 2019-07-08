@@ -43,7 +43,9 @@ module.exports = {
                     {
                         loader: 'sass-loader',
                         options: {
-                            includePaths: [path.join(__dirname, 'node_modules')]
+                            includePaths: [
+                                path.join(__dirname, 'node_modules')
+                            ]
                         }
                     }
                 ],

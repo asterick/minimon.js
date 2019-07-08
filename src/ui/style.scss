@@ -1,4 +1,5 @@
 @import "~normalize.css/normalize.css";
+@import "./settings.scss";
 
 body {
 	background: black;
@@ -14,15 +15,11 @@ body {
 	height: 100vh;
 }
 
-.menubar {
-	background: #444;
-}
-
 .debugger {
 	display: flex;
 	flex-direction: row;
 
-	background: #400;
+	background: $background-color;
 	flex-grow: 1;
 }
 
