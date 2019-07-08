@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { AutoSizer } from 'react-virtualized';
 
 import classes from "./style.scss";
+import SystemContext from "../context";
 
 import Disassembler from "../../system/disassemble.js";
 
@@ -12,6 +13,8 @@ function toHex(v, c) {
 }
 
 class Disassembly extends Component {
+	static contextType = SystemContext;
+
 	constructor(props) {
 		super();
 
@@ -29,8 +32,8 @@ class Disassembly extends Component {
 			return ;
 		}
 
-		const { system, target } = this.props;
-		const disasm = new Disassembler(system);
+		const { target } = this.props;
+		const disasm = new Disassembler(this.context);
 
 		const lines = disasm.process(this.state.address, 21);
 
@@ -56,7 +59,7 @@ class Disassembly extends Component {
 					{({ height, width }) => {
 						const rowCount = height / 20;
 
-						const disasm = new Disassembler(this.props.system);
+						const disasm = new Disassembler(this.context);
 						const lines = disasm.process(this.state.address, rowCount);
 
 						return <table>
@@ -64,7 +67,7 @@ class Disassembly extends Component {
 								{
 								lines.map(line =>
 									<tr key={line.address} className={(target == line.address) ? classes['active'] : ''}>
-										<td className={classes["address"]}>{toHex(this.props.system.translate(line.address), 6)}</td>
+										<td className={classes["address"]}>{toHex(this.context.translate(line.address), 6)}</td>
 										<td>{line.data.map((v, i) => <span className={classes['byte-cell']} key={i}>{toHex(v, 2)}&nbsp;</span>)}</td>
 										<td>{line.op}</td>
 										<td>{line.args.map((s, i) => <span key={i}>{s}</span>)}</td>

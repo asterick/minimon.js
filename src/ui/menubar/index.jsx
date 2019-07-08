@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 
 import style from "./style.scss";
+import SystemContext from "../context";
 
 const MenuItem = (props) => {
 	const { title } = props;
@@ -16,13 +17,15 @@ const DropDown = ({ title, children }) =>
 const Seperator = () => <div className={style.seperator}></div>
 
 export default class MenuBar extends Component {
+	static contextType = SystemContext;
+
 	step() {
-		this.props.system.step();
+		this.context.step();
 		this.parent.forceUpdate();
 	}
 
 	reset() {
-		this.props.system.reset();
+		this.context.reset();
 		this.forceUpdate();
 	}
 
@@ -31,28 +34,7 @@ export default class MenuBar extends Component {
 			<DropDown title="System">
 				<MenuItem title="step" onClick={() => this.step()} />
 				<MenuItem title="reset" onClick={() => this.reset()} />
-				<Seperator />
-				<DropDown title="text">
-					<MenuItem title="step" onClick={() => this.step()} />
-					<MenuItem title="reset" onClick={() => this.reset()} />
-				</DropDown>
 			</DropDown>
-			<DropDown title="System">
-				<MenuItem title="step" onClick={() => this.step()} />
-				<MenuItem title="reset" onClick={() => this.reset()} />
-				<DropDown title="text">
-					<MenuItem title="step" onClick={() => this.step()} />
-					<MenuItem title="reset" onClick={() => this.reset()} />
-				</DropDown>
-			</DropDown>
-			<DropDown title="System">
-				<MenuItem title="step" onClick={() => this.step()} />
-				<MenuItem title="reset" onClick={() => this.reset()} />
-				<DropDown title="text">
-					<MenuItem title="step" onClick={() => this.step()} />
-					<MenuItem title="reset" onClick={() => this.reset()} />
-				</DropDown>
-			</DropDown>
-		</div>;
+		</div>
 	}
 }

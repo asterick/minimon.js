@@ -4,11 +4,14 @@ import VertexShader from "./shaders/vertex.glsl";
 import FragmentShader from "./shaders/fragment.glsl";
 
 import classes from "./style.scss";
+import SystemContext from "../context";
 
 const VRAM_WIDTH  = 96;
 const VRAM_HEIGHT = 8;
 
 class Registers extends Component {
+	static contextType = SystemContext;
+
 	constructor(props) {
 		super(props);
 

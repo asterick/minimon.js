@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { AutoSizer, List } from 'react-virtualized';
 
 import classes from "./style.scss";
+import SystemContext from "../context";
 
 const TOP_OF_MEMORY = 0x1FFFFF;
 
@@ -38,13 +39,15 @@ function rowRenderer ({ key, style, index, parent }) {
 }
 
 class Memory extends Component {
+	static contextType = SystemContext;
+
 	render() {
 		return <div className={classes['memory']}>
 			<AutoSizer>
 				{({ height, width }) => {
 					return (
 						<List
-							system={this.props.system}
+							system={this.context}
 							bytesPerRow={this.props.bytesPerRow}
 							memoryTop={this.props.memoryTop}
 							memoryBottom={this.props.memoryBottom}

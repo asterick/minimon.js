@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 
 import classes from "./style.scss";
+import SystemContext from "../context";
 
 function toHex(i, c) {
 	let v = i.toString(16).toUpperCase();
@@ -9,6 +10,8 @@ function toHex(i, c) {
 }
 
 class Registers extends Component {
+	static contextType = SystemContext;
+
 	render() {
 		const sc = this.props.registers.sc;
 
