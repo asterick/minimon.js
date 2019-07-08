@@ -17,7 +17,7 @@ export default class MinimonDebugger extends Component {
 		const system = this.context;
 
 		return <div className={style.mainview}>
-			<MenuBar repaint={() => this.forceUpdate()} />
+			<MenuBar repaint={() => this.setState({})} />
 			<div className={style.debugger}>
 				<div className={style.sidebar}>
 					<Screen />
