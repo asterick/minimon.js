@@ -9,7 +9,7 @@ function toHex(i, c) {
 	return v;
 }
 
-class Registers extends Component {
+export default class Registers extends Component {
 	static contextType = SystemContext;
 
 	render() {
@@ -28,26 +28,42 @@ class Registers extends Component {
 						<tr><td>SP</td><td>{toHex(system.registers.sp, 4)}</td><td>NB</td><td>{toHex(system.registers.nb, 2)}</td></tr>
 					</tbody>
 				</table>
-				<table>
-					<thead>
-						<tr><td>SC</td><td>I</td><td>U</td><td>D</td><td>B</td><td>V</td><td>C</td><td>Z</td></tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td>{toHex(sc, 2)}</td>
-							<td>{sc >> 6}</td>
-							<td>{(sc & 0x20) ? '\u2713' : '\u2015'}</td>
-							<td>{(sc & 0x10) ? '\u2713' : '\u2015'}</td>
-							<td>{(sc & 0x08) ? '\u2713' : '\u2015'}</td>
-							<td>{(sc & 0x04) ? '\u2713' : '\u2015'}</td>
-							<td>{(sc & 0x02) ? '\u2713' : '\u2015'}</td>
-							<td>{(sc & 0x01) ? '\u2713' : '\u2015'}</td>
-						</tr>
-					</tbody>
-				</table>
+				<div className={classes.flags}>
+					<div className={classes.register}>
+						<span className={classes.name}>SC</span>
+						<span className={classes.value}>{toHex(sc, 2)}</span>
+					</div>
+					<div className={classes.register}>
+						<span className={classes.name}>I</span>
+						<span className={classes.value}>{sc >> 6}</span>
+					</div>
+					<div className={classes.register}>
+						<span className={classes.name}>U</span>
+						<div className={(sc & 0x20) ? classes.checked : classes.unchecked} />
+					</div>
+					<div className={classes.register}>
+						<span className={classes.name}>D</span>
+						<div className={(sc & 0x10) ? classes.checked : classes.unchecked} />
+					</div>
+					<div className={classes.register}>
+						<span className={classes.name}>B</span>
+						<div className={(sc & 0x08) ? classes.checked : classes.unchecked} />
+					</div>
+					<div className={classes.register}>
+						<span className={classes.name}>V</span>
+						<div className={(sc & 0x04) ? classes.checked : classes.unchecked} />
+					</div>
+					<div className={classes.register}>
+						<span className={classes.name}>C</span>
+						<div className={(sc & 0x02) ? classes.checked : classes.unchecked} />
+					</div>
+					<div className={classes.register}>
+						<span className={classes.name}>Z</span>
+						<div className={(sc & 0x01) ? classes.checked : classes.unchecked} />
+					</div>
+				</div>
 			</div>
 		);
 	}
 }
 
-export default Registers;

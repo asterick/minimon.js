@@ -31,7 +31,7 @@ function rowRenderer ({ key, style, index, parent }) {
 		data.push(<MemoryCell key={a} value={system.read(a)} />);
 
 	return (
-		<div key={key} style={style}>
+		<div className={classes.dataRow} key={key} style={style}>
 			<span className={classes['address']}>{toHex(address, addrLength)}</span>
 			{ data }
 		</div>

@@ -19,9 +19,7 @@ tr.active {
 	width: 22px;
 	text-align: center;
 	display: inline-block;
-}
-
-.byte-cell:nth-child(odd) {
+	color: $violet;
 }
 
 .disasm table {

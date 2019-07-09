@@ -1,10 +1,14 @@
 @import "../settings.scss";
 
 .memory {
-	min-width: 24ch;
+	min-width: 25ch;
 	text-align: center;
-	display: flex;
 	flex-grow: 1;
+}
+
+.dataRow {
+	display: block;
+	white-space: nowrap;
 }
 
 .address {
@@ -18,7 +22,5 @@
 	width: calc(2ch + 3px);
 	text-align: center;
 	display: inline-block;
-}
-
-.byte-cell:nth-child(odd) {
+	color: $violet;
 }

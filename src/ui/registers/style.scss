@@ -1,4 +1,44 @@
+@import "../settings.scss";
+
 .registers {
 	display: flex;
 	flex-direction: column;
+	padding: 0 2ch;
+}
+
+.flags {
+	display: flex;
+	flex-direction: row;
+	flex-grow: 1;
+
+	.register {
+		display: flex;
+		flex-direction: column;
+		flex-grow: 1;
+
+		.name {
+			display: inline-block;
+			flex-grow: 1;
+		}
+
+		.value {
+			display: inline;
+		}
+
+		.checked, .unchecked {
+			min-width: 2ch;
+		}
+
+		.checked:after {
+			display: inline;
+			content: '\2713';
+			color: $green;
+		}
+
+		.unchecked:after {
+			display: inline;
+			content: '\2014';
+			color: $blue;
+		}
+	}
 }

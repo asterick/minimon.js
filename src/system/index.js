@@ -16,10 +16,43 @@ export default class Minimon {
 
 		this.registers = new Registers(this._machineView);
 
+		this.cartridge = new Uint8Array(0x200000);
+
 		// Reset our CPU
 		this.reset();
+
+		let last = Date.now();
+		
+		const g = () => {
+			let now = Date.now();
+			console.log(now - last);
+			last = now;
+			setTimeout(g, 0)
+		};
+
+		g();
 	}	
 
+	// Cartridge I/O
+	load (ab) {
+		var bytes = new Uint8Array(ab);
+		var hasHeader = (bytes[0] != 0x4D || bytes[1] != 0x4E);
+		var offset = hasHeader ? 0 : 0x2100;
+
+		for (let i = bytes.length - 1; i >= 0; i--) this.cartridge[(i+offset) & 0x1FFFFF] = bytes[i];
+
+		this.reset();		
+	}
+
+	cpu_read_cart(address) {
+		return this.cartridge[address & 0x1FFFFF];
+	}
+
+	cpu_write_cart(data, address) {
+		// Unsupported
+	}
+
+	// WASM shim functions
 	step() {
 		this._exports.cpu_step(this._cpu_state);
 	}
@@ -30,14 +63,6 @@ export default class Minimon {
 
 	read(address) {
 		return this._exports.cpu_read8(this._cpu_state, address);
-	}
-
-	cpu_read_cart(address) {
-		return 0xCD;
-	}
-
-	cpu_write_cart(data, address) {
-		// Unsupported
 	}
 
 	write(data, address) {
