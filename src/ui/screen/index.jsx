@@ -8,7 +8,7 @@ import classes from "./style.scss";
 const VRAM_WIDTH  = 96;
 const VRAM_HEIGHT = 8;
 
-class Registers extends Component {
+export default class Registers extends Component {
 	constructor(props) {
 		super(props);
 
@@ -184,5 +184,3 @@ class Registers extends Component {
 		);
 	}
 }
-
-export default Registers;
