@@ -2740,10 +2740,10 @@ void inst_cp_hl_imm16(ProcessorState& cpu) {
 	op_cp16(cpu, cpu.reg.hl, data1);
 }
 
-void inst_ld_ind16_br(ProcessorState& cpu) {
+void inst_ld_ind16_b(ProcessorState& cpu) {
 	auto addr0 = calc_ind16(cpu);
 	uint8_t data0;
-	op_ld8(cpu, data0, cpu.reg.br);
+	op_ld8(cpu, data0, cpu.reg.b);
 	cpu_write8(cpu, data0, addr0);
 }
 
@@ -3813,7 +3813,7 @@ static InstructionCall inst_table1[] = {
 	inst_ld_l_ind16,
 	inst_ld_h_ind16,
 	inst_ld_ind16_a,
-	inst_ld_ind16_br,
+	inst_ld_ind16_b,
 	inst_ld_ind16_l,
 	inst_ld_ind16_h,
 	inst_mul,
