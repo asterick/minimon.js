@@ -1,5 +1,3 @@
-#include <stdio.h>
-
 #include "machine.h"
 
 static const uint8_t bios[0x2000] = {
@@ -12,15 +10,14 @@ ProcessorState* const get_machine() {
 	return &state;
 }
 
-extern "C" void debug_print(int length, const void* data);
+extern "C" void debug_print(const void* data);
 
 __attribute__ ((visibility ("default"))) extern "C"
 bool cpu_advance(ProcessorState& cpu, int ticks) {
 	// TODO: PROPER CPU CATCH-UP HERE
 
-	const uint8_t data[] = "Some string";
-
-	debug_print(1, data);
+	char data[] = "Hello World";
+	debug_print(data);
 
 	cpu_step(cpu);
 

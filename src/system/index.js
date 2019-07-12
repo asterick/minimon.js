@@ -14,6 +14,7 @@ export default class Minimon {
 		this._exports = this._module.instance.exports;
 		this._cpu_state = this._exports.get_machine();
 		this._machineView = new DataView(this._exports.memory.buffer, this._exports.get_machine());
+		this._machineBytes = new Uint8Array(this._exports.memory.buffer);
 
 		this.registers = new Registers(this._machineView);
 
@@ -23,8 +24,12 @@ export default class Minimon {
 		this.reset();
 	}
 
-	debug_print(a, b) {
-		console.log(a,b)
+	debug_print(a) {
+		const str = [];
+		let ch;
+		while (ch = this._machineBytes[a++]) str.push(String.fromCharCode(ch));
+
+		console.log(str.join(""));
 	}
 
 	get running() {
@@ -90,7 +95,7 @@ export default class Minimon {
 
 	reset() {
 		this._exports.cpu_reset(this._cpu_state);
-		this.running = false;
+		this.running = true;
 	}
 
 	read(address) {

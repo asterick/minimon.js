@@ -1,13 +1,12 @@
 OBJECTS=main.o blitter.o operations.o machine.o
 TARGET=../public/libminimon.wasm
 
-LD=$(WASI)/wasm-ld
-CC=$(WASI)/clang
-CPP=$(WASI)/clang++
+LD=wasm-ld
+CC=clang
+CPP=clang++
 
-CFLAGS=--target=wasm32-unknown-unknown-wasm -O2 -Iinclude
-CPPFLAGS=$(CFLAGS) -std=c++17
-LDFLAGS = --allow-undefined --export-dynamic --no-entry -s
+CPPFLAGS = --target=wasm32-wasm -O2 -Iinclude -std=c++17
+LDFLAGS = --allow-undefined --export-dynamic --no-entry
 
 all: $(DEPDIR) $(TARGET)
 
@@ -32,4 +31,4 @@ include/table.h: ../data/table.py ../data/s1c88.csv
 $(DEPDIR):
 	mkdir -p $(DEPDIR)
 
-.phony: all clean disassembly
+.phony: all clean disassembly wasi-libc
