@@ -15,16 +15,16 @@ __attribute__ ((visibility ("default"))) extern "C"
 bool cpu_advance(ProcessorState& cpu, int ticks) {
 	cpu_step(cpu);
 
-	dprintf(0x100, "experiment %c", 'x');
-
 	return true;
 }
 
 uint8_t cpu_read_reg(ProcessorState& cpu, uint32_t address) {
+	dprintf(0x100, "Register read %x", address);
 	return 0xCD;
 }
 
 void cpu_write_reg(ProcessorState& cpu, uint8_t data, uint32_t address) {
+	dprintf(0x100, "Register write %x: %x", address, data);
 }
 
 __attribute__ ((visibility ("default"))) extern "C"
