@@ -122,6 +122,8 @@ def format_arg(i, siz, mem, ind, nam):
 def format(cycles, op, *args):
     condition = None
 
+    cycles, skipped = [int(c) for c in cycles.split(",") * 2][:2]
+
     if args[0] in CONDITIONS:
         condition, args = args[0], args[1:]
     
@@ -148,7 +150,10 @@ def format(cycles, op, *args):
 
 
         if condition:
-            print ("\tif (!(%s)) return ;" % CONDITIONS[condition])
+            print ("\tif (!(%s)) {" % CONDITIONS[condition])
+            print ("\t\tcpu.clocks += %i;" % skipped)
+            print ("\t\treturn ;")
+            print ("\t}")
 
         print ("\top_%s%i(cpu, %s);" % (op.lower(), size, ', '.join([format_arg(i, *a) for i, a in enumerate(args)])));
 
@@ -156,6 +161,7 @@ def format(cycles, op, *args):
             if ind and "Write" in directions[i]:
                 print ("\tcpu_write%s(cpu, data%i, addr%i);" % (size, i, i))
 
+        print ("\tcpu.clocks += %i;" % cycles)
         print ("}\n")
     except:
         name = get_name(op, condition, *args)
