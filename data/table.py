@@ -119,7 +119,7 @@ def format_arg(i, siz, mem, ind, nam):
     else:
         return "cpu.reg.%s" % nam
 
-def format(op, *args):
+def format(cycles, op, *args):
     condition = None
 
     if args[0] in CONDITIONS:
@@ -168,15 +168,15 @@ with open(CSV_LOCATION, 'r') as csvfile:
     next(spamreader)
 
     for row in spamreader:
-        code, op0, arg0_1, arg0_2, _1, op1, arg1_1, arg1_2, _2, op2, arg2_1, arg2_2 = row
+        code, cycles0, op0, arg0_1, arg0_2, cycles1, op1, arg1_1, arg1_2, cycles2, op2, arg2_1, arg2_2 = row
         code = int(code, 16)
 
         if not op0 in ['[EXPANSION]', 'undefined']:
-        	op0s[code] = format(op0, arg0_1, arg0_2)
+        	op0s[code] = format(cycles0, op0, arg0_1, arg0_2)
         if op1 != 'undefined':
-        	op1s[code] = format(op1, arg1_1, arg1_2)
+        	op1s[code] = format(cycles1, op1, arg1_1, arg1_2)
         if op2 != 'undefined':
-        	op2s[code] = format(op2, arg2_1, arg2_2)
+        	op2s[code] = format(cycles2, op2, arg2_1, arg2_2)
 
 for i, t in enumerate([op0s, op1s, op2s]):
     print ("static InstructionCall inst_table%i[] = {" % i)

@@ -103,7 +103,7 @@ with open('s1c88.csv', 'r') as csvfile:
     next(spamreader)
 
     for row in spamreader:
-        code, op0, arg0_1, arg0_2, _1, op1, arg1_1, arg1_2, _2, op2, arg2_1, arg2_2 = row
+        code, cycles0, op0, arg0_1, arg0_2, cycles1, op1, arg1_1, arg1_2, cycles2, op2, arg2_1, arg2_2 = row
         code = int(code, 16)
 
         if not op0 in ['[EXPANSION]', 'undefined']:
