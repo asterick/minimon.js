@@ -16,9 +16,6 @@ __attribute__ ((visibility ("default"))) extern "C"
 bool cpu_advance(ProcessorState& cpu, int ticks) {
 	// TODO: PROPER CPU CATCH-UP HERE
 
-	char data[] = "Hello World";
-	debug_print(data);
-
 	cpu_step(cpu);
 
 	return true;

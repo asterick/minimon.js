@@ -8,7 +8,7 @@ CPP=clang++
 CPPFLAGS = --target=wasm32-wasm -O2 -Iinclude -std=c++17
 LDFLAGS = --allow-undefined --export-dynamic --no-entry
 
-all: $(DEPDIR) $(TARGET)
+all:table $(DEPDIR) $(TARGET)
 
 clean:
 	rm -Rf $(TARGET) $(OBJECTS)
@@ -19,8 +19,8 @@ dasm: $(TARGET)
 $(TARGET): $(OBJECTS)
 	$(LD) $(LDFLAGS) $(OBJECTS) -o $@
 
-include/table.h: ../data/table.py ../data/s1c88.csv
-	python3 ../data/table.py > $@
+table: ../data/table.py ../data/s1c88.csv
+	python3 ../data/table.py > include/table.h
 
 %.o: %.c include/*.h
 	$(CC) $(CFLAGS) $< -c -o $@

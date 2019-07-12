@@ -95,7 +95,7 @@ export default class Minimon {
 
 	reset() {
 		this._exports.cpu_reset(this._cpu_state);
-		this.running = true;
+		this.running = false;
 	}
 
 	read(address) {
