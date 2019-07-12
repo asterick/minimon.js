@@ -29,6 +29,14 @@ export default class MinimonDebugger extends Component {
         this.setState({ dragging: false });
     }
 
+	componentDidMount() {
+		this.context.update = () => this.setState({});
+	}
+
+	componentWillUnmount() {
+		delete this.context.update;
+	}
+
     onDrop (e) {
         e.preventDefault();
 
@@ -53,7 +61,7 @@ export default class MinimonDebugger extends Component {
             onDrop={(e) => this.onDrop(e)}
 			className={style.mainview}>
 
-			<MenuBar repaint={() => this.setState({})} />
+			<MenuBar />
 			<div className={style.debugger}>
 				<div className={style.sidebar}>
 					<Screen />

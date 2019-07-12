@@ -23,19 +23,19 @@ export default class MenuBar extends Component {
 		const system = this.context;
 
 		system.step();
-		this.props.repaint();
 	}
 
 	reset() {
 		const system = this.context;
 
 		system.reset();
-		this.props.repaint();
 	}
 
 	render() {
 		return <div className={style.menubar}>
 			<DropDown title="System">
+				<MenuItem title={this.context.running ? "stop" : "run"} onClick={() => (this.context.running = !this.context.running)} />
+				<Seperator />
 				<MenuItem title="step" onClick={() => this.step()} />
 				<MenuItem title="reset" onClick={() => this.reset()} />
 			</DropDown>

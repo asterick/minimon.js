@@ -6,7 +6,8 @@ export default class Minimon {
 		this._module = await WebAssembly.instantiate(await data.arrayBuffer(), {
 			env: {
 				cpu_read_cart: (cpu, address) => this.cpu_read_cart(address),
-				cpu_write_cart: (cpu, data, address) => this.cpu_write_cart(data, address)
+				cpu_write_cart: (cpu, data, address) => this.cpu_write_cart(data, address),
+				debug_print: (... rest) => this.debug_print.apply(this, rest)
 			}
 		});
 
@@ -20,18 +21,47 @@ export default class Minimon {
 
 		// Reset our CPU
 		this.reset();
+	}
 
-		let last = Date.now();
-		
-		const g = () => {
+	debug_print(a, b) {
+		console.log(a,b)
+	}
+
+	get running() {
+		return this._running;
+	}
+
+	set running(v) {
+		if (this._running == v) return ;
+
+		let time = Date.now();
+
+		const _tick = () => {
+			if (!this._running) return ;
+
 			let now = Date.now();
-			console.log(now - last);
-			last = now;
-			setTimeout(g, 0)
-		};
 
-		g();
-	}	
+			this._exports.cpu_advance(this._cpu_state, now - time);
+			time = now;
+
+			this.update();
+		}
+
+		this._running = v;
+
+		if (v) {
+			this._timer = setInterval(_tick, 0);
+		} else {
+			clearInterval(this._timer);
+		}
+
+		this.update();
+	}
+
+	// Trigger an update to the UI
+	update() {
+		// This will be overidden elsewhere
+	}
 
 	// Cartridge I/O
 	load (ab) {
@@ -55,10 +85,12 @@ export default class Minimon {
 	// WASM shim functions
 	step() {
 		this._exports.cpu_step(this._cpu_state);
+		this.update();
 	}
 
 	reset() {
 		this._exports.cpu_reset(this._cpu_state);
+		this.running = false;
 	}
 
 	read(address) {
