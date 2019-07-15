@@ -528,14 +528,17 @@ static void inst_sep(ProcessorState& cpu) {
 
 static void inst_halt(ProcessorState& cpu) {
 	// TODO
+	cpu.clocks = 0;
 }
 
 static void inst_slp(ProcessorState& cpu) {
 	// TODO
+	cpu.clocks = 0;
 }
 
 static void inst_undefined(ProcessorState& cpu) {
 	// TODO
+	cpu.clocks = 0;
 }
 
 static void inst_extended_ce(ProcessorState& cpu);

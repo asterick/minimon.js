@@ -14,9 +14,8 @@ const registerHeader = [
 	["cb", "u8"],
 	["nb", "u8"],
 	["sc", "u8"]
-]
+];
 
 export default function Registers(ab, offset) {
-	debugger ;
 	return struct(registerHeader, ab, offset, false, true);
 }

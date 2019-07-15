@@ -1,6 +1,11 @@
 #include "debug.h"
 #include "machine.h"
 
+const auto OSC1_SPEED	= 4000000;
+const auto OSC3_SPEED	= 32768;
+const auto MS_SPEED		= 1000;
+const auto CPU_DIVIDER	= 4;
+
 static const uint8_t bios[0x2000] = {
 	#include "bios.h"
 };
@@ -13,7 +18,11 @@ ProcessorState* const get_machine() {
 
 __attribute__ ((visibility ("default"))) extern "C"
 bool cpu_advance(ProcessorState& cpu, int ticks) {
-	cpu_step(cpu);
+	cpu.clocks += OSC1_SPEED / CPU_DIVIDER / MS_SPEED * ticks;
+
+	while (cpu.clocks > 0) {
+		cpu_step(cpu);
+	}
 
 	return true;
 }

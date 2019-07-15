@@ -151,7 +151,7 @@ def format(cycles, op, *args):
 
         if condition:
             print ("\tif (!(%s)) {" % CONDITIONS[condition])
-            print ("\t\tcpu.clocks += %i;" % skipped)
+            print ("\t\tcpu.clocks -= %i;" % skipped)
             print ("\t\treturn ;")
             print ("\t}")
 
@@ -161,7 +161,7 @@ def format(cycles, op, *args):
             if ind and "Write" in directions[i]:
                 print ("\tcpu_write%s(cpu, data%i, addr%i);" % (size, i, i))
 
-        print ("\tcpu.clocks += %i;" % cycles)
+        print ("\tcpu.clocks -= %i;" % cycles)
         print ("}\n")
         return name
     except:
@@ -169,7 +169,7 @@ def format(cycles, op, *args):
 
         print ("void clock_%s(ProcessorState& cpu) {" % name)
         print ("\t%s(cpu);" % name)
-        print ("\tcpu.clocks += %i;" % cycles)
+        print ("\tcpu.clocks -= %i;" % cycles)
         print ("}\n")
         return "clock_%s" % name
 

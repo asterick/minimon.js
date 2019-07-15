@@ -1,79 +1,79 @@
 void inst_add_a_a(ProcessorState& cpu) {
 	op_add8(cpu, cpu.reg.a, cpu.reg.a);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_add_a_inddix(ProcessorState& cpu) {
 	auto addr1 = calc_indDIX(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_add8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_add_ba_ba(ProcessorState& cpu) {
 	op_add16(cpu, cpu.reg.ba, cpu.reg.ba);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_add_a_b(ProcessorState& cpu) {
 	op_add8(cpu, cpu.reg.a, cpu.reg.b);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_add_a_inddiy(ProcessorState& cpu) {
 	auto addr1 = calc_indDIY(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_add8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_add_ba_hl(ProcessorState& cpu) {
 	op_add16(cpu, cpu.reg.ba, cpu.reg.hl);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_add_a_imm8(ProcessorState& cpu) {
 	uint8_t data1 = cpu_imm8(cpu);
 	op_add8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_add_a_indiix(ProcessorState& cpu) {
 	auto addr1 = calc_indIIX(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_add8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_add_ba_ix(ProcessorState& cpu) {
 	op_add16(cpu, cpu.reg.ba, cpu.reg.ix);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_add_a_abshl(ProcessorState& cpu) {
 	auto addr1 = calc_absHL(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_add8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_add_a_indiiy(ProcessorState& cpu) {
 	auto addr1 = calc_indIIY(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_add8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_add_ba_iy(ProcessorState& cpu) {
 	op_add16(cpu, cpu.reg.ba, cpu.reg.iy);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_add_a_absbr(ProcessorState& cpu) {
 	auto addr1 = calc_absBR(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_add8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_add_abshl_a(ProcessorState& cpu) {
@@ -81,19 +81,19 @@ void inst_add_abshl_a(ProcessorState& cpu) {
 	uint8_t data0 = cpu_read8(cpu, addr0);
 	op_add8(cpu, data0, cpu.reg.a);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_adc_ba_ba(ProcessorState& cpu) {
 	op_adc16(cpu, cpu.reg.ba, cpu.reg.ba);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_add_a_ind16(ProcessorState& cpu) {
 	auto addr1 = calc_ind16(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_add8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_add_abshl_imm8(ProcessorState& cpu) {
@@ -102,19 +102,19 @@ void inst_add_abshl_imm8(ProcessorState& cpu) {
 	uint8_t data1 = cpu_imm8(cpu);
 	op_add8(cpu, data0, data1);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_adc_ba_hl(ProcessorState& cpu) {
 	op_adc16(cpu, cpu.reg.ba, cpu.reg.hl);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_add_a_absix(ProcessorState& cpu) {
 	auto addr1 = calc_absIX(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_add8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_add_abshl_absix(ProcessorState& cpu) {
@@ -124,19 +124,19 @@ void inst_add_abshl_absix(ProcessorState& cpu) {
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_add8(cpu, data0, data1);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_adc_ba_ix(ProcessorState& cpu) {
 	op_adc16(cpu, cpu.reg.ba, cpu.reg.ix);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_add_a_absiy(ProcessorState& cpu) {
 	auto addr1 = calc_absIY(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_add8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_add_abshl_absiy(ProcessorState& cpu) {
@@ -146,90 +146,90 @@ void inst_add_abshl_absiy(ProcessorState& cpu) {
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_add8(cpu, data0, data1);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_adc_ba_iy(ProcessorState& cpu) {
 	op_adc16(cpu, cpu.reg.ba, cpu.reg.iy);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_adc_a_a(ProcessorState& cpu) {
 	op_adc8(cpu, cpu.reg.a, cpu.reg.a);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_adc_a_inddix(ProcessorState& cpu) {
 	auto addr1 = calc_indDIX(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_adc8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_sub_ba_ba(ProcessorState& cpu) {
 	op_sub16(cpu, cpu.reg.ba, cpu.reg.ba);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_adc_a_b(ProcessorState& cpu) {
 	op_adc8(cpu, cpu.reg.a, cpu.reg.b);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_adc_a_inddiy(ProcessorState& cpu) {
 	auto addr1 = calc_indDIY(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_adc8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_sub_ba_hl(ProcessorState& cpu) {
 	op_sub16(cpu, cpu.reg.ba, cpu.reg.hl);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_adc_a_imm8(ProcessorState& cpu) {
 	uint8_t data1 = cpu_imm8(cpu);
 	op_adc8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_adc_a_indiix(ProcessorState& cpu) {
 	auto addr1 = calc_indIIX(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_adc8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_sub_ba_ix(ProcessorState& cpu) {
 	op_sub16(cpu, cpu.reg.ba, cpu.reg.ix);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_adc_a_abshl(ProcessorState& cpu) {
 	auto addr1 = calc_absHL(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_adc8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_adc_a_indiiy(ProcessorState& cpu) {
 	auto addr1 = calc_indIIY(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_adc8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_sub_ba_iy(ProcessorState& cpu) {
 	op_sub16(cpu, cpu.reg.ba, cpu.reg.iy);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_adc_a_absbr(ProcessorState& cpu) {
 	auto addr1 = calc_absBR(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_adc8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_adc_abshl_a(ProcessorState& cpu) {
@@ -237,19 +237,19 @@ void inst_adc_abshl_a(ProcessorState& cpu) {
 	uint8_t data0 = cpu_read8(cpu, addr0);
 	op_adc8(cpu, data0, cpu.reg.a);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_sbc_ba_ba(ProcessorState& cpu) {
 	op_sbc16(cpu, cpu.reg.ba, cpu.reg.ba);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_adc_a_ind16(ProcessorState& cpu) {
 	auto addr1 = calc_ind16(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_adc8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_adc_abshl_imm8(ProcessorState& cpu) {
@@ -258,19 +258,19 @@ void inst_adc_abshl_imm8(ProcessorState& cpu) {
 	uint8_t data1 = cpu_imm8(cpu);
 	op_adc8(cpu, data0, data1);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_sbc_ba_hl(ProcessorState& cpu) {
 	op_sbc16(cpu, cpu.reg.ba, cpu.reg.hl);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_adc_a_absix(ProcessorState& cpu) {
 	auto addr1 = calc_absIX(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_adc8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_adc_abshl_absix(ProcessorState& cpu) {
@@ -280,19 +280,19 @@ void inst_adc_abshl_absix(ProcessorState& cpu) {
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_adc8(cpu, data0, data1);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_sbc_ba_ix(ProcessorState& cpu) {
 	op_sbc16(cpu, cpu.reg.ba, cpu.reg.ix);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_adc_a_absiy(ProcessorState& cpu) {
 	auto addr1 = calc_absIY(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_adc8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_adc_abshl_absiy(ProcessorState& cpu) {
@@ -302,70 +302,70 @@ void inst_adc_abshl_absiy(ProcessorState& cpu) {
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_adc8(cpu, data0, data1);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_sbc_ba_iy(ProcessorState& cpu) {
 	op_sbc16(cpu, cpu.reg.ba, cpu.reg.iy);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_sub_a_a(ProcessorState& cpu) {
 	op_sub8(cpu, cpu.reg.a, cpu.reg.a);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_sub_a_inddix(ProcessorState& cpu) {
 	auto addr1 = calc_indDIX(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_sub8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_sub_a_b(ProcessorState& cpu) {
 	op_sub8(cpu, cpu.reg.a, cpu.reg.b);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_sub_a_inddiy(ProcessorState& cpu) {
 	auto addr1 = calc_indDIY(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_sub8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_sub_a_imm8(ProcessorState& cpu) {
 	uint8_t data1 = cpu_imm8(cpu);
 	op_sub8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_sub_a_indiix(ProcessorState& cpu) {
 	auto addr1 = calc_indIIX(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_sub8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_sub_a_abshl(ProcessorState& cpu) {
 	auto addr1 = calc_absHL(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_sub8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_sub_a_indiiy(ProcessorState& cpu) {
 	auto addr1 = calc_indIIY(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_sub8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_sub_a_absbr(ProcessorState& cpu) {
 	auto addr1 = calc_absBR(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_sub8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_sub_abshl_a(ProcessorState& cpu) {
@@ -373,14 +373,14 @@ void inst_sub_abshl_a(ProcessorState& cpu) {
 	uint8_t data0 = cpu_read8(cpu, addr0);
 	op_sub8(cpu, data0, cpu.reg.a);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_sub_a_ind16(ProcessorState& cpu) {
 	auto addr1 = calc_ind16(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_sub8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_sub_abshl_imm8(ProcessorState& cpu) {
@@ -389,14 +389,14 @@ void inst_sub_abshl_imm8(ProcessorState& cpu) {
 	uint8_t data1 = cpu_imm8(cpu);
 	op_sub8(cpu, data0, data1);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_sub_a_absix(ProcessorState& cpu) {
 	auto addr1 = calc_absIX(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_sub8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_sub_abshl_absix(ProcessorState& cpu) {
@@ -406,14 +406,14 @@ void inst_sub_abshl_absix(ProcessorState& cpu) {
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_sub8(cpu, data0, data1);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_sub_a_absiy(ProcessorState& cpu) {
 	auto addr1 = calc_absIY(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_sub8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_sub_abshl_absiy(ProcessorState& cpu) {
@@ -423,85 +423,85 @@ void inst_sub_abshl_absiy(ProcessorState& cpu) {
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_sub8(cpu, data0, data1);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_sbc_a_a(ProcessorState& cpu) {
 	op_sbc8(cpu, cpu.reg.a, cpu.reg.a);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_sbc_a_inddix(ProcessorState& cpu) {
 	auto addr1 = calc_indDIX(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_sbc8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_cp_ba_ba(ProcessorState& cpu) {
 	op_cp16(cpu, cpu.reg.ba, cpu.reg.ba);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_sbc_a_b(ProcessorState& cpu) {
 	op_sbc8(cpu, cpu.reg.a, cpu.reg.b);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_sbc_a_inddiy(ProcessorState& cpu) {
 	auto addr1 = calc_indDIY(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_sbc8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_cp_ba_hl(ProcessorState& cpu) {
 	op_cp16(cpu, cpu.reg.ba, cpu.reg.hl);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_sbc_a_imm8(ProcessorState& cpu) {
 	uint8_t data1 = cpu_imm8(cpu);
 	op_sbc8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_sbc_a_indiix(ProcessorState& cpu) {
 	auto addr1 = calc_indIIX(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_sbc8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_cp_ba_ix(ProcessorState& cpu) {
 	op_cp16(cpu, cpu.reg.ba, cpu.reg.ix);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_sbc_a_abshl(ProcessorState& cpu) {
 	auto addr1 = calc_absHL(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_sbc8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_sbc_a_indiiy(ProcessorState& cpu) {
 	auto addr1 = calc_indIIY(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_sbc8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_cp_ba_iy(ProcessorState& cpu) {
 	op_cp16(cpu, cpu.reg.ba, cpu.reg.iy);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_sbc_a_absbr(ProcessorState& cpu) {
 	auto addr1 = calc_absBR(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_sbc8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_sbc_abshl_a(ProcessorState& cpu) {
@@ -509,14 +509,14 @@ void inst_sbc_abshl_a(ProcessorState& cpu) {
 	uint8_t data0 = cpu_read8(cpu, addr0);
 	op_sbc8(cpu, data0, cpu.reg.a);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_sbc_a_ind16(ProcessorState& cpu) {
 	auto addr1 = calc_ind16(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_sbc8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_sbc_abshl_imm8(ProcessorState& cpu) {
@@ -525,14 +525,14 @@ void inst_sbc_abshl_imm8(ProcessorState& cpu) {
 	uint8_t data1 = cpu_imm8(cpu);
 	op_sbc8(cpu, data0, data1);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_sbc_a_absix(ProcessorState& cpu) {
 	auto addr1 = calc_absIX(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_sbc8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_sbc_abshl_absix(ProcessorState& cpu) {
@@ -542,14 +542,14 @@ void inst_sbc_abshl_absix(ProcessorState& cpu) {
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_sbc8(cpu, data0, data1);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_sbc_a_absiy(ProcessorState& cpu) {
 	auto addr1 = calc_absIY(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_sbc8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_sbc_abshl_absiy(ProcessorState& cpu) {
@@ -559,85 +559,85 @@ void inst_sbc_abshl_absiy(ProcessorState& cpu) {
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_sbc8(cpu, data0, data1);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_and_a_a(ProcessorState& cpu) {
 	op_and8(cpu, cpu.reg.a, cpu.reg.a);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_and_a_inddix(ProcessorState& cpu) {
 	auto addr1 = calc_indDIX(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_and8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_add_hl_ba(ProcessorState& cpu) {
 	op_add16(cpu, cpu.reg.hl, cpu.reg.ba);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_and_a_b(ProcessorState& cpu) {
 	op_and8(cpu, cpu.reg.a, cpu.reg.b);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_and_a_inddiy(ProcessorState& cpu) {
 	auto addr1 = calc_indDIY(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_and8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_add_hl_hl(ProcessorState& cpu) {
 	op_add16(cpu, cpu.reg.hl, cpu.reg.hl);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_and_a_imm8(ProcessorState& cpu) {
 	uint8_t data1 = cpu_imm8(cpu);
 	op_and8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_and_a_indiix(ProcessorState& cpu) {
 	auto addr1 = calc_indIIX(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_and8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_add_hl_ix(ProcessorState& cpu) {
 	op_add16(cpu, cpu.reg.hl, cpu.reg.ix);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_and_a_abshl(ProcessorState& cpu) {
 	auto addr1 = calc_absHL(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_and8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_and_a_indiiy(ProcessorState& cpu) {
 	auto addr1 = calc_indIIY(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_and8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_add_hl_iy(ProcessorState& cpu) {
 	op_add16(cpu, cpu.reg.hl, cpu.reg.iy);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_and_a_absbr(ProcessorState& cpu) {
 	auto addr1 = calc_absBR(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_and8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_and_abshl_a(ProcessorState& cpu) {
@@ -645,19 +645,19 @@ void inst_and_abshl_a(ProcessorState& cpu) {
 	uint8_t data0 = cpu_read8(cpu, addr0);
 	op_and8(cpu, data0, cpu.reg.a);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_adc_hl_ba(ProcessorState& cpu) {
 	op_adc16(cpu, cpu.reg.hl, cpu.reg.ba);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_and_a_ind16(ProcessorState& cpu) {
 	auto addr1 = calc_ind16(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_and8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_and_abshl_imm8(ProcessorState& cpu) {
@@ -666,19 +666,19 @@ void inst_and_abshl_imm8(ProcessorState& cpu) {
 	uint8_t data1 = cpu_imm8(cpu);
 	op_and8(cpu, data0, data1);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_adc_hl_hl(ProcessorState& cpu) {
 	op_adc16(cpu, cpu.reg.hl, cpu.reg.hl);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_and_a_absix(ProcessorState& cpu) {
 	auto addr1 = calc_absIX(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_and8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_and_abshl_absix(ProcessorState& cpu) {
@@ -688,19 +688,19 @@ void inst_and_abshl_absix(ProcessorState& cpu) {
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_and8(cpu, data0, data1);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_adc_hl_ix(ProcessorState& cpu) {
 	op_adc16(cpu, cpu.reg.hl, cpu.reg.ix);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_and_a_absiy(ProcessorState& cpu) {
 	auto addr1 = calc_absIY(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_and8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_and_abshl_absiy(ProcessorState& cpu) {
@@ -710,90 +710,90 @@ void inst_and_abshl_absiy(ProcessorState& cpu) {
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_and8(cpu, data0, data1);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_adc_hl_iy(ProcessorState& cpu) {
 	op_adc16(cpu, cpu.reg.hl, cpu.reg.iy);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_or_a_a(ProcessorState& cpu) {
 	op_or8(cpu, cpu.reg.a, cpu.reg.a);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_or_a_inddix(ProcessorState& cpu) {
 	auto addr1 = calc_indDIX(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_or8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_sub_hl_ba(ProcessorState& cpu) {
 	op_sub16(cpu, cpu.reg.hl, cpu.reg.ba);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_or_a_b(ProcessorState& cpu) {
 	op_or8(cpu, cpu.reg.a, cpu.reg.b);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_or_a_inddiy(ProcessorState& cpu) {
 	auto addr1 = calc_indDIY(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_or8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_sub_hl_hl(ProcessorState& cpu) {
 	op_sub16(cpu, cpu.reg.hl, cpu.reg.hl);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_or_a_imm8(ProcessorState& cpu) {
 	uint8_t data1 = cpu_imm8(cpu);
 	op_or8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_or_a_indiix(ProcessorState& cpu) {
 	auto addr1 = calc_indIIX(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_or8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_sub_hl_ix(ProcessorState& cpu) {
 	op_sub16(cpu, cpu.reg.hl, cpu.reg.ix);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_or_a_abshl(ProcessorState& cpu) {
 	auto addr1 = calc_absHL(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_or8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_or_a_indiiy(ProcessorState& cpu) {
 	auto addr1 = calc_indIIY(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_or8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_sub_hl_iy(ProcessorState& cpu) {
 	op_sub16(cpu, cpu.reg.hl, cpu.reg.iy);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_or_a_absbr(ProcessorState& cpu) {
 	auto addr1 = calc_absBR(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_or8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_or_abshl_a(ProcessorState& cpu) {
@@ -801,19 +801,19 @@ void inst_or_abshl_a(ProcessorState& cpu) {
 	uint8_t data0 = cpu_read8(cpu, addr0);
 	op_or8(cpu, data0, cpu.reg.a);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_sbc_hl_ba(ProcessorState& cpu) {
 	op_sbc16(cpu, cpu.reg.hl, cpu.reg.ba);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_or_a_ind16(ProcessorState& cpu) {
 	auto addr1 = calc_ind16(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_or8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_or_abshl_imm8(ProcessorState& cpu) {
@@ -822,19 +822,19 @@ void inst_or_abshl_imm8(ProcessorState& cpu) {
 	uint8_t data1 = cpu_imm8(cpu);
 	op_or8(cpu, data0, data1);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_sbc_hl_hl(ProcessorState& cpu) {
 	op_sbc16(cpu, cpu.reg.hl, cpu.reg.hl);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_or_a_absix(ProcessorState& cpu) {
 	auto addr1 = calc_absIX(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_or8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_or_abshl_absix(ProcessorState& cpu) {
@@ -844,19 +844,19 @@ void inst_or_abshl_absix(ProcessorState& cpu) {
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_or8(cpu, data0, data1);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_sbc_hl_ix(ProcessorState& cpu) {
 	op_sbc16(cpu, cpu.reg.hl, cpu.reg.ix);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_or_a_absiy(ProcessorState& cpu) {
 	auto addr1 = calc_absIY(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_or8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_or_abshl_absiy(ProcessorState& cpu) {
@@ -866,84 +866,84 @@ void inst_or_abshl_absiy(ProcessorState& cpu) {
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_or8(cpu, data0, data1);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_sbc_hl_iy(ProcessorState& cpu) {
 	op_sbc16(cpu, cpu.reg.hl, cpu.reg.iy);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_cp_a_a(ProcessorState& cpu) {
 	op_cp8(cpu, cpu.reg.a, cpu.reg.a);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_cp_a_inddix(ProcessorState& cpu) {
 	auto addr1 = calc_indDIX(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_cp8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_cp_a_b(ProcessorState& cpu) {
 	op_cp8(cpu, cpu.reg.a, cpu.reg.b);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_cp_a_inddiy(ProcessorState& cpu) {
 	auto addr1 = calc_indDIY(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_cp8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_cp_a_imm8(ProcessorState& cpu) {
 	uint8_t data1 = cpu_imm8(cpu);
 	op_cp8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_cp_a_indiix(ProcessorState& cpu) {
 	auto addr1 = calc_indIIX(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_cp8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_cp_a_abshl(ProcessorState& cpu) {
 	auto addr1 = calc_absHL(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_cp8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_cp_a_indiiy(ProcessorState& cpu) {
 	auto addr1 = calc_indIIY(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_cp8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_cp_a_absbr(ProcessorState& cpu) {
 	auto addr1 = calc_absBR(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_cp8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_cp_abshl_a(ProcessorState& cpu) {
 	auto addr0 = calc_absHL(cpu);
 	uint8_t data0 = cpu_read8(cpu, addr0);
 	op_cp8(cpu, data0, cpu.reg.a);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_cp_a_ind16(ProcessorState& cpu) {
 	auto addr1 = calc_ind16(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_cp8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_cp_abshl_imm8(ProcessorState& cpu) {
@@ -951,14 +951,14 @@ void inst_cp_abshl_imm8(ProcessorState& cpu) {
 	uint8_t data0 = cpu_read8(cpu, addr0);
 	uint8_t data1 = cpu_imm8(cpu);
 	op_cp8(cpu, data0, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_cp_a_absix(ProcessorState& cpu) {
 	auto addr1 = calc_absIX(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_cp8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_cp_abshl_absix(ProcessorState& cpu) {
@@ -967,14 +967,14 @@ void inst_cp_abshl_absix(ProcessorState& cpu) {
 	auto addr1 = calc_absIX(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_cp8(cpu, data0, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_cp_a_absiy(ProcessorState& cpu) {
 	auto addr1 = calc_absIY(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_cp8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_cp_abshl_absiy(ProcessorState& cpu) {
@@ -983,85 +983,85 @@ void inst_cp_abshl_absiy(ProcessorState& cpu) {
 	auto addr1 = calc_absIY(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_cp8(cpu, data0, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_xor_a_a(ProcessorState& cpu) {
 	op_xor8(cpu, cpu.reg.a, cpu.reg.a);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_xor_a_inddix(ProcessorState& cpu) {
 	auto addr1 = calc_indDIX(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_xor8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_cp_hl_ba(ProcessorState& cpu) {
 	op_cp16(cpu, cpu.reg.hl, cpu.reg.ba);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_xor_a_b(ProcessorState& cpu) {
 	op_xor8(cpu, cpu.reg.a, cpu.reg.b);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_xor_a_inddiy(ProcessorState& cpu) {
 	auto addr1 = calc_indDIY(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_xor8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_cp_hl_hl(ProcessorState& cpu) {
 	op_cp16(cpu, cpu.reg.hl, cpu.reg.hl);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_xor_a_imm8(ProcessorState& cpu) {
 	uint8_t data1 = cpu_imm8(cpu);
 	op_xor8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_xor_a_indiix(ProcessorState& cpu) {
 	auto addr1 = calc_indIIX(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_xor8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_cp_hl_ix(ProcessorState& cpu) {
 	op_cp16(cpu, cpu.reg.hl, cpu.reg.ix);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_xor_a_abshl(ProcessorState& cpu) {
 	auto addr1 = calc_absHL(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_xor8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_xor_a_indiiy(ProcessorState& cpu) {
 	auto addr1 = calc_indIIY(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_xor8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_cp_hl_iy(ProcessorState& cpu) {
 	op_cp16(cpu, cpu.reg.hl, cpu.reg.iy);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_xor_a_absbr(ProcessorState& cpu) {
 	auto addr1 = calc_absBR(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_xor8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_xor_abshl_a(ProcessorState& cpu) {
@@ -1069,14 +1069,14 @@ void inst_xor_abshl_a(ProcessorState& cpu) {
 	uint8_t data0 = cpu_read8(cpu, addr0);
 	op_xor8(cpu, data0, cpu.reg.a);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_xor_a_ind16(ProcessorState& cpu) {
 	auto addr1 = calc_ind16(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_xor8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_xor_abshl_imm8(ProcessorState& cpu) {
@@ -1085,14 +1085,14 @@ void inst_xor_abshl_imm8(ProcessorState& cpu) {
 	uint8_t data1 = cpu_imm8(cpu);
 	op_xor8(cpu, data0, data1);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_xor_a_absix(ProcessorState& cpu) {
 	auto addr1 = calc_absIX(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_xor8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_xor_abshl_absix(ProcessorState& cpu) {
@@ -1102,14 +1102,14 @@ void inst_xor_abshl_absix(ProcessorState& cpu) {
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_xor8(cpu, data0, data1);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_xor_a_absiy(ProcessorState& cpu) {
 	auto addr1 = calc_absIY(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_xor8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_xor_abshl_absiy(ProcessorState& cpu) {
@@ -1119,82 +1119,82 @@ void inst_xor_abshl_absiy(ProcessorState& cpu) {
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_xor8(cpu, data0, data1);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_ld_a_a(ProcessorState& cpu) {
 	op_ld8(cpu, cpu.reg.a, cpu.reg.a);
-	cpu.clocks += 1;
+	cpu.clocks -= 1;
 }
 
 void inst_ld_a_inddix(ProcessorState& cpu) {
 	auto addr1 = calc_indDIX(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_add_ix_ba(ProcessorState& cpu) {
 	op_add16(cpu, cpu.reg.ix, cpu.reg.ba);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_ld_a_b(ProcessorState& cpu) {
 	op_ld8(cpu, cpu.reg.a, cpu.reg.b);
-	cpu.clocks += 1;
+	cpu.clocks -= 1;
 }
 
 void inst_ld_a_inddiy(ProcessorState& cpu) {
 	auto addr1 = calc_indDIY(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_add_ix_hl(ProcessorState& cpu) {
 	op_add16(cpu, cpu.reg.ix, cpu.reg.hl);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_ld_a_l(ProcessorState& cpu) {
 	op_ld8(cpu, cpu.reg.a, cpu.reg.l);
-	cpu.clocks += 1;
+	cpu.clocks -= 1;
 }
 
 void inst_ld_a_indiix(ProcessorState& cpu) {
 	auto addr1 = calc_indIIX(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_add_iy_ba(ProcessorState& cpu) {
 	op_add16(cpu, cpu.reg.iy, cpu.reg.ba);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_ld_a_h(ProcessorState& cpu) {
 	op_ld8(cpu, cpu.reg.a, cpu.reg.h);
-	cpu.clocks += 1;
+	cpu.clocks -= 1;
 }
 
 void inst_ld_a_indiiy(ProcessorState& cpu) {
 	auto addr1 = calc_indIIY(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_add_iy_hl(ProcessorState& cpu) {
 	op_add16(cpu, cpu.reg.iy, cpu.reg.hl);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_ld_a_absbr(ProcessorState& cpu) {
 	auto addr1 = calc_absBR(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_inddix_a(ProcessorState& cpu) {
@@ -1202,19 +1202,19 @@ void inst_ld_inddix_a(ProcessorState& cpu) {
 	uint8_t data0;
 	op_ld8(cpu, data0, cpu.reg.a);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_add_sp_ba(ProcessorState& cpu) {
 	op_add16(cpu, cpu.reg.sp, cpu.reg.ba);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_ld_a_abshl(ProcessorState& cpu) {
 	auto addr1 = calc_absHL(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_ld_inddiy_a(ProcessorState& cpu) {
@@ -1222,19 +1222,19 @@ void inst_ld_inddiy_a(ProcessorState& cpu) {
 	uint8_t data0;
 	op_ld8(cpu, data0, cpu.reg.a);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_add_sp_hl(ProcessorState& cpu) {
 	op_add16(cpu, cpu.reg.sp, cpu.reg.hl);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_ld_a_absix(ProcessorState& cpu) {
 	auto addr1 = calc_absIX(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_ld_indiix_a(ProcessorState& cpu) {
@@ -1242,14 +1242,14 @@ void inst_ld_indiix_a(ProcessorState& cpu) {
 	uint8_t data0;
 	op_ld8(cpu, data0, cpu.reg.a);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_ld_a_absiy(ProcessorState& cpu) {
 	auto addr1 = calc_absIY(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_ld_indiiy_a(ProcessorState& cpu) {
@@ -1257,82 +1257,82 @@ void inst_ld_indiiy_a(ProcessorState& cpu) {
 	uint8_t data0;
 	op_ld8(cpu, data0, cpu.reg.a);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_ld_b_a(ProcessorState& cpu) {
 	op_ld8(cpu, cpu.reg.b, cpu.reg.a);
-	cpu.clocks += 1;
+	cpu.clocks -= 1;
 }
 
 void inst_ld_b_inddix(ProcessorState& cpu) {
 	auto addr1 = calc_indDIX(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, cpu.reg.b, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_sub_ix_ba(ProcessorState& cpu) {
 	op_sub16(cpu, cpu.reg.ix, cpu.reg.ba);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_ld_b_b(ProcessorState& cpu) {
 	op_ld8(cpu, cpu.reg.b, cpu.reg.b);
-	cpu.clocks += 1;
+	cpu.clocks -= 1;
 }
 
 void inst_ld_b_inddiy(ProcessorState& cpu) {
 	auto addr1 = calc_indDIY(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, cpu.reg.b, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_sub_ix_hl(ProcessorState& cpu) {
 	op_sub16(cpu, cpu.reg.ix, cpu.reg.hl);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_ld_b_l(ProcessorState& cpu) {
 	op_ld8(cpu, cpu.reg.b, cpu.reg.l);
-	cpu.clocks += 1;
+	cpu.clocks -= 1;
 }
 
 void inst_ld_b_indiix(ProcessorState& cpu) {
 	auto addr1 = calc_indIIX(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, cpu.reg.b, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_sub_iy_ba(ProcessorState& cpu) {
 	op_sub16(cpu, cpu.reg.iy, cpu.reg.ba);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_ld_b_h(ProcessorState& cpu) {
 	op_ld8(cpu, cpu.reg.b, cpu.reg.h);
-	cpu.clocks += 1;
+	cpu.clocks -= 1;
 }
 
 void inst_ld_b_indiiy(ProcessorState& cpu) {
 	auto addr1 = calc_indIIY(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, cpu.reg.b, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_sub_iy_hl(ProcessorState& cpu) {
 	op_sub16(cpu, cpu.reg.iy, cpu.reg.hl);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_ld_b_absbr(ProcessorState& cpu) {
 	auto addr1 = calc_absBR(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, cpu.reg.b, data1);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_inddix_b(ProcessorState& cpu) {
@@ -1340,19 +1340,19 @@ void inst_ld_inddix_b(ProcessorState& cpu) {
 	uint8_t data0;
 	op_ld8(cpu, data0, cpu.reg.b);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_sub_sp_ba(ProcessorState& cpu) {
 	op_sub16(cpu, cpu.reg.sp, cpu.reg.ba);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_ld_b_abshl(ProcessorState& cpu) {
 	auto addr1 = calc_absHL(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, cpu.reg.b, data1);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_ld_inddiy_b(ProcessorState& cpu) {
@@ -1360,19 +1360,19 @@ void inst_ld_inddiy_b(ProcessorState& cpu) {
 	uint8_t data0;
 	op_ld8(cpu, data0, cpu.reg.b);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_sub_sp_hl(ProcessorState& cpu) {
 	op_sub16(cpu, cpu.reg.sp, cpu.reg.hl);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_ld_b_absix(ProcessorState& cpu) {
 	auto addr1 = calc_absIX(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, cpu.reg.b, data1);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_ld_indiix_b(ProcessorState& cpu) {
@@ -1380,14 +1380,14 @@ void inst_ld_indiix_b(ProcessorState& cpu) {
 	uint8_t data0;
 	op_ld8(cpu, data0, cpu.reg.b);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_ld_b_absiy(ProcessorState& cpu) {
 	auto addr1 = calc_absIY(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, cpu.reg.b, data1);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_ld_indiiy_b(ProcessorState& cpu) {
@@ -1395,62 +1395,62 @@ void inst_ld_indiiy_b(ProcessorState& cpu) {
 	uint8_t data0;
 	op_ld8(cpu, data0, cpu.reg.b);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_ld_l_a(ProcessorState& cpu) {
 	op_ld8(cpu, cpu.reg.l, cpu.reg.a);
-	cpu.clocks += 1;
+	cpu.clocks -= 1;
 }
 
 void inst_ld_l_inddix(ProcessorState& cpu) {
 	auto addr1 = calc_indDIX(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, cpu.reg.l, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_ld_l_b(ProcessorState& cpu) {
 	op_ld8(cpu, cpu.reg.l, cpu.reg.b);
-	cpu.clocks += 1;
+	cpu.clocks -= 1;
 }
 
 void inst_ld_l_inddiy(ProcessorState& cpu) {
 	auto addr1 = calc_indDIY(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, cpu.reg.l, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_ld_l_l(ProcessorState& cpu) {
 	op_ld8(cpu, cpu.reg.l, cpu.reg.l);
-	cpu.clocks += 1;
+	cpu.clocks -= 1;
 }
 
 void inst_ld_l_indiix(ProcessorState& cpu) {
 	auto addr1 = calc_indIIX(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, cpu.reg.l, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_ld_l_h(ProcessorState& cpu) {
 	op_ld8(cpu, cpu.reg.l, cpu.reg.h);
-	cpu.clocks += 1;
+	cpu.clocks -= 1;
 }
 
 void inst_ld_l_indiiy(ProcessorState& cpu) {
 	auto addr1 = calc_indIIY(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, cpu.reg.l, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_ld_l_absbr(ProcessorState& cpu) {
 	auto addr1 = calc_absBR(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, cpu.reg.l, data1);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_inddix_l(ProcessorState& cpu) {
@@ -1458,14 +1458,14 @@ void inst_ld_inddix_l(ProcessorState& cpu) {
 	uint8_t data0;
 	op_ld8(cpu, data0, cpu.reg.l);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_ld_l_abshl(ProcessorState& cpu) {
 	auto addr1 = calc_absHL(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, cpu.reg.l, data1);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_ld_inddiy_l(ProcessorState& cpu) {
@@ -1473,14 +1473,14 @@ void inst_ld_inddiy_l(ProcessorState& cpu) {
 	uint8_t data0;
 	op_ld8(cpu, data0, cpu.reg.l);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_ld_l_absix(ProcessorState& cpu) {
 	auto addr1 = calc_absIX(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, cpu.reg.l, data1);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_ld_indiix_l(ProcessorState& cpu) {
@@ -1488,14 +1488,14 @@ void inst_ld_indiix_l(ProcessorState& cpu) {
 	uint8_t data0;
 	op_ld8(cpu, data0, cpu.reg.l);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_ld_l_absiy(ProcessorState& cpu) {
 	auto addr1 = calc_absIY(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, cpu.reg.l, data1);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_ld_indiiy_l(ProcessorState& cpu) {
@@ -1503,62 +1503,62 @@ void inst_ld_indiiy_l(ProcessorState& cpu) {
 	uint8_t data0;
 	op_ld8(cpu, data0, cpu.reg.l);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_ld_h_a(ProcessorState& cpu) {
 	op_ld8(cpu, cpu.reg.h, cpu.reg.a);
-	cpu.clocks += 1;
+	cpu.clocks -= 1;
 }
 
 void inst_ld_h_inddix(ProcessorState& cpu) {
 	auto addr1 = calc_indDIX(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, cpu.reg.h, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_ld_h_b(ProcessorState& cpu) {
 	op_ld8(cpu, cpu.reg.h, cpu.reg.b);
-	cpu.clocks += 1;
+	cpu.clocks -= 1;
 }
 
 void inst_ld_h_inddiy(ProcessorState& cpu) {
 	auto addr1 = calc_indDIY(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, cpu.reg.h, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_ld_h_l(ProcessorState& cpu) {
 	op_ld8(cpu, cpu.reg.h, cpu.reg.l);
-	cpu.clocks += 1;
+	cpu.clocks -= 1;
 }
 
 void inst_ld_h_indiix(ProcessorState& cpu) {
 	auto addr1 = calc_indIIX(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, cpu.reg.h, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_ld_h_h(ProcessorState& cpu) {
 	op_ld8(cpu, cpu.reg.h, cpu.reg.h);
-	cpu.clocks += 1;
+	cpu.clocks -= 1;
 }
 
 void inst_ld_h_indiiy(ProcessorState& cpu) {
 	auto addr1 = calc_indIIY(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, cpu.reg.h, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_ld_h_absbr(ProcessorState& cpu) {
 	auto addr1 = calc_absBR(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, cpu.reg.h, data1);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_inddix_h(ProcessorState& cpu) {
@@ -1566,19 +1566,19 @@ void inst_ld_inddix_h(ProcessorState& cpu) {
 	uint8_t data0;
 	op_ld8(cpu, data0, cpu.reg.h);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_cp_sp_ba(ProcessorState& cpu) {
 	op_cp16(cpu, cpu.reg.sp, cpu.reg.ba);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_ld_h_abshl(ProcessorState& cpu) {
 	auto addr1 = calc_absHL(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, cpu.reg.h, data1);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_ld_inddiy_h(ProcessorState& cpu) {
@@ -1586,19 +1586,19 @@ void inst_ld_inddiy_h(ProcessorState& cpu) {
 	uint8_t data0;
 	op_ld8(cpu, data0, cpu.reg.h);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_cp_sp_hl(ProcessorState& cpu) {
 	op_cp16(cpu, cpu.reg.sp, cpu.reg.hl);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_ld_h_absix(ProcessorState& cpu) {
 	auto addr1 = calc_absIX(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, cpu.reg.h, data1);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_ld_indiix_h(ProcessorState& cpu) {
@@ -1606,14 +1606,14 @@ void inst_ld_indiix_h(ProcessorState& cpu) {
 	uint8_t data0;
 	op_ld8(cpu, data0, cpu.reg.h);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_ld_h_absiy(ProcessorState& cpu) {
 	auto addr1 = calc_absIY(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, cpu.reg.h, data1);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_ld_indiiy_h(ProcessorState& cpu) {
@@ -1621,7 +1621,7 @@ void inst_ld_indiiy_h(ProcessorState& cpu) {
 	uint8_t data0;
 	op_ld8(cpu, data0, cpu.reg.h);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_ld_absix_a(ProcessorState& cpu) {
@@ -1629,7 +1629,7 @@ void inst_ld_absix_a(ProcessorState& cpu) {
 	uint8_t data0;
 	op_ld8(cpu, data0, cpu.reg.a);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_ld_abshl_inddix(ProcessorState& cpu) {
@@ -1639,13 +1639,13 @@ void inst_ld_abshl_inddix(ProcessorState& cpu) {
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, data0, data1);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_adc_ba_imm16(ProcessorState& cpu) {
 	uint16_t data1 = cpu_imm16(cpu);
 	op_adc16(cpu, cpu.reg.ba, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_ld_absix_b(ProcessorState& cpu) {
@@ -1653,7 +1653,7 @@ void inst_ld_absix_b(ProcessorState& cpu) {
 	uint8_t data0;
 	op_ld8(cpu, data0, cpu.reg.b);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_ld_abshl_inddiy(ProcessorState& cpu) {
@@ -1663,13 +1663,13 @@ void inst_ld_abshl_inddiy(ProcessorState& cpu) {
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, data0, data1);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_adc_hl_imm16(ProcessorState& cpu) {
 	uint16_t data1 = cpu_imm16(cpu);
 	op_adc16(cpu, cpu.reg.hl, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_ld_absix_l(ProcessorState& cpu) {
@@ -1677,7 +1677,7 @@ void inst_ld_absix_l(ProcessorState& cpu) {
 	uint8_t data0;
 	op_ld8(cpu, data0, cpu.reg.l);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_ld_abshl_indiix(ProcessorState& cpu) {
@@ -1687,13 +1687,13 @@ void inst_ld_abshl_indiix(ProcessorState& cpu) {
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, data0, data1);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_sbc_ba_imm16(ProcessorState& cpu) {
 	uint16_t data1 = cpu_imm16(cpu);
 	op_sbc16(cpu, cpu.reg.ba, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_ld_absix_h(ProcessorState& cpu) {
@@ -1701,7 +1701,7 @@ void inst_ld_absix_h(ProcessorState& cpu) {
 	uint8_t data0;
 	op_ld8(cpu, data0, cpu.reg.h);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_ld_abshl_indiiy(ProcessorState& cpu) {
@@ -1711,13 +1711,13 @@ void inst_ld_abshl_indiiy(ProcessorState& cpu) {
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, data0, data1);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_sbc_hl_imm16(ProcessorState& cpu) {
 	uint16_t data1 = cpu_imm16(cpu);
 	op_sbc16(cpu, cpu.reg.hl, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_ld_absix_absbr(ProcessorState& cpu) {
@@ -1727,7 +1727,7 @@ void inst_ld_absix_absbr(ProcessorState& cpu) {
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, data0, data1);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_ld_absix_abshl(ProcessorState& cpu) {
@@ -1737,7 +1737,7 @@ void inst_ld_absix_abshl(ProcessorState& cpu) {
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, data0, data1);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_absix_absix(ProcessorState& cpu) {
@@ -1747,7 +1747,7 @@ void inst_ld_absix_absix(ProcessorState& cpu) {
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, data0, data1);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_absix_absiy(ProcessorState& cpu) {
@@ -1757,7 +1757,7 @@ void inst_ld_absix_absiy(ProcessorState& cpu) {
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, data0, data1);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_abshl_a(ProcessorState& cpu) {
@@ -1765,7 +1765,7 @@ void inst_ld_abshl_a(ProcessorState& cpu) {
 	uint8_t data0;
 	op_ld8(cpu, data0, cpu.reg.a);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_ld_absix_inddix(ProcessorState& cpu) {
@@ -1775,13 +1775,13 @@ void inst_ld_absix_inddix(ProcessorState& cpu) {
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, data0, data1);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_add_sp_imm16(ProcessorState& cpu) {
 	uint16_t data1 = cpu_imm16(cpu);
 	op_add16(cpu, cpu.reg.sp, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_ld_abshl_b(ProcessorState& cpu) {
@@ -1789,7 +1789,7 @@ void inst_ld_abshl_b(ProcessorState& cpu) {
 	uint8_t data0;
 	op_ld8(cpu, data0, cpu.reg.b);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_ld_absix_inddiy(ProcessorState& cpu) {
@@ -1799,7 +1799,7 @@ void inst_ld_absix_inddiy(ProcessorState& cpu) {
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, data0, data1);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_ld_abshl_l(ProcessorState& cpu) {
@@ -1807,7 +1807,7 @@ void inst_ld_abshl_l(ProcessorState& cpu) {
 	uint8_t data0;
 	op_ld8(cpu, data0, cpu.reg.l);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_ld_absix_indiix(ProcessorState& cpu) {
@@ -1817,13 +1817,13 @@ void inst_ld_absix_indiix(ProcessorState& cpu) {
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, data0, data1);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_sub_sp_imm16(ProcessorState& cpu) {
 	uint16_t data1 = cpu_imm16(cpu);
 	op_sub16(cpu, cpu.reg.sp, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_ld_abshl_h(ProcessorState& cpu) {
@@ -1831,7 +1831,7 @@ void inst_ld_abshl_h(ProcessorState& cpu) {
 	uint8_t data0;
 	op_ld8(cpu, data0, cpu.reg.h);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_ld_absix_indiiy(ProcessorState& cpu) {
@@ -1841,7 +1841,7 @@ void inst_ld_absix_indiiy(ProcessorState& cpu) {
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, data0, data1);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_ld_abshl_absbr(ProcessorState& cpu) {
@@ -1851,13 +1851,13 @@ void inst_ld_abshl_absbr(ProcessorState& cpu) {
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, data0, data1);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_cp_sp_imm16(ProcessorState& cpu) {
 	uint16_t data1 = cpu_imm16(cpu);
 	op_cp16(cpu, cpu.reg.sp, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_ld_abshl_abshl(ProcessorState& cpu) {
@@ -1867,7 +1867,7 @@ void inst_ld_abshl_abshl(ProcessorState& cpu) {
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, data0, data1);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_abshl_absix(ProcessorState& cpu) {
@@ -1877,13 +1877,13 @@ void inst_ld_abshl_absix(ProcessorState& cpu) {
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, data0, data1);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_sp_imm16(ProcessorState& cpu) {
 	uint16_t data1 = cpu_imm16(cpu);
 	op_ld16(cpu, cpu.reg.sp, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_ld_abshl_absiy(ProcessorState& cpu) {
@@ -1893,7 +1893,7 @@ void inst_ld_abshl_absiy(ProcessorState& cpu) {
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, data0, data1);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_absiy_a(ProcessorState& cpu) {
@@ -1901,14 +1901,14 @@ void inst_ld_absiy_a(ProcessorState& cpu) {
 	uint8_t data0;
 	op_ld8(cpu, data0, cpu.reg.a);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_ld_ba_inddsp(ProcessorState& cpu) {
 	auto addr1 = calc_indDSP(cpu);
 	uint16_t data1 = cpu_read16(cpu, addr1);
 	op_ld16(cpu, cpu.reg.ba, data1);
-	cpu.clocks += 6;
+	cpu.clocks -= 6;
 }
 
 void inst_ld_absiy_b(ProcessorState& cpu) {
@@ -1916,14 +1916,14 @@ void inst_ld_absiy_b(ProcessorState& cpu) {
 	uint8_t data0;
 	op_ld8(cpu, data0, cpu.reg.b);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_ld_hl_inddsp(ProcessorState& cpu) {
 	auto addr1 = calc_indDSP(cpu);
 	uint16_t data1 = cpu_read16(cpu, addr1);
 	op_ld16(cpu, cpu.reg.hl, data1);
-	cpu.clocks += 6;
+	cpu.clocks -= 6;
 }
 
 void inst_ld_absiy_l(ProcessorState& cpu) {
@@ -1931,14 +1931,14 @@ void inst_ld_absiy_l(ProcessorState& cpu) {
 	uint8_t data0;
 	op_ld8(cpu, data0, cpu.reg.l);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_ld_ix_inddsp(ProcessorState& cpu) {
 	auto addr1 = calc_indDSP(cpu);
 	uint16_t data1 = cpu_read16(cpu, addr1);
 	op_ld16(cpu, cpu.reg.ix, data1);
-	cpu.clocks += 6;
+	cpu.clocks -= 6;
 }
 
 void inst_ld_absiy_h(ProcessorState& cpu) {
@@ -1946,14 +1946,14 @@ void inst_ld_absiy_h(ProcessorState& cpu) {
 	uint8_t data0;
 	op_ld8(cpu, data0, cpu.reg.h);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_ld_iy_inddsp(ProcessorState& cpu) {
 	auto addr1 = calc_indDSP(cpu);
 	uint16_t data1 = cpu_read16(cpu, addr1);
 	op_ld16(cpu, cpu.reg.iy, data1);
-	cpu.clocks += 6;
+	cpu.clocks -= 6;
 }
 
 void inst_ld_absiy_absbr(ProcessorState& cpu) {
@@ -1963,7 +1963,7 @@ void inst_ld_absiy_absbr(ProcessorState& cpu) {
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, data0, data1);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_ld_inddsp_ba(ProcessorState& cpu) {
@@ -1971,7 +1971,7 @@ void inst_ld_inddsp_ba(ProcessorState& cpu) {
 	uint16_t data0;
 	op_ld16(cpu, data0, cpu.reg.ba);
 	cpu_write16(cpu, data0, addr0);
-	cpu.clocks += 6;
+	cpu.clocks -= 6;
 }
 
 void inst_ld_absiy_abshl(ProcessorState& cpu) {
@@ -1981,7 +1981,7 @@ void inst_ld_absiy_abshl(ProcessorState& cpu) {
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, data0, data1);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_inddsp_hl(ProcessorState& cpu) {
@@ -1989,7 +1989,7 @@ void inst_ld_inddsp_hl(ProcessorState& cpu) {
 	uint16_t data0;
 	op_ld16(cpu, data0, cpu.reg.hl);
 	cpu_write16(cpu, data0, addr0);
-	cpu.clocks += 6;
+	cpu.clocks -= 6;
 }
 
 void inst_ld_absiy_absix(ProcessorState& cpu) {
@@ -1999,7 +1999,7 @@ void inst_ld_absiy_absix(ProcessorState& cpu) {
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, data0, data1);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_inddsp_ix(ProcessorState& cpu) {
@@ -2007,7 +2007,7 @@ void inst_ld_inddsp_ix(ProcessorState& cpu) {
 	uint16_t data0;
 	op_ld16(cpu, data0, cpu.reg.ix);
 	cpu_write16(cpu, data0, addr0);
-	cpu.clocks += 6;
+	cpu.clocks -= 6;
 }
 
 void inst_ld_absiy_absiy(ProcessorState& cpu) {
@@ -2017,7 +2017,7 @@ void inst_ld_absiy_absiy(ProcessorState& cpu) {
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, data0, data1);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_inddsp_iy(ProcessorState& cpu) {
@@ -2025,7 +2025,7 @@ void inst_ld_inddsp_iy(ProcessorState& cpu) {
 	uint16_t data0;
 	op_ld16(cpu, data0, cpu.reg.iy);
 	cpu_write16(cpu, data0, addr0);
-	cpu.clocks += 6;
+	cpu.clocks -= 6;
 }
 
 void inst_ld_absbr_a(ProcessorState& cpu) {
@@ -2033,7 +2033,7 @@ void inst_ld_absbr_a(ProcessorState& cpu) {
 	uint8_t data0;
 	op_ld8(cpu, data0, cpu.reg.a);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_absiy_inddix(ProcessorState& cpu) {
@@ -2043,14 +2043,14 @@ void inst_ld_absiy_inddix(ProcessorState& cpu) {
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, data0, data1);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_ld_sp_ind16(ProcessorState& cpu) {
 	auto addr1 = calc_ind16(cpu);
 	uint16_t data1 = cpu_read16(cpu, addr1);
 	op_ld16(cpu, cpu.reg.sp, data1);
-	cpu.clocks += 6;
+	cpu.clocks -= 6;
 }
 
 void inst_ld_absbr_b(ProcessorState& cpu) {
@@ -2058,7 +2058,7 @@ void inst_ld_absbr_b(ProcessorState& cpu) {
 	uint8_t data0;
 	op_ld8(cpu, data0, cpu.reg.b);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_absiy_inddiy(ProcessorState& cpu) {
@@ -2068,7 +2068,7 @@ void inst_ld_absiy_inddiy(ProcessorState& cpu) {
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, data0, data1);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_ld_absbr_l(ProcessorState& cpu) {
@@ -2076,7 +2076,7 @@ void inst_ld_absbr_l(ProcessorState& cpu) {
 	uint8_t data0;
 	op_ld8(cpu, data0, cpu.reg.l);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_absiy_indiix(ProcessorState& cpu) {
@@ -2086,7 +2086,7 @@ void inst_ld_absiy_indiix(ProcessorState& cpu) {
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, data0, data1);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_ld_absbr_h(ProcessorState& cpu) {
@@ -2094,7 +2094,7 @@ void inst_ld_absbr_h(ProcessorState& cpu) {
 	uint8_t data0;
 	op_ld8(cpu, data0, cpu.reg.h);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_absiy_indiiy(ProcessorState& cpu) {
@@ -2104,7 +2104,7 @@ void inst_ld_absiy_indiiy(ProcessorState& cpu) {
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, data0, data1);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_ld_ind16_sp(ProcessorState& cpu) {
@@ -2112,7 +2112,7 @@ void inst_ld_ind16_sp(ProcessorState& cpu) {
 	uint16_t data0;
 	op_ld16(cpu, data0, cpu.reg.sp);
 	cpu_write16(cpu, data0, addr0);
-	cpu.clocks += 6;
+	cpu.clocks -= 6;
 }
 
 void inst_ld_absbr_abshl(ProcessorState& cpu) {
@@ -2122,7 +2122,7 @@ void inst_ld_absbr_abshl(ProcessorState& cpu) {
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, data0, data1);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_ld_absbr_absix(ProcessorState& cpu) {
@@ -2132,7 +2132,7 @@ void inst_ld_absbr_absix(ProcessorState& cpu) {
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, data0, data1);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_ld_absbr_absiy(ProcessorState& cpu) {
@@ -2142,32 +2142,32 @@ void inst_ld_absbr_absiy(ProcessorState& cpu) {
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, data0, data1);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_inc_a(ProcessorState& cpu) {
 	op_inc8(cpu, cpu.reg.a);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_sla_a(ProcessorState& cpu) {
 	op_sla8(cpu, cpu.reg.a);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_inc_b(ProcessorState& cpu) {
 	op_inc8(cpu, cpu.reg.b);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_sla_b(ProcessorState& cpu) {
 	op_sla8(cpu, cpu.reg.b);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_inc_l(ProcessorState& cpu) {
 	op_inc8(cpu, cpu.reg.l);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_sla_absbr(ProcessorState& cpu) {
@@ -2175,12 +2175,12 @@ void inst_sla_absbr(ProcessorState& cpu) {
 	uint8_t data0 = cpu_read8(cpu, addr0);
 	op_sla8(cpu, data0);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_inc_h(ProcessorState& cpu) {
 	op_inc8(cpu, cpu.reg.h);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_sla_abshl(ProcessorState& cpu) {
@@ -2188,17 +2188,17 @@ void inst_sla_abshl(ProcessorState& cpu) {
 	uint8_t data0 = cpu_read8(cpu, addr0);
 	op_sla8(cpu, data0);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_inc_br(ProcessorState& cpu) {
 	op_inc8(cpu, cpu.reg.br);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_sll_a(ProcessorState& cpu) {
 	op_sll8(cpu, cpu.reg.a);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_inc_absbr(ProcessorState& cpu) {
@@ -2206,12 +2206,12 @@ void inst_inc_absbr(ProcessorState& cpu) {
 	uint8_t data0 = cpu_read8(cpu, addr0);
 	op_inc8(cpu, data0);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_sll_b(ProcessorState& cpu) {
 	op_sll8(cpu, cpu.reg.b);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_inc_abshl(ProcessorState& cpu) {
@@ -2219,7 +2219,7 @@ void inst_inc_abshl(ProcessorState& cpu) {
 	uint8_t data0 = cpu_read8(cpu, addr0);
 	op_inc8(cpu, data0);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_sll_absbr(ProcessorState& cpu) {
@@ -2227,12 +2227,12 @@ void inst_sll_absbr(ProcessorState& cpu) {
 	uint8_t data0 = cpu_read8(cpu, addr0);
 	op_sll8(cpu, data0);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_inc_sp(ProcessorState& cpu) {
 	op_inc16(cpu, cpu.reg.sp);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_sll_abshl(ProcessorState& cpu) {
@@ -2240,32 +2240,32 @@ void inst_sll_abshl(ProcessorState& cpu) {
 	uint8_t data0 = cpu_read8(cpu, addr0);
 	op_sll8(cpu, data0);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_dec_a(ProcessorState& cpu) {
 	op_dec8(cpu, cpu.reg.a);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_sra_a(ProcessorState& cpu) {
 	op_sra8(cpu, cpu.reg.a);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_dec_b(ProcessorState& cpu) {
 	op_dec8(cpu, cpu.reg.b);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_sra_b(ProcessorState& cpu) {
 	op_sra8(cpu, cpu.reg.b);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_dec_l(ProcessorState& cpu) {
 	op_dec8(cpu, cpu.reg.l);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_sra_absbr(ProcessorState& cpu) {
@@ -2273,12 +2273,12 @@ void inst_sra_absbr(ProcessorState& cpu) {
 	uint8_t data0 = cpu_read8(cpu, addr0);
 	op_sra8(cpu, data0);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_dec_h(ProcessorState& cpu) {
 	op_dec8(cpu, cpu.reg.h);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_sra_abshl(ProcessorState& cpu) {
@@ -2286,17 +2286,17 @@ void inst_sra_abshl(ProcessorState& cpu) {
 	uint8_t data0 = cpu_read8(cpu, addr0);
 	op_sra8(cpu, data0);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_dec_br(ProcessorState& cpu) {
 	op_dec8(cpu, cpu.reg.br);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_srl_a(ProcessorState& cpu) {
 	op_srl8(cpu, cpu.reg.a);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_dec_absbr(ProcessorState& cpu) {
@@ -2304,12 +2304,12 @@ void inst_dec_absbr(ProcessorState& cpu) {
 	uint8_t data0 = cpu_read8(cpu, addr0);
 	op_dec8(cpu, data0);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_srl_b(ProcessorState& cpu) {
 	op_srl8(cpu, cpu.reg.b);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_dec_abshl(ProcessorState& cpu) {
@@ -2317,7 +2317,7 @@ void inst_dec_abshl(ProcessorState& cpu) {
 	uint8_t data0 = cpu_read8(cpu, addr0);
 	op_dec8(cpu, data0);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_srl_absbr(ProcessorState& cpu) {
@@ -2325,12 +2325,12 @@ void inst_srl_absbr(ProcessorState& cpu) {
 	uint8_t data0 = cpu_read8(cpu, addr0);
 	op_srl8(cpu, data0);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_dec_sp(ProcessorState& cpu) {
 	op_dec16(cpu, cpu.reg.sp);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_srl_abshl(ProcessorState& cpu) {
@@ -2338,32 +2338,32 @@ void inst_srl_abshl(ProcessorState& cpu) {
 	uint8_t data0 = cpu_read8(cpu, addr0);
 	op_srl8(cpu, data0);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_inc_ba(ProcessorState& cpu) {
 	op_inc16(cpu, cpu.reg.ba);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_rl_a(ProcessorState& cpu) {
 	op_rl8(cpu, cpu.reg.a);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_inc_hl(ProcessorState& cpu) {
 	op_inc16(cpu, cpu.reg.hl);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_rl_b(ProcessorState& cpu) {
 	op_rl8(cpu, cpu.reg.b);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_inc_ix(ProcessorState& cpu) {
 	op_inc16(cpu, cpu.reg.ix);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_rl_absbr(ProcessorState& cpu) {
@@ -2371,12 +2371,12 @@ void inst_rl_absbr(ProcessorState& cpu) {
 	uint8_t data0 = cpu_read8(cpu, addr0);
 	op_rl8(cpu, data0);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_inc_iy(ProcessorState& cpu) {
 	op_inc16(cpu, cpu.reg.iy);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_rl_abshl(ProcessorState& cpu) {
@@ -2384,17 +2384,17 @@ void inst_rl_abshl(ProcessorState& cpu) {
 	uint8_t data0 = cpu_read8(cpu, addr0);
 	op_rl8(cpu, data0);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_bit_a_b(ProcessorState& cpu) {
 	op_bit8(cpu, cpu.reg.a, cpu.reg.b);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_rlc_a(ProcessorState& cpu) {
 	op_rlc8(cpu, cpu.reg.a);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_bit_abshl_imm8(ProcessorState& cpu) {
@@ -2402,18 +2402,18 @@ void inst_bit_abshl_imm8(ProcessorState& cpu) {
 	uint8_t data0 = cpu_read8(cpu, addr0);
 	uint8_t data1 = cpu_imm8(cpu);
 	op_bit8(cpu, data0, data1);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_rlc_b(ProcessorState& cpu) {
 	op_rlc8(cpu, cpu.reg.b);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_bit_a_imm8(ProcessorState& cpu) {
 	uint8_t data1 = cpu_imm8(cpu);
 	op_bit8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_rlc_absbr(ProcessorState& cpu) {
@@ -2421,13 +2421,13 @@ void inst_rlc_absbr(ProcessorState& cpu) {
 	uint8_t data0 = cpu_read8(cpu, addr0);
 	op_rlc8(cpu, data0);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_bit_b_imm8(ProcessorState& cpu) {
 	uint8_t data1 = cpu_imm8(cpu);
 	op_bit8(cpu, cpu.reg.b, data1);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_rlc_abshl(ProcessorState& cpu) {
@@ -2435,32 +2435,32 @@ void inst_rlc_abshl(ProcessorState& cpu) {
 	uint8_t data0 = cpu_read8(cpu, addr0);
 	op_rlc8(cpu, data0);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_dec_ba(ProcessorState& cpu) {
 	op_dec16(cpu, cpu.reg.ba);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_rr_a(ProcessorState& cpu) {
 	op_rr8(cpu, cpu.reg.a);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_dec_hl(ProcessorState& cpu) {
 	op_dec16(cpu, cpu.reg.hl);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_rr_b(ProcessorState& cpu) {
 	op_rr8(cpu, cpu.reg.b);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_dec_ix(ProcessorState& cpu) {
 	op_dec16(cpu, cpu.reg.ix);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_rr_absbr(ProcessorState& cpu) {
@@ -2468,12 +2468,12 @@ void inst_rr_absbr(ProcessorState& cpu) {
 	uint8_t data0 = cpu_read8(cpu, addr0);
 	op_rr8(cpu, data0);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_dec_iy(ProcessorState& cpu) {
 	op_dec16(cpu, cpu.reg.iy);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_rr_abshl(ProcessorState& cpu) {
@@ -2481,35 +2481,35 @@ void inst_rr_abshl(ProcessorState& cpu) {
 	uint8_t data0 = cpu_read8(cpu, addr0);
 	op_rr8(cpu, data0);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_and_sc_imm8(ProcessorState& cpu) {
 	uint8_t data1 = cpu_imm8(cpu);
 	op_and8(cpu, cpu.reg.sc, data1);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_rrc_a(ProcessorState& cpu) {
 	op_rrc8(cpu, cpu.reg.a);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_or_sc_imm8(ProcessorState& cpu) {
 	uint8_t data1 = cpu_imm8(cpu);
 	op_or8(cpu, cpu.reg.sc, data1);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_rrc_b(ProcessorState& cpu) {
 	op_rrc8(cpu, cpu.reg.b);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_xor_sc_imm8(ProcessorState& cpu) {
 	uint8_t data1 = cpu_imm8(cpu);
 	op_xor8(cpu, cpu.reg.sc, data1);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_rrc_absbr(ProcessorState& cpu) {
@@ -2517,13 +2517,13 @@ void inst_rrc_absbr(ProcessorState& cpu) {
 	uint8_t data0 = cpu_read8(cpu, addr0);
 	op_rrc8(cpu, data0);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_ld_sc_imm8(ProcessorState& cpu) {
 	uint8_t data1 = cpu_imm8(cpu);
 	op_ld8(cpu, cpu.reg.sc, data1);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_rrc_abshl(ProcessorState& cpu) {
@@ -2531,32 +2531,32 @@ void inst_rrc_abshl(ProcessorState& cpu) {
 	uint8_t data0 = cpu_read8(cpu, addr0);
 	op_rrc8(cpu, data0);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_push_ba(ProcessorState& cpu) {
 	op_push16(cpu, cpu.reg.ba);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_cpl_a(ProcessorState& cpu) {
 	op_cpl8(cpu, cpu.reg.a);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_push_hl(ProcessorState& cpu) {
 	op_push16(cpu, cpu.reg.hl);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_cpl_b(ProcessorState& cpu) {
 	op_cpl8(cpu, cpu.reg.b);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_push_ix(ProcessorState& cpu) {
 	op_push16(cpu, cpu.reg.ix);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_cpl_absbr(ProcessorState& cpu) {
@@ -2564,12 +2564,12 @@ void inst_cpl_absbr(ProcessorState& cpu) {
 	uint8_t data0 = cpu_read8(cpu, addr0);
 	op_cpl8(cpu, data0);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_push_iy(ProcessorState& cpu) {
 	op_push16(cpu, cpu.reg.iy);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_cpl_abshl(ProcessorState& cpu) {
@@ -2577,32 +2577,32 @@ void inst_cpl_abshl(ProcessorState& cpu) {
 	uint8_t data0 = cpu_read8(cpu, addr0);
 	op_cpl8(cpu, data0);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_push_br(ProcessorState& cpu) {
 	op_push8(cpu, cpu.reg.br);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_neg_a(ProcessorState& cpu) {
 	op_neg8(cpu, cpu.reg.a);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_push_ep(ProcessorState& cpu) {
 	op_push8(cpu, cpu.reg.ep);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_neg_b(ProcessorState& cpu) {
 	op_neg8(cpu, cpu.reg.b);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void clock_inst_push_ip(ProcessorState& cpu) {
 	inst_push_ip(cpu);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_neg_absbr(ProcessorState& cpu) {
@@ -2610,12 +2610,12 @@ void inst_neg_absbr(ProcessorState& cpu) {
 	uint8_t data0 = cpu_read8(cpu, addr0);
 	op_neg8(cpu, data0);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_push_sc(ProcessorState& cpu) {
 	op_push8(cpu, cpu.reg.sc);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_neg_abshl(ProcessorState& cpu) {
@@ -2623,141 +2623,141 @@ void inst_neg_abshl(ProcessorState& cpu) {
 	uint8_t data0 = cpu_read8(cpu, addr0);
 	op_neg8(cpu, data0);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_pop_ba(ProcessorState& cpu) {
 	op_pop16(cpu, cpu.reg.ba);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void clock_inst_sep(ProcessorState& cpu) {
 	inst_sep(cpu);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_pop_hl(ProcessorState& cpu) {
 	op_pop16(cpu, cpu.reg.hl);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_pop_ix(ProcessorState& cpu) {
 	op_pop16(cpu, cpu.reg.ix);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_pop_iy(ProcessorState& cpu) {
 	op_pop16(cpu, cpu.reg.iy);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_pop_br(ProcessorState& cpu) {
 	op_pop8(cpu, cpu.reg.br);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_pop_ep(ProcessorState& cpu) {
 	op_pop8(cpu, cpu.reg.ep);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void clock_inst_pop_ip(ProcessorState& cpu) {
 	inst_pop_ip(cpu);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void clock_inst_halt(ProcessorState& cpu) {
 	inst_halt(cpu);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_pop_sc(ProcessorState& cpu) {
 	op_pop8(cpu, cpu.reg.sc);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void clock_inst_slp(ProcessorState& cpu) {
 	inst_slp(cpu);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_a_imm8(ProcessorState& cpu) {
 	uint8_t data1 = cpu_imm8(cpu);
 	op_ld8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_and_b_imm8(ProcessorState& cpu) {
 	uint8_t data1 = cpu_imm8(cpu);
 	op_and8(cpu, cpu.reg.b, data1);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_push_a(ProcessorState& cpu) {
 	op_push8(cpu, cpu.reg.a);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_b_imm8(ProcessorState& cpu) {
 	uint8_t data1 = cpu_imm8(cpu);
 	op_ld8(cpu, cpu.reg.b, data1);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_and_l_imm8(ProcessorState& cpu) {
 	uint8_t data1 = cpu_imm8(cpu);
 	op_and8(cpu, cpu.reg.l, data1);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_push_b(ProcessorState& cpu) {
 	op_push8(cpu, cpu.reg.b);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_l_imm8(ProcessorState& cpu) {
 	uint8_t data1 = cpu_imm8(cpu);
 	op_ld8(cpu, cpu.reg.l, data1);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_and_h_imm8(ProcessorState& cpu) {
 	uint8_t data1 = cpu_imm8(cpu);
 	op_and8(cpu, cpu.reg.h, data1);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_push_l(ProcessorState& cpu) {
 	op_push8(cpu, cpu.reg.l);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_h_imm8(ProcessorState& cpu) {
 	uint8_t data1 = cpu_imm8(cpu);
 	op_ld8(cpu, cpu.reg.h, data1);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_push_h(ProcessorState& cpu) {
 	op_push8(cpu, cpu.reg.h);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_br_imm8(ProcessorState& cpu) {
 	uint8_t data1 = cpu_imm8(cpu);
 	op_ld8(cpu, cpu.reg.br, data1);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_or_b_imm8(ProcessorState& cpu) {
 	uint8_t data1 = cpu_imm8(cpu);
 	op_or8(cpu, cpu.reg.b, data1);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_pop_a(ProcessorState& cpu) {
 	op_pop8(cpu, cpu.reg.a);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_abshl_imm8(ProcessorState& cpu) {
@@ -2766,18 +2766,18 @@ void inst_ld_abshl_imm8(ProcessorState& cpu) {
 	uint8_t data1 = cpu_imm8(cpu);
 	op_ld8(cpu, data0, data1);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_or_l_imm8(ProcessorState& cpu) {
 	uint8_t data1 = cpu_imm8(cpu);
 	op_or8(cpu, cpu.reg.l, data1);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_pop_b(ProcessorState& cpu) {
 	op_pop8(cpu, cpu.reg.b);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_absix_imm8(ProcessorState& cpu) {
@@ -2786,18 +2786,18 @@ void inst_ld_absix_imm8(ProcessorState& cpu) {
 	uint8_t data1 = cpu_imm8(cpu);
 	op_ld8(cpu, data0, data1);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_or_h_imm8(ProcessorState& cpu) {
 	uint8_t data1 = cpu_imm8(cpu);
 	op_or8(cpu, cpu.reg.h, data1);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_pop_l(ProcessorState& cpu) {
 	op_pop8(cpu, cpu.reg.l);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_absiy_imm8(ProcessorState& cpu) {
@@ -2806,68 +2806,68 @@ void inst_ld_absiy_imm8(ProcessorState& cpu) {
 	uint8_t data1 = cpu_imm8(cpu);
 	op_ld8(cpu, data0, data1);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_pop_h(ProcessorState& cpu) {
 	op_pop8(cpu, cpu.reg.h);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_ba_ind16(ProcessorState& cpu) {
 	auto addr1 = calc_ind16(cpu);
 	uint16_t data1 = cpu_read16(cpu, addr1);
 	op_ld16(cpu, cpu.reg.ba, data1);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_xor_b_imm8(ProcessorState& cpu) {
 	uint8_t data1 = cpu_imm8(cpu);
 	op_xor8(cpu, cpu.reg.b, data1);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void clock_inst_push_all(ProcessorState& cpu) {
 	inst_push_all(cpu);
-	cpu.clocks += 12;
+	cpu.clocks -= 12;
 }
 
 void inst_ld_hl_ind16(ProcessorState& cpu) {
 	auto addr1 = calc_ind16(cpu);
 	uint16_t data1 = cpu_read16(cpu, addr1);
 	op_ld16(cpu, cpu.reg.hl, data1);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_xor_l_imm8(ProcessorState& cpu) {
 	uint8_t data1 = cpu_imm8(cpu);
 	op_xor8(cpu, cpu.reg.l, data1);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void clock_inst_push_ale(ProcessorState& cpu) {
 	inst_push_ale(cpu);
-	cpu.clocks += 15;
+	cpu.clocks -= 15;
 }
 
 void inst_ld_ix_ind16(ProcessorState& cpu) {
 	auto addr1 = calc_ind16(cpu);
 	uint16_t data1 = cpu_read16(cpu, addr1);
 	op_ld16(cpu, cpu.reg.ix, data1);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_xor_h_imm8(ProcessorState& cpu) {
 	uint8_t data1 = cpu_imm8(cpu);
 	op_xor8(cpu, cpu.reg.h, data1);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_iy_ind16(ProcessorState& cpu) {
 	auto addr1 = calc_ind16(cpu);
 	uint16_t data1 = cpu_read16(cpu, addr1);
 	op_ld16(cpu, cpu.reg.iy, data1);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_ld_ind16_ba(ProcessorState& cpu) {
@@ -2875,18 +2875,18 @@ void inst_ld_ind16_ba(ProcessorState& cpu) {
 	uint16_t data0;
 	op_ld16(cpu, data0, cpu.reg.ba);
 	cpu_write16(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_cp_b_imm8(ProcessorState& cpu) {
 	uint8_t data1 = cpu_imm8(cpu);
 	op_cp8(cpu, cpu.reg.b, data1);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void clock_inst_pop_all(ProcessorState& cpu) {
 	inst_pop_all(cpu);
-	cpu.clocks += 11;
+	cpu.clocks -= 11;
 }
 
 void inst_ld_ind16_hl(ProcessorState& cpu) {
@@ -2894,18 +2894,18 @@ void inst_ld_ind16_hl(ProcessorState& cpu) {
 	uint16_t data0;
 	op_ld16(cpu, data0, cpu.reg.hl);
 	cpu_write16(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_cp_l_imm8(ProcessorState& cpu) {
 	uint8_t data1 = cpu_imm8(cpu);
 	op_cp8(cpu, cpu.reg.l, data1);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void clock_inst_pop_ale(ProcessorState& cpu) {
 	inst_pop_ale(cpu);
-	cpu.clocks += 14;
+	cpu.clocks -= 14;
 }
 
 void inst_ld_ind16_ix(ProcessorState& cpu) {
@@ -2913,13 +2913,13 @@ void inst_ld_ind16_ix(ProcessorState& cpu) {
 	uint16_t data0;
 	op_ld16(cpu, data0, cpu.reg.ix);
 	cpu_write16(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_cp_h_imm8(ProcessorState& cpu) {
 	uint8_t data1 = cpu_imm8(cpu);
 	op_cp8(cpu, cpu.reg.h, data1);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_ind16_iy(ProcessorState& cpu) {
@@ -2927,97 +2927,97 @@ void inst_ld_ind16_iy(ProcessorState& cpu) {
 	uint16_t data0;
 	op_ld16(cpu, data0, cpu.reg.iy);
 	cpu_write16(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_cp_br_imm8(ProcessorState& cpu) {
 	uint8_t data1 = cpu_imm8(cpu);
 	op_cp8(cpu, cpu.reg.br, data1);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_add_ba_imm16(ProcessorState& cpu) {
 	uint16_t data1 = cpu_imm16(cpu);
 	op_add16(cpu, cpu.reg.ba, data1);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_a_br(ProcessorState& cpu) {
 	op_ld8(cpu, cpu.reg.a, cpu.reg.br);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_ld_ba_abshl(ProcessorState& cpu) {
 	auto addr1 = calc_absHL(cpu);
 	uint16_t data1 = cpu_read16(cpu, addr1);
 	op_ld16(cpu, cpu.reg.ba, data1);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_add_hl_imm16(ProcessorState& cpu) {
 	uint16_t data1 = cpu_imm16(cpu);
 	op_add16(cpu, cpu.reg.hl, data1);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_a_sc(ProcessorState& cpu) {
 	op_ld8(cpu, cpu.reg.a, cpu.reg.sc);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_ld_hl_abshl(ProcessorState& cpu) {
 	auto addr1 = calc_absHL(cpu);
 	uint16_t data1 = cpu_read16(cpu, addr1);
 	op_ld16(cpu, cpu.reg.hl, data1);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_add_ix_imm16(ProcessorState& cpu) {
 	uint16_t data1 = cpu_imm16(cpu);
 	op_add16(cpu, cpu.reg.ix, data1);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_br_a(ProcessorState& cpu) {
 	op_ld8(cpu, cpu.reg.br, cpu.reg.a);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_ld_ix_abshl(ProcessorState& cpu) {
 	auto addr1 = calc_absHL(cpu);
 	uint16_t data1 = cpu_read16(cpu, addr1);
 	op_ld16(cpu, cpu.reg.ix, data1);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_add_iy_imm16(ProcessorState& cpu) {
 	uint16_t data1 = cpu_imm16(cpu);
 	op_add16(cpu, cpu.reg.iy, data1);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_sc_a(ProcessorState& cpu) {
 	op_ld8(cpu, cpu.reg.sc, cpu.reg.a);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_ld_iy_abshl(ProcessorState& cpu) {
 	auto addr1 = calc_absHL(cpu);
 	uint16_t data1 = cpu_read16(cpu, addr1);
 	op_ld16(cpu, cpu.reg.iy, data1);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_ld_ba_imm16(ProcessorState& cpu) {
 	uint16_t data1 = cpu_imm16(cpu);
 	op_ld16(cpu, cpu.reg.ba, data1);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_nb_imm8(ProcessorState& cpu) {
 	uint8_t data1 = cpu_imm8(cpu);
 	op_ld8(cpu, cpu.reg.nb, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_ld_abshl_ba(ProcessorState& cpu) {
@@ -3025,19 +3025,19 @@ void inst_ld_abshl_ba(ProcessorState& cpu) {
 	uint16_t data0;
 	op_ld16(cpu, data0, cpu.reg.ba);
 	cpu_write16(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_ld_hl_imm16(ProcessorState& cpu) {
 	uint16_t data1 = cpu_imm16(cpu);
 	op_ld16(cpu, cpu.reg.hl, data1);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_ep_imm8(ProcessorState& cpu) {
 	uint8_t data1 = cpu_imm8(cpu);
 	op_ld8(cpu, cpu.reg.ep, data1);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_abshl_hl(ProcessorState& cpu) {
@@ -3045,19 +3045,19 @@ void inst_ld_abshl_hl(ProcessorState& cpu) {
 	uint16_t data0;
 	op_ld16(cpu, data0, cpu.reg.hl);
 	cpu_write16(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_ld_ix_imm16(ProcessorState& cpu) {
 	uint16_t data1 = cpu_imm16(cpu);
 	op_ld16(cpu, cpu.reg.ix, data1);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_xp_imm8(ProcessorState& cpu) {
 	uint8_t data1 = cpu_imm8(cpu);
 	op_ld8(cpu, cpu.reg.xp, data1);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_abshl_ix(ProcessorState& cpu) {
@@ -3065,19 +3065,19 @@ void inst_ld_abshl_ix(ProcessorState& cpu) {
 	uint16_t data0;
 	op_ld16(cpu, data0, cpu.reg.ix);
 	cpu_write16(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_ld_iy_imm16(ProcessorState& cpu) {
 	uint16_t data1 = cpu_imm16(cpu);
 	op_ld16(cpu, cpu.reg.iy, data1);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_yp_imm8(ProcessorState& cpu) {
 	uint8_t data1 = cpu_imm8(cpu);
 	op_ld8(cpu, cpu.reg.yp, data1);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_abshl_iy(ProcessorState& cpu) {
@@ -3085,57 +3085,57 @@ void inst_ld_abshl_iy(ProcessorState& cpu) {
 	uint16_t data0;
 	op_ld16(cpu, data0, cpu.reg.iy);
 	cpu_write16(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_ex_ba_hl(ProcessorState& cpu) {
 	op_ex16(cpu, cpu.reg.ba, cpu.reg.hl);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_a_nb(ProcessorState& cpu) {
 	op_ld8(cpu, cpu.reg.a, cpu.reg.nb);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_ex_ba_ix(ProcessorState& cpu) {
 	op_ex16(cpu, cpu.reg.ba, cpu.reg.ix);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_a_ep(ProcessorState& cpu) {
 	op_ld8(cpu, cpu.reg.a, cpu.reg.ep);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_ex_ba_iy(ProcessorState& cpu) {
 	op_ex16(cpu, cpu.reg.ba, cpu.reg.iy);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_a_xp(ProcessorState& cpu) {
 	op_ld8(cpu, cpu.reg.a, cpu.reg.xp);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_ex_ba_sp(ProcessorState& cpu) {
 	op_ex16(cpu, cpu.reg.ba, cpu.reg.sp);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_a_yp(ProcessorState& cpu) {
 	op_ld8(cpu, cpu.reg.a, cpu.reg.yp);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_ex_a_b(ProcessorState& cpu) {
 	op_ex8(cpu, cpu.reg.a, cpu.reg.b);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_ld_nb_a(ProcessorState& cpu) {
 	op_ld8(cpu, cpu.reg.nb, cpu.reg.a);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ex_a_abshl(ProcessorState& cpu) {
@@ -3143,108 +3143,108 @@ void inst_ex_a_abshl(ProcessorState& cpu) {
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ex8(cpu, cpu.reg.a, data1);
 	cpu_write8(cpu, data1, addr1);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_ep_a(ProcessorState& cpu) {
 	op_ld8(cpu, cpu.reg.ep, cpu.reg.a);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_ld_xp_a(ProcessorState& cpu) {
 	op_ld8(cpu, cpu.reg.xp, cpu.reg.a);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_ld_yp_a(ProcessorState& cpu) {
 	op_ld8(cpu, cpu.reg.yp, cpu.reg.a);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_sub_ba_imm16(ProcessorState& cpu) {
 	uint16_t data1 = cpu_imm16(cpu);
 	op_sub16(cpu, cpu.reg.ba, data1);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_a_ind16(ProcessorState& cpu) {
 	auto addr1 = calc_ind16(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, cpu.reg.a, data1);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_ld_ba_absix(ProcessorState& cpu) {
 	auto addr1 = calc_absIX(cpu);
 	uint16_t data1 = cpu_read16(cpu, addr1);
 	op_ld16(cpu, cpu.reg.ba, data1);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_sub_hl_imm16(ProcessorState& cpu) {
 	uint16_t data1 = cpu_imm16(cpu);
 	op_sub16(cpu, cpu.reg.hl, data1);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_b_ind16(ProcessorState& cpu) {
 	auto addr1 = calc_ind16(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, cpu.reg.b, data1);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_ld_hl_absix(ProcessorState& cpu) {
 	auto addr1 = calc_absIX(cpu);
 	uint16_t data1 = cpu_read16(cpu, addr1);
 	op_ld16(cpu, cpu.reg.hl, data1);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_sub_ix_imm16(ProcessorState& cpu) {
 	uint16_t data1 = cpu_imm16(cpu);
 	op_sub16(cpu, cpu.reg.ix, data1);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_l_ind16(ProcessorState& cpu) {
 	auto addr1 = calc_ind16(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, cpu.reg.l, data1);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_ld_ix_absix(ProcessorState& cpu) {
 	auto addr1 = calc_absIX(cpu);
 	uint16_t data1 = cpu_read16(cpu, addr1);
 	op_ld16(cpu, cpu.reg.ix, data1);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_sub_iy_imm16(ProcessorState& cpu) {
 	uint16_t data1 = cpu_imm16(cpu);
 	op_sub16(cpu, cpu.reg.iy, data1);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_h_ind16(ProcessorState& cpu) {
 	auto addr1 = calc_ind16(cpu);
 	uint8_t data1 = cpu_read8(cpu, addr1);
 	op_ld8(cpu, cpu.reg.h, data1);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_ld_iy_absix(ProcessorState& cpu) {
 	auto addr1 = calc_absIX(cpu);
 	uint16_t data1 = cpu_read16(cpu, addr1);
 	op_ld16(cpu, cpu.reg.iy, data1);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_cp_ba_imm16(ProcessorState& cpu) {
 	uint16_t data1 = cpu_imm16(cpu);
 	op_cp16(cpu, cpu.reg.ba, data1);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_ind16_a(ProcessorState& cpu) {
@@ -3252,7 +3252,7 @@ void inst_ld_ind16_a(ProcessorState& cpu) {
 	uint8_t data0;
 	op_ld8(cpu, data0, cpu.reg.a);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_ld_absix_ba(ProcessorState& cpu) {
@@ -3260,13 +3260,13 @@ void inst_ld_absix_ba(ProcessorState& cpu) {
 	uint16_t data0;
 	op_ld16(cpu, data0, cpu.reg.ba);
 	cpu_write16(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_cp_hl_imm16(ProcessorState& cpu) {
 	uint16_t data1 = cpu_imm16(cpu);
 	op_cp16(cpu, cpu.reg.hl, data1);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_ind16_b(ProcessorState& cpu) {
@@ -3274,7 +3274,7 @@ void inst_ld_ind16_b(ProcessorState& cpu) {
 	uint8_t data0;
 	op_ld8(cpu, data0, cpu.reg.b);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_ld_absix_hl(ProcessorState& cpu) {
@@ -3282,13 +3282,13 @@ void inst_ld_absix_hl(ProcessorState& cpu) {
 	uint16_t data0;
 	op_ld16(cpu, data0, cpu.reg.hl);
 	cpu_write16(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_cp_ix_imm16(ProcessorState& cpu) {
 	uint16_t data1 = cpu_imm16(cpu);
 	op_cp16(cpu, cpu.reg.ix, data1);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_ind16_l(ProcessorState& cpu) {
@@ -3296,7 +3296,7 @@ void inst_ld_ind16_l(ProcessorState& cpu) {
 	uint8_t data0;
 	op_ld8(cpu, data0, cpu.reg.l);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_ld_absix_ix(ProcessorState& cpu) {
@@ -3304,13 +3304,13 @@ void inst_ld_absix_ix(ProcessorState& cpu) {
 	uint16_t data0;
 	op_ld16(cpu, data0, cpu.reg.ix);
 	cpu_write16(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_cp_iy_imm16(ProcessorState& cpu) {
 	uint16_t data1 = cpu_imm16(cpu);
 	op_cp16(cpu, cpu.reg.iy, data1);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_ind16_h(ProcessorState& cpu) {
@@ -3318,7 +3318,7 @@ void inst_ld_ind16_h(ProcessorState& cpu) {
 	uint8_t data0;
 	op_ld8(cpu, data0, cpu.reg.h);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_ld_absix_iy(ProcessorState& cpu) {
@@ -3326,7 +3326,7 @@ void inst_ld_absix_iy(ProcessorState& cpu) {
 	uint16_t data0;
 	op_ld16(cpu, data0, cpu.reg.iy);
 	cpu_write16(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_and_absbr_imm8(ProcessorState& cpu) {
@@ -3335,19 +3335,19 @@ void inst_and_absbr_imm8(ProcessorState& cpu) {
 	uint8_t data1 = cpu_imm8(cpu);
 	op_and8(cpu, data0, data1);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void clock_inst_mul(ProcessorState& cpu) {
 	inst_mul(cpu);
-	cpu.clocks += 12;
+	cpu.clocks -= 12;
 }
 
 void inst_ld_ba_absiy(ProcessorState& cpu) {
 	auto addr1 = calc_absIY(cpu);
 	uint16_t data1 = cpu_read16(cpu, addr1);
 	op_ld16(cpu, cpu.reg.ba, data1);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_or_absbr_imm8(ProcessorState& cpu) {
@@ -3356,19 +3356,19 @@ void inst_or_absbr_imm8(ProcessorState& cpu) {
 	uint8_t data1 = cpu_imm8(cpu);
 	op_or8(cpu, data0, data1);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void clock_inst_div(ProcessorState& cpu) {
 	inst_div(cpu);
-	cpu.clocks += 13;
+	cpu.clocks -= 13;
 }
 
 void inst_ld_hl_absiy(ProcessorState& cpu) {
 	auto addr1 = calc_absIY(cpu);
 	uint16_t data1 = cpu_read16(cpu, addr1);
 	op_ld16(cpu, cpu.reg.hl, data1);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_xor_absbr_imm8(ProcessorState& cpu) {
@@ -3377,14 +3377,14 @@ void inst_xor_absbr_imm8(ProcessorState& cpu) {
 	uint8_t data1 = cpu_imm8(cpu);
 	op_xor8(cpu, data0, data1);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_ld_ix_absiy(ProcessorState& cpu) {
 	auto addr1 = calc_absIY(cpu);
 	uint16_t data1 = cpu_read16(cpu, addr1);
 	op_ld16(cpu, cpu.reg.ix, data1);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_cp_absbr_imm8(ProcessorState& cpu) {
@@ -3392,14 +3392,14 @@ void inst_cp_absbr_imm8(ProcessorState& cpu) {
 	uint8_t data0 = cpu_read8(cpu, addr0);
 	uint8_t data1 = cpu_imm8(cpu);
 	op_cp8(cpu, data0, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_ld_iy_absiy(ProcessorState& cpu) {
 	auto addr1 = calc_absIY(cpu);
 	uint16_t data1 = cpu_read16(cpu, addr1);
 	op_ld16(cpu, cpu.reg.iy, data1);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_bit_absbr_imm8(ProcessorState& cpu) {
@@ -3407,7 +3407,7 @@ void inst_bit_absbr_imm8(ProcessorState& cpu) {
 	uint8_t data0 = cpu_read8(cpu, addr0);
 	uint8_t data1 = cpu_imm8(cpu);
 	op_bit8(cpu, data0, data1);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_ld_absiy_ba(ProcessorState& cpu) {
@@ -3415,7 +3415,7 @@ void inst_ld_absiy_ba(ProcessorState& cpu) {
 	uint16_t data0;
 	op_ld16(cpu, data0, cpu.reg.ba);
 	cpu_write16(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_ld_absbr_imm8(ProcessorState& cpu) {
@@ -3424,7 +3424,7 @@ void inst_ld_absbr_imm8(ProcessorState& cpu) {
 	uint8_t data1 = cpu_imm8(cpu);
 	op_ld8(cpu, data0, data1);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_ld_absiy_hl(ProcessorState& cpu) {
@@ -3432,12 +3432,12 @@ void inst_ld_absiy_hl(ProcessorState& cpu) {
 	uint16_t data0;
 	op_ld16(cpu, data0, cpu.reg.hl);
 	cpu_write16(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void clock_inst_pack(ProcessorState& cpu) {
 	inst_pack(cpu);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_ld_absiy_ix(ProcessorState& cpu) {
@@ -3445,12 +3445,12 @@ void inst_ld_absiy_ix(ProcessorState& cpu) {
 	uint16_t data0;
 	op_ld16(cpu, data0, cpu.reg.ix);
 	cpu_write16(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void clock_inst_upck(ProcessorState& cpu) {
 	inst_upck(cpu);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_ld_absiy_iy(ProcessorState& cpu) {
@@ -3458,551 +3458,551 @@ void inst_ld_absiy_iy(ProcessorState& cpu) {
 	uint16_t data0;
 	op_ld16(cpu, data0, cpu.reg.iy);
 	cpu_write16(cpu, data0, addr0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_cars_c_imm8(ProcessorState& cpu) {
 	uint8_t data0 = cpu_imm8(cpu);
 	if (!(cpu.reg.flag.c)) {
-		cpu.clocks += 2;
+		cpu.clocks -= 2;
 		return ;
 	}
 	op_cars8(cpu, data0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_jrs_lt_imm8(ProcessorState& cpu) {
 	uint8_t data0 = cpu_imm8(cpu);
 	if (!(cpu.reg.flag.n != cpu.reg.flag.v)) {
-		cpu.clocks += 3;
+		cpu.clocks -= 3;
 		return ;
 	}
 	op_jrs8(cpu, data0);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_ba_ba(ProcessorState& cpu) {
 	op_ld16(cpu, cpu.reg.ba, cpu.reg.ba);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_cars_nc_imm8(ProcessorState& cpu) {
 	uint8_t data0 = cpu_imm8(cpu);
 	if (!(!cpu.reg.flag.c)) {
-		cpu.clocks += 2;
+		cpu.clocks -= 2;
 		return ;
 	}
 	op_cars8(cpu, data0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_jrs_le_imm8(ProcessorState& cpu) {
 	uint8_t data0 = cpu_imm8(cpu);
 	if (!((cpu.reg.flag.n != cpu.reg.flag.v) || cpu.reg.flag.z)) {
-		cpu.clocks += 3;
+		cpu.clocks -= 3;
 		return ;
 	}
 	op_jrs8(cpu, data0);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_ba_hl(ProcessorState& cpu) {
 	op_ld16(cpu, cpu.reg.ba, cpu.reg.hl);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_cars_z_imm8(ProcessorState& cpu) {
 	uint8_t data0 = cpu_imm8(cpu);
 	if (!(!cpu.reg.flag.z)) {
-		cpu.clocks += 2;
+		cpu.clocks -= 2;
 		return ;
 	}
 	op_cars8(cpu, data0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_jrs_gt_imm8(ProcessorState& cpu) {
 	uint8_t data0 = cpu_imm8(cpu);
 	if (!((cpu.reg.flag.n == cpu.reg.flag.v) && !cpu.reg.flag.z)) {
-		cpu.clocks += 3;
+		cpu.clocks -= 3;
 		return ;
 	}
 	op_jrs8(cpu, data0);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_ba_ix(ProcessorState& cpu) {
 	op_ld16(cpu, cpu.reg.ba, cpu.reg.ix);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_cars_nz_imm8(ProcessorState& cpu) {
 	uint8_t data0 = cpu_imm8(cpu);
 	if (!(!cpu.reg.flag.z)) {
-		cpu.clocks += 2;
+		cpu.clocks -= 2;
 		return ;
 	}
 	op_cars8(cpu, data0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_jrs_ge_imm8(ProcessorState& cpu) {
 	uint8_t data0 = cpu_imm8(cpu);
 	if (!(cpu.reg.flag.n == cpu.reg.flag.v)) {
-		cpu.clocks += 3;
+		cpu.clocks -= 3;
 		return ;
 	}
 	op_jrs8(cpu, data0);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_ba_iy(ProcessorState& cpu) {
 	op_ld16(cpu, cpu.reg.ba, cpu.reg.iy);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_jrs_c_imm8(ProcessorState& cpu) {
 	uint8_t data0 = cpu_imm8(cpu);
 	if (!(cpu.reg.flag.c)) {
-		cpu.clocks += 2;
+		cpu.clocks -= 2;
 		return ;
 	}
 	op_jrs8(cpu, data0);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_jrs_v_imm8(ProcessorState& cpu) {
 	uint8_t data0 = cpu_imm8(cpu);
 	if (!(cpu.reg.flag.v)) {
-		cpu.clocks += 3;
+		cpu.clocks -= 3;
 		return ;
 	}
 	op_jrs8(cpu, data0);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_hl_ba(ProcessorState& cpu) {
 	op_ld16(cpu, cpu.reg.hl, cpu.reg.ba);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_jrs_nc_imm8(ProcessorState& cpu) {
 	uint8_t data0 = cpu_imm8(cpu);
 	if (!(!cpu.reg.flag.c)) {
-		cpu.clocks += 2;
+		cpu.clocks -= 2;
 		return ;
 	}
 	op_jrs8(cpu, data0);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_jrs_nv_imm8(ProcessorState& cpu) {
 	uint8_t data0 = cpu_imm8(cpu);
 	if (!(!cpu.reg.flag.v)) {
-		cpu.clocks += 3;
+		cpu.clocks -= 3;
 		return ;
 	}
 	op_jrs8(cpu, data0);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_hl_hl(ProcessorState& cpu) {
 	op_ld16(cpu, cpu.reg.hl, cpu.reg.hl);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_jrs_z_imm8(ProcessorState& cpu) {
 	uint8_t data0 = cpu_imm8(cpu);
 	if (!(!cpu.reg.flag.z)) {
-		cpu.clocks += 2;
+		cpu.clocks -= 2;
 		return ;
 	}
 	op_jrs8(cpu, data0);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_jrs_p_imm8(ProcessorState& cpu) {
 	uint8_t data0 = cpu_imm8(cpu);
 	if (!(!cpu.reg.flag.n)) {
-		cpu.clocks += 3;
+		cpu.clocks -= 3;
 		return ;
 	}
 	op_jrs8(cpu, data0);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_hl_ix(ProcessorState& cpu) {
 	op_ld16(cpu, cpu.reg.hl, cpu.reg.ix);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_jrs_nz_imm8(ProcessorState& cpu) {
 	uint8_t data0 = cpu_imm8(cpu);
 	if (!(!cpu.reg.flag.z)) {
-		cpu.clocks += 2;
+		cpu.clocks -= 2;
 		return ;
 	}
 	op_jrs8(cpu, data0);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_jrs_m_imm8(ProcessorState& cpu) {
 	uint8_t data0 = cpu_imm8(cpu);
 	if (!(cpu.reg.flag.n)) {
-		cpu.clocks += 3;
+		cpu.clocks -= 3;
 		return ;
 	}
 	op_jrs8(cpu, data0);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_hl_iy(ProcessorState& cpu) {
 	op_ld16(cpu, cpu.reg.hl, cpu.reg.iy);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_carl_c_imm16(ProcessorState& cpu) {
 	uint16_t data0 = cpu_imm16(cpu);
 	if (!(cpu.reg.flag.c)) {
-		cpu.clocks += 3;
+		cpu.clocks -= 3;
 		return ;
 	}
 	op_carl16(cpu, data0);
-	cpu.clocks += 6;
+	cpu.clocks -= 6;
 }
 
 void inst_jrs_f0_imm8(ProcessorState& cpu) {
 	uint8_t data0 = cpu_imm8(cpu);
 	if (!(cpu.reg.flag.f0)) {
-		cpu.clocks += 3;
+		cpu.clocks -= 3;
 		return ;
 	}
 	op_jrs8(cpu, data0);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_ix_ba(ProcessorState& cpu) {
 	op_ld16(cpu, cpu.reg.ix, cpu.reg.ba);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_carl_nc_imm16(ProcessorState& cpu) {
 	uint16_t data0 = cpu_imm16(cpu);
 	if (!(!cpu.reg.flag.c)) {
-		cpu.clocks += 3;
+		cpu.clocks -= 3;
 		return ;
 	}
 	op_carl16(cpu, data0);
-	cpu.clocks += 6;
+	cpu.clocks -= 6;
 }
 
 void inst_jrs_f1_imm8(ProcessorState& cpu) {
 	uint8_t data0 = cpu_imm8(cpu);
 	if (!(cpu.reg.flag.f1)) {
-		cpu.clocks += 3;
+		cpu.clocks -= 3;
 		return ;
 	}
 	op_jrs8(cpu, data0);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_ix_hl(ProcessorState& cpu) {
 	op_ld16(cpu, cpu.reg.ix, cpu.reg.hl);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_carl_z_imm16(ProcessorState& cpu) {
 	uint16_t data0 = cpu_imm16(cpu);
 	if (!(!cpu.reg.flag.z)) {
-		cpu.clocks += 3;
+		cpu.clocks -= 3;
 		return ;
 	}
 	op_carl16(cpu, data0);
-	cpu.clocks += 6;
+	cpu.clocks -= 6;
 }
 
 void inst_jrs_f2_imm8(ProcessorState& cpu) {
 	uint8_t data0 = cpu_imm8(cpu);
 	if (!(cpu.reg.flag.f2)) {
-		cpu.clocks += 3;
+		cpu.clocks -= 3;
 		return ;
 	}
 	op_jrs8(cpu, data0);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_ix_ix(ProcessorState& cpu) {
 	op_ld16(cpu, cpu.reg.ix, cpu.reg.ix);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_carl_nz_imm16(ProcessorState& cpu) {
 	uint16_t data0 = cpu_imm16(cpu);
 	if (!(!cpu.reg.flag.z)) {
-		cpu.clocks += 3;
+		cpu.clocks -= 3;
 		return ;
 	}
 	op_carl16(cpu, data0);
-	cpu.clocks += 6;
+	cpu.clocks -= 6;
 }
 
 void inst_jrs_f3_imm8(ProcessorState& cpu) {
 	uint8_t data0 = cpu_imm8(cpu);
 	if (!(cpu.reg.flag.f3)) {
-		cpu.clocks += 3;
+		cpu.clocks -= 3;
 		return ;
 	}
 	op_jrs8(cpu, data0);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_ix_iy(ProcessorState& cpu) {
 	op_ld16(cpu, cpu.reg.ix, cpu.reg.iy);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_jrl_c_imm16(ProcessorState& cpu) {
 	uint16_t data0 = cpu_imm16(cpu);
 	if (!(cpu.reg.flag.c)) {
-		cpu.clocks += 3;
+		cpu.clocks -= 3;
 		return ;
 	}
 	op_jrl16(cpu, data0);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_jrs_nf0_imm8(ProcessorState& cpu) {
 	uint8_t data0 = cpu_imm8(cpu);
 	if (!(!cpu.reg.flag.f0)) {
-		cpu.clocks += 3;
+		cpu.clocks -= 3;
 		return ;
 	}
 	op_jrs8(cpu, data0);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_iy_ba(ProcessorState& cpu) {
 	op_ld16(cpu, cpu.reg.iy, cpu.reg.ba);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_jrl_nc_imm16(ProcessorState& cpu) {
 	uint16_t data0 = cpu_imm16(cpu);
 	if (!(!cpu.reg.flag.c)) {
-		cpu.clocks += 3;
+		cpu.clocks -= 3;
 		return ;
 	}
 	op_jrl16(cpu, data0);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_jrs_nf1_imm8(ProcessorState& cpu) {
 	uint8_t data0 = cpu_imm8(cpu);
 	if (!(!cpu.reg.flag.f1)) {
-		cpu.clocks += 3;
+		cpu.clocks -= 3;
 		return ;
 	}
 	op_jrs8(cpu, data0);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_iy_hl(ProcessorState& cpu) {
 	op_ld16(cpu, cpu.reg.iy, cpu.reg.hl);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_jrl_z_imm16(ProcessorState& cpu) {
 	uint16_t data0 = cpu_imm16(cpu);
 	if (!(!cpu.reg.flag.z)) {
-		cpu.clocks += 3;
+		cpu.clocks -= 3;
 		return ;
 	}
 	op_jrl16(cpu, data0);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_jrs_nf2_imm8(ProcessorState& cpu) {
 	uint8_t data0 = cpu_imm8(cpu);
 	if (!(!cpu.reg.flag.f2)) {
-		cpu.clocks += 3;
+		cpu.clocks -= 3;
 		return ;
 	}
 	op_jrs8(cpu, data0);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_iy_ix(ProcessorState& cpu) {
 	op_ld16(cpu, cpu.reg.iy, cpu.reg.ix);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_jrl_nz_imm16(ProcessorState& cpu) {
 	uint16_t data0 = cpu_imm16(cpu);
 	if (!(!cpu.reg.flag.z)) {
-		cpu.clocks += 3;
+		cpu.clocks -= 3;
 		return ;
 	}
 	op_jrl16(cpu, data0);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_jrs_nf3_imm8(ProcessorState& cpu) {
 	uint8_t data0 = cpu_imm8(cpu);
 	if (!(!cpu.reg.flag.f3)) {
-		cpu.clocks += 3;
+		cpu.clocks -= 3;
 		return ;
 	}
 	op_jrs8(cpu, data0);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_ld_iy_iy(ProcessorState& cpu) {
 	op_ld16(cpu, cpu.reg.iy, cpu.reg.iy);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_cars_imm8(ProcessorState& cpu) {
 	uint8_t data0 = cpu_imm8(cpu);
 	op_cars8(cpu, data0);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_cars_lt_imm8(ProcessorState& cpu) {
 	uint8_t data0 = cpu_imm8(cpu);
 	if (!(cpu.reg.flag.n != cpu.reg.flag.v)) {
-		cpu.clocks += 3;
+		cpu.clocks -= 3;
 		return ;
 	}
 	op_cars8(cpu, data0);
-	cpu.clocks += 6;
+	cpu.clocks -= 6;
 }
 
 void inst_ld_sp_ba(ProcessorState& cpu) {
 	op_ld16(cpu, cpu.reg.sp, cpu.reg.ba);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_jrs_imm8(ProcessorState& cpu) {
 	uint8_t data0 = cpu_imm8(cpu);
 	op_jrs8(cpu, data0);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_cars_le_imm8(ProcessorState& cpu) {
 	uint8_t data0 = cpu_imm8(cpu);
 	if (!((cpu.reg.flag.n != cpu.reg.flag.v) || cpu.reg.flag.z)) {
-		cpu.clocks += 4;
+		cpu.clocks -= 4;
 		return ;
 	}
 	op_cars8(cpu, data0);
-	cpu.clocks += 6;
+	cpu.clocks -= 6;
 }
 
 void inst_ld_sp_hl(ProcessorState& cpu) {
 	op_ld16(cpu, cpu.reg.sp, cpu.reg.hl);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_carl_imm16(ProcessorState& cpu) {
 	uint16_t data0 = cpu_imm16(cpu);
 	op_carl16(cpu, data0);
-	cpu.clocks += 6;
+	cpu.clocks -= 6;
 }
 
 void inst_cars_gt_imm8(ProcessorState& cpu) {
 	uint8_t data0 = cpu_imm8(cpu);
 	if (!((cpu.reg.flag.n == cpu.reg.flag.v) && !cpu.reg.flag.z)) {
-		cpu.clocks += 5;
+		cpu.clocks -= 5;
 		return ;
 	}
 	op_cars8(cpu, data0);
-	cpu.clocks += 6;
+	cpu.clocks -= 6;
 }
 
 void inst_ld_sp_ix(ProcessorState& cpu) {
 	op_ld16(cpu, cpu.reg.sp, cpu.reg.ix);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_jrl_imm16(ProcessorState& cpu) {
 	uint16_t data0 = cpu_imm16(cpu);
 	op_jrl16(cpu, data0);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_cars_ge_imm8(ProcessorState& cpu) {
 	uint8_t data0 = cpu_imm8(cpu);
 	if (!(cpu.reg.flag.n == cpu.reg.flag.v)) {
-		cpu.clocks += 6;
+		cpu.clocks -= 6;
 		return ;
 	}
 	op_cars8(cpu, data0);
-	cpu.clocks += 6;
+	cpu.clocks -= 6;
 }
 
 void inst_ld_sp_iy(ProcessorState& cpu) {
 	op_ld16(cpu, cpu.reg.sp, cpu.reg.iy);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_jp_hl(ProcessorState& cpu) {
 	op_jp16(cpu, cpu.reg.hl);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_cars_v_imm8(ProcessorState& cpu) {
 	uint8_t data0 = cpu_imm8(cpu);
 	if (!(cpu.reg.flag.v)) {
-		cpu.clocks += 7;
+		cpu.clocks -= 7;
 		return ;
 	}
 	op_cars8(cpu, data0);
-	cpu.clocks += 6;
+	cpu.clocks -= 6;
 }
 
 void inst_ld_hl_sp(ProcessorState& cpu) {
 	op_ld16(cpu, cpu.reg.hl, cpu.reg.sp);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_djr_nz_imm8(ProcessorState& cpu) {
 	uint8_t data0 = cpu_imm8(cpu);
 	if (!(!cpu.reg.flag.z)) {
-		cpu.clocks += 4;
+		cpu.clocks -= 4;
 		return ;
 	}
 	op_djr8(cpu, data0);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_cars_nv_imm8(ProcessorState& cpu) {
 	uint8_t data0 = cpu_imm8(cpu);
 	if (!(!cpu.reg.flag.v)) {
-		cpu.clocks += 8;
+		cpu.clocks -= 8;
 		return ;
 	}
 	op_cars8(cpu, data0);
-	cpu.clocks += 6;
+	cpu.clocks -= 6;
 }
 
 void inst_ld_hl_pc(ProcessorState& cpu) {
 	op_ld16(cpu, cpu.reg.hl, cpu.reg.pc);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_swap_a(ProcessorState& cpu) {
 	op_swap8(cpu, cpu.reg.a);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_cars_p_imm8(ProcessorState& cpu) {
 	uint8_t data0 = cpu_imm8(cpu);
 	if (!(!cpu.reg.flag.n)) {
-		cpu.clocks += 9;
+		cpu.clocks -= 9;
 		return ;
 	}
 	op_cars8(cpu, data0);
-	cpu.clocks += 6;
+	cpu.clocks -= 6;
 }
 
 void inst_swap_abshl(ProcessorState& cpu) {
@@ -4010,158 +4010,158 @@ void inst_swap_abshl(ProcessorState& cpu) {
 	uint8_t data0 = cpu_read8(cpu, addr0);
 	op_swap8(cpu, data0);
 	cpu_write8(cpu, data0, addr0);
-	cpu.clocks += 3;
+	cpu.clocks -= 3;
 }
 
 void inst_cars_m_imm8(ProcessorState& cpu) {
 	uint8_t data0 = cpu_imm8(cpu);
 	if (!(cpu.reg.flag.n)) {
-		cpu.clocks += 10;
+		cpu.clocks -= 10;
 		return ;
 	}
 	op_cars8(cpu, data0);
-	cpu.clocks += 6;
+	cpu.clocks -= 6;
 }
 
 void clock_inst_ret(ProcessorState& cpu) {
 	inst_ret(cpu);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_cars_f0_imm8(ProcessorState& cpu) {
 	uint8_t data0 = cpu_imm8(cpu);
 	if (!(cpu.reg.flag.f0)) {
-		cpu.clocks += 11;
+		cpu.clocks -= 11;
 		return ;
 	}
 	op_cars8(cpu, data0);
-	cpu.clocks += 6;
+	cpu.clocks -= 6;
 }
 
 void inst_ld_ba_sp(ProcessorState& cpu) {
 	op_ld16(cpu, cpu.reg.ba, cpu.reg.sp);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void clock_inst_rete(ProcessorState& cpu) {
 	inst_rete(cpu);
-	cpu.clocks += 5;
+	cpu.clocks -= 5;
 }
 
 void inst_cars_f1_imm8(ProcessorState& cpu) {
 	uint8_t data0 = cpu_imm8(cpu);
 	if (!(cpu.reg.flag.f1)) {
-		cpu.clocks += 12;
+		cpu.clocks -= 12;
 		return ;
 	}
 	op_cars8(cpu, data0);
-	cpu.clocks += 6;
+	cpu.clocks -= 6;
 }
 
 void inst_ld_ba_pc(ProcessorState& cpu) {
 	op_ld16(cpu, cpu.reg.ba, cpu.reg.pc);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void clock_inst_rets(ProcessorState& cpu) {
 	inst_rets(cpu);
-	cpu.clocks += 6;
+	cpu.clocks -= 6;
 }
 
 void inst_cars_f2_imm8(ProcessorState& cpu) {
 	uint8_t data0 = cpu_imm8(cpu);
 	if (!(cpu.reg.flag.f2)) {
-		cpu.clocks += 13;
+		cpu.clocks -= 13;
 		return ;
 	}
 	op_cars8(cpu, data0);
-	cpu.clocks += 6;
+	cpu.clocks -= 6;
 }
 
 void inst_ld_ix_sp(ProcessorState& cpu) {
 	op_ld16(cpu, cpu.reg.ix, cpu.reg.sp);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_call_ind16(ProcessorState& cpu) {
 	auto addr0 = calc_ind16(cpu);
 	uint16_t data0 = cpu_read16(cpu, addr0);
 	op_call16(cpu, data0);
-	cpu.clocks += 8;
+	cpu.clocks -= 8;
 }
 
 void inst_cars_f3_imm8(ProcessorState& cpu) {
 	uint8_t data0 = cpu_imm8(cpu);
 	if (!(cpu.reg.flag.f3)) {
-		cpu.clocks += 14;
+		cpu.clocks -= 14;
 		return ;
 	}
 	op_cars8(cpu, data0);
-	cpu.clocks += 6;
+	cpu.clocks -= 6;
 }
 
 void inst_int_vect(ProcessorState& cpu) {
 	auto addr0 = calc_vect(cpu);
 	uint16_t data0 = cpu_read16(cpu, addr0);
 	op_int16(cpu, data0);
-	cpu.clocks += 8;
+	cpu.clocks -= 8;
 }
 
 void inst_cars_nf0_imm8(ProcessorState& cpu) {
 	uint8_t data0 = cpu_imm8(cpu);
 	if (!(!cpu.reg.flag.f0)) {
-		cpu.clocks += 15;
+		cpu.clocks -= 15;
 		return ;
 	}
 	op_cars8(cpu, data0);
-	cpu.clocks += 6;
+	cpu.clocks -= 6;
 }
 
 void inst_jp_vect(ProcessorState& cpu) {
 	auto addr0 = calc_vect(cpu);
 	uint16_t data0 = cpu_read16(cpu, addr0);
 	op_jp16(cpu, data0);
-	cpu.clocks += 4;
+	cpu.clocks -= 4;
 }
 
 void inst_cars_nf1_imm8(ProcessorState& cpu) {
 	uint8_t data0 = cpu_imm8(cpu);
 	if (!(!cpu.reg.flag.f1)) {
-		cpu.clocks += 16;
+		cpu.clocks -= 16;
 		return ;
 	}
 	op_cars8(cpu, data0);
-	cpu.clocks += 6;
+	cpu.clocks -= 6;
 }
 
 void inst_cars_nf2_imm8(ProcessorState& cpu) {
 	uint8_t data0 = cpu_imm8(cpu);
 	if (!(!cpu.reg.flag.f2)) {
-		cpu.clocks += 17;
+		cpu.clocks -= 17;
 		return ;
 	}
 	op_cars8(cpu, data0);
-	cpu.clocks += 6;
+	cpu.clocks -= 6;
 }
 
 void inst_ld_iy_sp(ProcessorState& cpu) {
 	op_ld16(cpu, cpu.reg.iy, cpu.reg.sp);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void clock_inst_nop(ProcessorState& cpu) {
 	inst_nop(cpu);
-	cpu.clocks += 2;
+	cpu.clocks -= 2;
 }
 
 void inst_cars_nf3_imm8(ProcessorState& cpu) {
 	uint8_t data0 = cpu_imm8(cpu);
 	if (!(!cpu.reg.flag.f3)) {
-		cpu.clocks += 18;
+		cpu.clocks -= 18;
 		return ;
 	}
 	op_cars8(cpu, data0);
-	cpu.clocks += 6;
+	cpu.clocks -= 6;
 }
 
 static InstructionCall inst_table0[] = {

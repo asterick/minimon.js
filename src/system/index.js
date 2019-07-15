@@ -44,7 +44,7 @@ export default class Minimon {
 			if (!this._running) return ;
 
 			let now = Date.now();
-			let delta = Math.min(2000, now - time);
+			let delta = Math.min(50, now - time);
 
 
 			this._exports.cpu_advance(this._cpu_state, delta);

@@ -43,13 +43,14 @@ union ProcessorRegisters {
 				unsigned int f2:1;
 				unsigned int f3:1;
 			} flag;
-		} ;
+		};
 	};
 };
 
 struct ProcessorState {
 	ProcessorRegisters reg;
-	unsigned int clocks;
+
+	int clocks;
 
 	uint8_t ram[0x1000];
 	uint8_t gddram[9][132];
