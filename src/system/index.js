@@ -13,10 +13,9 @@ export default class Minimon {
 
 		this._exports = this._module.instance.exports;
 		this._cpu_state = this._exports.get_machine();
-		this._machineView = new DataView(this._exports.memory.buffer, this._exports.get_machine());
 		this._machineBytes = new Uint8Array(this._exports.memory.buffer);
 
-		this.registers = new Registers(this._machineView);
+		this.registers = new Registers(this._exports.memory.buffer, this._cpu_state);
 
 		this.cartridge = new Uint8Array(0x200000);
 
