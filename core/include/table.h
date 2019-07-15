@@ -2600,6 +2600,11 @@ void inst_neg_b(ProcessorState& cpu) {
 	cpu.clocks += 3;
 }
 
+void clock_inst_push_ip(ProcessorState& cpu) {
+	inst_push_ip(cpu);
+	cpu.clocks += 4;
+}
+
 void inst_neg_absbr(ProcessorState& cpu) {
 	auto addr0 = calc_absBR(cpu);
 	uint8_t data0 = cpu_read8(cpu, addr0);
@@ -2623,6 +2628,11 @@ void inst_neg_abshl(ProcessorState& cpu) {
 
 void inst_pop_ba(ProcessorState& cpu) {
 	op_pop16(cpu, cpu.reg.ba);
+	cpu.clocks += 3;
+}
+
+void clock_inst_sep(ProcessorState& cpu) {
+	inst_sep(cpu);
 	cpu.clocks += 3;
 }
 
@@ -2651,9 +2661,24 @@ void inst_pop_ep(ProcessorState& cpu) {
 	cpu.clocks += 2;
 }
 
+void clock_inst_pop_ip(ProcessorState& cpu) {
+	inst_pop_ip(cpu);
+	cpu.clocks += 3;
+}
+
+void clock_inst_halt(ProcessorState& cpu) {
+	inst_halt(cpu);
+	cpu.clocks += 3;
+}
+
 void inst_pop_sc(ProcessorState& cpu) {
 	op_pop8(cpu, cpu.reg.sc);
 	cpu.clocks += 2;
+}
+
+void clock_inst_slp(ProcessorState& cpu) {
+	inst_slp(cpu);
+	cpu.clocks += 3;
 }
 
 void inst_ld_a_imm8(ProcessorState& cpu) {
@@ -2802,6 +2827,11 @@ void inst_xor_b_imm8(ProcessorState& cpu) {
 	cpu.clocks += 3;
 }
 
+void clock_inst_push_all(ProcessorState& cpu) {
+	inst_push_all(cpu);
+	cpu.clocks += 12;
+}
+
 void inst_ld_hl_ind16(ProcessorState& cpu) {
 	auto addr1 = calc_ind16(cpu);
 	uint16_t data1 = cpu_read16(cpu, addr1);
@@ -2813,6 +2843,11 @@ void inst_xor_l_imm8(ProcessorState& cpu) {
 	uint8_t data1 = cpu_imm8(cpu);
 	op_xor8(cpu, cpu.reg.l, data1);
 	cpu.clocks += 3;
+}
+
+void clock_inst_push_ale(ProcessorState& cpu) {
+	inst_push_ale(cpu);
+	cpu.clocks += 15;
 }
 
 void inst_ld_ix_ind16(ProcessorState& cpu) {
@@ -2849,6 +2884,11 @@ void inst_cp_b_imm8(ProcessorState& cpu) {
 	cpu.clocks += 3;
 }
 
+void clock_inst_pop_all(ProcessorState& cpu) {
+	inst_pop_all(cpu);
+	cpu.clocks += 11;
+}
+
 void inst_ld_ind16_hl(ProcessorState& cpu) {
 	auto addr0 = calc_ind16(cpu);
 	uint16_t data0;
@@ -2861,6 +2901,11 @@ void inst_cp_l_imm8(ProcessorState& cpu) {
 	uint8_t data1 = cpu_imm8(cpu);
 	op_cp8(cpu, cpu.reg.l, data1);
 	cpu.clocks += 3;
+}
+
+void clock_inst_pop_ale(ProcessorState& cpu) {
+	inst_pop_ale(cpu);
+	cpu.clocks += 14;
 }
 
 void inst_ld_ind16_ix(ProcessorState& cpu) {
@@ -3293,6 +3338,11 @@ void inst_and_absbr_imm8(ProcessorState& cpu) {
 	cpu.clocks += 5;
 }
 
+void clock_inst_mul(ProcessorState& cpu) {
+	inst_mul(cpu);
+	cpu.clocks += 12;
+}
+
 void inst_ld_ba_absiy(ProcessorState& cpu) {
 	auto addr1 = calc_absIY(cpu);
 	uint16_t data1 = cpu_read16(cpu, addr1);
@@ -3307,6 +3357,11 @@ void inst_or_absbr_imm8(ProcessorState& cpu) {
 	op_or8(cpu, data0, data1);
 	cpu_write8(cpu, data0, addr0);
 	cpu.clocks += 5;
+}
+
+void clock_inst_div(ProcessorState& cpu) {
+	inst_div(cpu);
+	cpu.clocks += 13;
 }
 
 void inst_ld_hl_absiy(ProcessorState& cpu) {
@@ -3380,12 +3435,22 @@ void inst_ld_absiy_hl(ProcessorState& cpu) {
 	cpu.clocks += 5;
 }
 
+void clock_inst_pack(ProcessorState& cpu) {
+	inst_pack(cpu);
+	cpu.clocks += 2;
+}
+
 void inst_ld_absiy_ix(ProcessorState& cpu) {
 	auto addr0 = calc_absIY(cpu);
 	uint16_t data0;
 	op_ld16(cpu, data0, cpu.reg.ix);
 	cpu_write16(cpu, data0, addr0);
 	cpu.clocks += 5;
+}
+
+void clock_inst_upck(ProcessorState& cpu) {
+	inst_upck(cpu);
+	cpu.clocks += 2;
 }
 
 void inst_ld_absiy_iy(ProcessorState& cpu) {
@@ -3958,6 +4023,11 @@ void inst_cars_m_imm8(ProcessorState& cpu) {
 	cpu.clocks += 6;
 }
 
+void clock_inst_ret(ProcessorState& cpu) {
+	inst_ret(cpu);
+	cpu.clocks += 4;
+}
+
 void inst_cars_f0_imm8(ProcessorState& cpu) {
 	uint8_t data0 = cpu_imm8(cpu);
 	if (!(cpu.reg.flag.f0)) {
@@ -3973,6 +4043,11 @@ void inst_ld_ba_sp(ProcessorState& cpu) {
 	cpu.clocks += 2;
 }
 
+void clock_inst_rete(ProcessorState& cpu) {
+	inst_rete(cpu);
+	cpu.clocks += 5;
+}
+
 void inst_cars_f1_imm8(ProcessorState& cpu) {
 	uint8_t data0 = cpu_imm8(cpu);
 	if (!(cpu.reg.flag.f1)) {
@@ -3986,6 +4061,11 @@ void inst_cars_f1_imm8(ProcessorState& cpu) {
 void inst_ld_ba_pc(ProcessorState& cpu) {
 	op_ld16(cpu, cpu.reg.ba, cpu.reg.pc);
 	cpu.clocks += 2;
+}
+
+void clock_inst_rets(ProcessorState& cpu) {
+	inst_rets(cpu);
+	cpu.clocks += 6;
 }
 
 void inst_cars_f2_imm8(ProcessorState& cpu) {
@@ -4066,6 +4146,11 @@ void inst_cars_nf2_imm8(ProcessorState& cpu) {
 
 void inst_ld_iy_sp(ProcessorState& cpu) {
 	op_ld16(cpu, cpu.reg.iy, cpu.reg.sp);
+	cpu.clocks += 2;
+}
+
+void clock_inst_nop(ProcessorState& cpu) {
+	inst_nop(cpu);
 	cpu.clocks += 2;
 }
 
@@ -4246,7 +4331,7 @@ static InstructionCall inst_table0[] = {
 	inst_push_iy,
 	inst_push_br,
 	inst_push_ep,
-	inst_push_ip,
+	clock_inst_push_ip,
 	inst_push_sc,
 	inst_pop_ba,
 	inst_pop_hl,
@@ -4254,7 +4339,7 @@ static InstructionCall inst_table0[] = {
 	inst_pop_iy,
 	inst_pop_br,
 	inst_pop_ep,
-	inst_pop_ip,
+	clock_inst_pop_ip,
 	inst_pop_sc,
 	inst_ld_a_imm8,
 	inst_ld_b_imm8,
@@ -4302,8 +4387,8 @@ static InstructionCall inst_table0[] = {
 	inst_cp_absbr_imm8,
 	inst_bit_absbr_imm8,
 	inst_ld_absbr_imm8,
-	inst_pack,
-	inst_upck,
+	clock_inst_pack,
+	clock_inst_upck,
 	inst_cars_c_imm8,
 	inst_cars_nc_imm8,
 	inst_cars_z_imm8,
@@ -4328,14 +4413,14 @@ static InstructionCall inst_table0[] = {
 	inst_djr_nz_imm8,
 	inst_swap_a,
 	inst_swap_abshl,
-	inst_ret,
-	inst_rete,
-	inst_rets,
+	clock_inst_ret,
+	clock_inst_rete,
+	clock_inst_rets,
 	inst_call_ind16,
 	inst_int_vect,
 	inst_jp_vect,
 	inst_undefined,
-	inst_nop,
+	clock_inst_nop,
 };
 static InstructionCall inst_table1[] = {
 	inst_add_a_inddix,
@@ -4506,14 +4591,14 @@ static InstructionCall inst_table1[] = {
 	inst_neg_b,
 	inst_neg_absbr,
 	inst_neg_abshl,
-	inst_sep,
+	clock_inst_sep,
 	inst_undefined,
 	inst_undefined,
 	inst_undefined,
 	inst_undefined,
 	inst_undefined,
-	inst_halt,
-	inst_slp,
+	clock_inst_halt,
+	clock_inst_slp,
 	inst_and_b_imm8,
 	inst_and_l_imm8,
 	inst_and_h_imm8,
@@ -4554,8 +4639,8 @@ static InstructionCall inst_table1[] = {
 	inst_ld_ind16_b,
 	inst_ld_ind16_l,
 	inst_ld_ind16_h,
-	inst_mul,
-	inst_div,
+	clock_inst_mul,
+	clock_inst_div,
 	inst_undefined,
 	inst_undefined,
 	inst_undefined,
@@ -4780,12 +4865,12 @@ static InstructionCall inst_table2[] = {
 	inst_pop_b,
 	inst_pop_l,
 	inst_pop_h,
-	inst_push_all,
-	inst_push_ale,
+	clock_inst_push_all,
+	clock_inst_push_ale,
 	inst_undefined,
 	inst_undefined,
-	inst_pop_all,
-	inst_pop_ale,
+	clock_inst_pop_all,
+	clock_inst_pop_ale,
 	inst_undefined,
 	inst_undefined,
 	inst_ld_ba_abshl,

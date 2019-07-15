@@ -163,10 +163,16 @@ def format(cycles, op, *args):
 
         print ("\tcpu.clocks += %i;" % cycles)
         print ("}\n")
+        return name
     except:
         name = get_name(op, condition, *args)
 
-    return name
+        print ("void clock_%s(ProcessorState& cpu) {" % name)
+        print ("\t%s(cpu);" % name)
+        print ("\tcpu.clocks += %i;" % cycles)
+        print ("}\n")
+        return "clock_%s" % name
+
 
 with open(CSV_LOCATION, 'r') as csvfile:
     spamreader = csv.reader(csvfile)
