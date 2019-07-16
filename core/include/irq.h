@@ -8,6 +8,8 @@ enum InterruptVector : uint8_t {
 
 static const int IRC_PRIO_HIGHEST = 3;
 
-extern "C" {
-	void cpu_interrupt(ProcessorState& cpu, InterruptVector irq, int level);
-}
+uint8_t irq_read_reg(ProcessorState& cpu, uint32_t address);
+void irq_write_reg(ProcessorState& cpu, uint8_t data, uint32_t address);
+void irq_trigger(InterruptVector irq);
+
+void cpu_interrupt(ProcessorState& cpu, InterruptVector irq, int level);

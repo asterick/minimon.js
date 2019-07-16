@@ -4,6 +4,7 @@
 #include "lcd.h"
 #include "blitter.h"
 #include "irq.h"
+#include "lcd.h"
 
 const auto OSC1_SPEED	= 4000000;
 const auto OSC3_SPEED	= 32768;
@@ -32,12 +33,32 @@ bool cpu_advance(ProcessorState& cpu, int ticks) {
 }
 
 uint8_t cpu_read_reg(ProcessorState& cpu, uint32_t address) {
-	dprintf(0x100, "Register read %x", address);
-	return 0xCD;
+	switch (address) {
+	case 0x2020: case 0x2021: case 0x2022:
+	case 0x2023: case 0x2024: case 0x2025: case 0x2026:
+	case 0x2027: case 0x2028: case 0x2029: case 0x202A:
+		return irq_read_reg(cpu, address);
+	case 0x20FE: case 0x20FF:
+		return lcd_read_reg(cpu, address);
+	default:
+		dprintf("Unhandled register read %x", address);
+		return 0xCD;
+	}
 }
 
 void cpu_write_reg(ProcessorState& cpu, uint8_t data, uint32_t address) {
-	dprintf(0x100, "Register write %x: %x", address, data);
+	switch (address) {
+	case 0x2020: case 0x2021: case 0x2022:
+	case 0x2023: case 0x2024: case 0x2025: case 0x2026:
+	case 0x2027: case 0x2028: case 0x2029: case 0x202A:
+		irq_write_reg(cpu, data, address);
+		break ;
+	case 0x20FE: case 0x20FF:
+		irq_write_reg(cpu, data, address);
+		break ;
+	default:
+		dprintf("Unhandled register write %x: %x", address, data);
+	}
 }
 
 __attribute__ ((visibility ("default"))) extern "C"

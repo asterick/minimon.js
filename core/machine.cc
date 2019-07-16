@@ -22,15 +22,6 @@ uint32_t cpu_translate(ProcessorState& cpu, uint16_t address) {
 	}
 }
 
-void cpu_interrupt(ProcessorState& cpu, InterruptVector irq, int level) {
-	cpu_push8(cpu, cpu.reg.cb);
-	cpu_push16(cpu, cpu.reg.pc);
-	cpu_push8(cpu, cpu.reg.sc);
-
-	cpu.reg.pc = cpu_read16(cpu, 2 * (int) irq);
-	cpu.reg.flag.i = level;
-}
-
 /**
  * S1C88 Memory access helper functions
  **/

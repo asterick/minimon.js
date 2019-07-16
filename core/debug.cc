@@ -2,6 +2,8 @@
 
 extern "C" void debug_print(const void* data);
 
+static char OUTPUT_BUFFER[0x1000];
+
 void format_num(char*& output, int value, int radix, bool sign) {
 	const char digits[] = "0123456789abcdefghijklmnopqrstuvwxyz";
 	char values[32];
@@ -53,11 +55,8 @@ void format_arg(char code, char*& output, int value) {
 	}
 }
 
-extern "C" void dprintf(int size, const char* format, ...) {
-	if (size <= 0) return ;
-
-	char temp[size--];
-	char *out = temp;
+void dprintf(const char* format, ...) {
+	char *out = OUTPUT_BUFFER;
 
 	va_list argp;
 
@@ -76,5 +75,5 @@ extern "C" void dprintf(int size, const char* format, ...) {
 	va_end(argp);
 
 	*out = 0;
-	debug_print(temp);
+	debug_print(OUTPUT_BUFFER);
 }
