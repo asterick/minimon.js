@@ -136,7 +136,7 @@ def format(cycles, op, *args):
         size = max(default_size, *[s for s, i, m, n in args])
         name = get_name(op, condition, *[n for s, i, m, n in args])
 
-        print ("void %s(ProcessorState& cpu) {" % name)
+        print ("void %s(MachineState& cpu) {" % name)
 
         for i, (siz, mem, ind, nam) in enumerate(args):
             if ind:
@@ -167,7 +167,7 @@ def format(cycles, op, *args):
     except:
         name = get_name(op, condition, *args)
 
-        print ("void clock_%s(ProcessorState& cpu) {" % name)
+        print ("void clock_%s(MachineState& cpu) {" % name)
         print ("\t%s(cpu);" % name)
         print ("\tcpu.clocks -= %i;" % cycles)
         print ("}\n")

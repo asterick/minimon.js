@@ -1,11 +1,6 @@
 #include "debug.h"
 #include "machine.h"
 
-#include "lcd.h"
-#include "blitter.h"
-#include "irq.h"
-#include "lcd.h"
-
 const auto OSC1_SPEED	= 4000000;
 const auto OSC3_SPEED	= 32768;
 const auto MS_SPEED		= 1000;
@@ -16,13 +11,13 @@ static const uint8_t bios[0x2000] = {
 };
 
 __attribute__ ((visibility ("default"))) extern "C"
-ProcessorState* const get_machine() {
-	static ProcessorState state;
+MachineState* const get_machine() {
+	static MachineState state;
 	return &state;
 }
 
 __attribute__ ((visibility ("default"))) extern "C"
-bool cpu_advance(ProcessorState& cpu, int ticks) {
+bool cpu_advance(MachineState& cpu, int ticks) {
 	cpu.clocks += OSC1_SPEED / CPU_DIVIDER / MS_SPEED * ticks;
 
 	while (cpu.clocks > 0) {
@@ -32,7 +27,7 @@ bool cpu_advance(ProcessorState& cpu, int ticks) {
 	return true;
 }
 
-uint8_t cpu_read_reg(ProcessorState& cpu, uint32_t address) {
+uint8_t cpu_read_reg(MachineState& cpu, uint32_t address) {
 	switch (address) {
 	case 0x2020: case 0x2021: case 0x2022:
 	case 0x2023: case 0x2024: case 0x2025: case 0x2026:
@@ -46,7 +41,7 @@ uint8_t cpu_read_reg(ProcessorState& cpu, uint32_t address) {
 	}
 }
 
-void cpu_write_reg(ProcessorState& cpu, uint8_t data, uint32_t address) {
+void cpu_write_reg(MachineState& cpu, uint8_t data, uint32_t address) {
 	switch (address) {
 	case 0x2020: case 0x2021: case 0x2022:
 	case 0x2023: case 0x2024: case 0x2025: case 0x2026:
@@ -62,7 +57,7 @@ void cpu_write_reg(ProcessorState& cpu, uint8_t data, uint32_t address) {
 }
 
 __attribute__ ((visibility ("default"))) extern "C"
-uint8_t cpu_read8(ProcessorState& cpu, uint32_t address) {
+uint8_t cpu_read8(MachineState& cpu, uint32_t address) {
 	if (address < 0x1000) {
 		return bios[address];
 	} else if (address < 0x2000) {
@@ -75,7 +70,7 @@ uint8_t cpu_read8(ProcessorState& cpu, uint32_t address) {
 }
 
 __attribute__ ((visibility ("default"))) extern "C"
-void cpu_write8(ProcessorState& cpu, uint8_t data, uint32_t address) {
+void cpu_write8(MachineState& cpu, uint8_t data, uint32_t address) {
 	if (address >= 0x2100) {
 		cpu_write_cart(cpu, data, address);
 	} else if (address > 0x2000) {

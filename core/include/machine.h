@@ -2,7 +2,11 @@
 
 #include <stdint.h>
 
-union ProcessorRegisters {
+#include "lcd.h"
+#include "irq.h"
+#include "blitter.h"
+
+union CPUState {
 	struct {
 		uint8_t a;
 		uint8_t b;
@@ -47,8 +51,9 @@ union ProcessorRegisters {
 	};
 };
 
-struct ProcessorState {
-	ProcessorRegisters reg;
+struct MachineState {
+	CPUState reg;
+	IRQState irq;
 
 	int clocks;
 
@@ -56,21 +61,23 @@ struct ProcessorState {
 	uint8_t gddram[9][132];
 };
 
-extern "C" {
-	uint8_t cpu_read_cart(ProcessorState& cpu, uint32_t address);
-	void cpu_write_cart(ProcessorState& cpu, uint8_t data, uint32_t address);
+#include "irq.h"
 
-	uint8_t cpu_read8(ProcessorState& cpu, uint32_t address);
-	void cpu_write8(ProcessorState& cpu, uint8_t data, uint32_t address);
-	void cpu_step(ProcessorState& cpu);
+extern "C" {
+	uint8_t cpu_read_cart(MachineState& cpu, uint32_t address);
+	void cpu_write_cart(MachineState& cpu, uint8_t data, uint32_t address);
+
+	uint8_t cpu_read8(MachineState& cpu, uint32_t address);
+	void cpu_write8(MachineState& cpu, uint8_t data, uint32_t address);
+	void cpu_step(MachineState& cpu);
 }
 
 // These are memory access helpers
-uint16_t cpu_read16(ProcessorState& cpu, uint32_t address);
-void cpu_write16(ProcessorState& cpu, uint16_t data, uint32_t address);
-uint8_t cpu_imm8(ProcessorState& cpu);
-uint16_t cpu_imm16(ProcessorState& cpu);
-void cpu_push8(ProcessorState& cpu, uint8_t t);
-uint8_t cpu_pop8(ProcessorState& cpu);
-void cpu_push16(ProcessorState& cpu, uint16_t t);
-uint16_t cpu_pop16(ProcessorState& cpu);
+uint16_t cpu_read16(MachineState& cpu, uint32_t address);
+void cpu_write16(MachineState& cpu, uint16_t data, uint32_t address);
+uint8_t cpu_imm8(MachineState& cpu);
+uint16_t cpu_imm16(MachineState& cpu);
+void cpu_push8(MachineState& cpu, uint8_t t);
+uint8_t cpu_pop8(MachineState& cpu);
+void cpu_push16(MachineState& cpu, uint16_t t);
+uint16_t cpu_pop16(MachineState& cpu);
