@@ -1,6 +1,7 @@
 #include <stdint.h>
 
 #include "machine.h"
+#include "irq.h"
 
 typedef void (*InstructionCall)(ProcessorState& cpu);
 

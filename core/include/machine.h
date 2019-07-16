@@ -56,21 +56,10 @@ struct ProcessorState {
 	uint8_t gddram[9][132];
 };
 
-enum InterruptVector : uint8_t {
-	IRQ_RESET,
-	IRQ_DIV_ZERO,
-	IRQ_WATCHDOG
-};
-
-static const int IRC_PRIO_HIGHEST = 3;
-
 extern "C" {
 	uint8_t cpu_read_cart(ProcessorState& cpu, uint32_t address);
 	void cpu_write_cart(ProcessorState& cpu, uint8_t data, uint32_t address);
-}
 
-extern "C" {
-	void cpu_interrupt(ProcessorState& cpu, InterruptVector irq, int level);
 	uint8_t cpu_read8(ProcessorState& cpu, uint32_t address);
 	void cpu_write8(ProcessorState& cpu, uint8_t data, uint32_t address);
 	void cpu_step(ProcessorState& cpu);

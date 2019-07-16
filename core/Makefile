@@ -1,4 +1,4 @@
-OBJECTS=main.o blitter.o operations.o machine.o debug.o
+OBJECTS=main.o irq.o lcd.o blitter.o operations.o machine.o debug.o
 TARGET=../public/libminimon.wasm
 
 LD=wasm-ld

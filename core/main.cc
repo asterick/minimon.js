@@ -1,6 +1,10 @@
 #include "debug.h"
 #include "machine.h"
 
+#include "lcd.h"
+#include "blitter.h"
+#include "irq.h"
+
 const auto OSC1_SPEED	= 4000000;
 const auto OSC3_SPEED	= 32768;
 const auto MS_SPEED		= 1000;

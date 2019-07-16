@@ -1,6 +1,7 @@
 #include <stdint.h>
 
 #include "machine.h"
+#include "irq.h"
 
 __attribute__ ((visibility ("default"))) extern "C"
 void cpu_reset(ProcessorState& cpu) {
