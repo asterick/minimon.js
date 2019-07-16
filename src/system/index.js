@@ -96,6 +96,8 @@ export default class Minimon {
 
 	reset() {
 		this._exports.cpu_reset(this._cpu_state);
+		this.update();
+
 		this.running = false;
 	}
 
