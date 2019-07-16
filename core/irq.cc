@@ -52,12 +52,7 @@ static const uint8_t BIT_MASK[] = {
 	0b11111111,
 	0b00111111,
 	0b11111111,
-	0b11110111,
-
-	0b11111111,
-	0b00111111,
-	0b11111111,
-	0b11110111,
+	0b11110111
 };
 
 static void refresh_irqs(MachineState& cpu) {
@@ -74,7 +69,7 @@ static void refresh_irqs(MachineState& cpu) {
 		int priority = (cpu.irq.priority >> info.priority_group) & IRQ_PRIO_HIGHEST;
 
 		if (cpu.irq.next_priority < priority) {
-			cpu.irq.next_priority = priority;
+			//cpu.irq.next_priority = priority;
 			cpu.irq.next_irq = (InterruptVector) irq;
 		}
 	}
@@ -98,11 +93,7 @@ static void cpu_interrupt(MachineState& cpu, InterruptVector irq, int level) {
 }
 
 void irq_fire(MachineState& cpu) {
-	return ;
-	// Cannot interrupt of nb != cb, not sure how this affects divide by zeros
-	if (cpu.reg.nb != cpu.reg.cb) return ;
-
-	if (cpu.reg.flag.i < cpu.irq.next_irq) {
+	if (cpu.reg.nb == cpu.reg.cb && cpu.reg.flag.i < cpu.irq.next_irq) {
 		cpu_interrupt(cpu, cpu.irq.next_irq, cpu.irq.next_priority);
 	}
 }
@@ -110,13 +101,11 @@ void irq_fire(MachineState& cpu) {
 void irq_trigger(MachineState& cpu, InterruptVector irq) {
 	const IRQVectorTable& info = IRQ_TABLE[irq];
 
-	if (info.maskable) {
-		cpu.irq.active |= 1 << info.bit_group;
-
-		refresh_irqs(cpu);
-	} else {
-		// Unmaskable interrupt, fire immediately
+	if (irq < FIRST_MASKABLE_IRQ) {
 		cpu_interrupt(cpu, irq, IRQ_PRIO_HIGHEST);
+	} else {
+		cpu.irq.active |= 1 << info.bit_group;
+		refresh_irqs(cpu);
 	}
 }
 
@@ -146,10 +135,10 @@ void irq_write_reg(MachineState& cpu, uint8_t data, uint32_t address) {
 		case 0x2024: cpu.irq.enable_bytes[1] = data & BIT_MASK[4];
 		case 0x2025: cpu.irq.enable_bytes[2] = data & BIT_MASK[5];
 		case 0x2026: cpu.irq.enable_bytes[3] = data & BIT_MASK[6];
-		case 0x2027: cpu.irq.active_bytes[0] &= ~(data & BIT_MASK[7]);
-		case 0x2028: cpu.irq.active_bytes[1] &= ~(data & BIT_MASK[8]);
-		case 0x2029: cpu.irq.active_bytes[2] &= ~(data & BIT_MASK[9]);
-		case 0x202A: cpu.irq.active_bytes[3] &= ~(data & BIT_MASK[10]);
+		case 0x2027: cpu.irq.active_bytes[0] &= ~data;
+		case 0x2028: cpu.irq.active_bytes[1] &= ~data;
+		case 0x2029: cpu.irq.active_bytes[2] &= ~data;
+		case 0x202A: cpu.irq.active_bytes[3] &= ~data;
 	}
 
 	refresh_irqs(cpu);
