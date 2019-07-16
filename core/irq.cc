@@ -67,7 +67,7 @@ static void refresh_irqs(MachineState& cpu) {
 		const IRQVectorTable& info = IRQ_TABLE[irq];
 
 		// Is IRQ active and enabled?
-		if (cpu.irq.active & cpu.irq.enable & (1 << info.bit_group)) {
+		if ((1 << info.bit_group) & ~cpu.irq.active & cpu.irq.enable) {
 			continue ;
 		}
 
@@ -98,6 +98,7 @@ static void cpu_interrupt(MachineState& cpu, InterruptVector irq, int level) {
 }
 
 void irq_fire(MachineState& cpu) {
+	return ;
 	// Cannot interrupt of nb != cb, not sure how this affects divide by zeros
 	if (cpu.reg.nb != cpu.reg.cb) return ;
 
