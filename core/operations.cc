@@ -251,7 +251,7 @@ static void inst_mul(ProcessorState& cpu) {
 
 static void inst_div(ProcessorState& cpu) {
 	if (cpu.reg.a == 0) {
-		cpu_interrupt(cpu, IRQ_DIV_ZERO);
+		cpu_interrupt(cpu, IRQ_DIV_ZERO, IRC_PRIO_HIGHEST);
 		return ;
 	}
 
