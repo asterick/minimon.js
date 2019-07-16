@@ -1,7 +1,6 @@
 #include <stdint.h>
 
 #include "machine.h"
-#include "irq.h"
 
 __attribute__ ((visibility ("default"))) extern "C"
 void cpu_reset(MachineState& cpu) {
@@ -11,6 +10,8 @@ void cpu_reset(MachineState& cpu) {
 	cpu.reg.xp = 0x00;
 	cpu.reg.yp = 0x00;
 	cpu.reg.nb = 0x01;
+
+	irq_reset(cpu);
 }
 
 __attribute__ ((visibility ("default"))) extern "C"

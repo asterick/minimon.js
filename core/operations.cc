@@ -1,7 +1,6 @@
 #include <stdint.h>
 
 #include "machine.h"
-#include "irq.h"
 
 typedef void (*InstructionCall)(MachineState& cpu);
 
@@ -252,7 +251,7 @@ static void inst_mul(MachineState& cpu) {
 
 static void inst_div(MachineState& cpu) {
 	if (cpu.reg.a == 0) {
-		cpu_interrupt(cpu, IRQ_DIV_ZERO, IRC_PRIO_HIGHEST);
+		irq_trigger(cpu, IRQ_DIV_ZERO);
 		return ;
 	}
 
@@ -558,5 +557,6 @@ static void inst_extended_cf(MachineState& cpu) {
 
 __attribute__ ((visibility ("default")))
 void cpu_step(MachineState& cpu) {
+	irq_fire(cpu);
 	inst_table0[cpu_imm8(cpu)](cpu);
 }
