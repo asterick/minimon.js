@@ -65,11 +65,11 @@ uint8_t cpu_pop8(MachineState& cpu) {
 }
 
 void cpu_push16(MachineState& cpu, uint16_t t) {
-	cpu_push8(cpu, (uint8_t)t);
 	cpu_push8(cpu, t >> 8);
+	cpu_push8(cpu, (uint8_t)t);
 }
 
 uint16_t cpu_pop16(MachineState& cpu) {
-	uint16_t t = cpu_pop8(cpu) << 8;
-	return cpu_pop8(cpu) | t;
+	uint16_t t = cpu_pop8(cpu);
+	return (cpu_pop8(cpu) << 8) | t;
 }

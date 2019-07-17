@@ -481,21 +481,18 @@ static inline void op_int16(MachineState& cpu, uint16_t& t) {
 
 static void inst_ret(MachineState& cpu) {
 	cpu.reg.pc = cpu_pop16(cpu);
-	cpu.reg.cb = cpu_pop8(cpu);
-	cpu.reg.nb = cpu.reg.cb;
+	cpu.reg.nb = cpu.reg.cb = cpu_pop8(cpu);
 }
 
 static void inst_rete(MachineState& cpu) {
 	cpu.reg.sc = cpu_pop8(cpu);
 	cpu.reg.pc = cpu_pop16(cpu);
-	cpu.reg.cb = cpu_pop8(cpu);
-	cpu.reg.nb = cpu.reg.cb;
+	cpu.reg.nb = cpu.reg.cb = cpu_pop8(cpu);
 }
 
 static void inst_rets(MachineState& cpu) {
 	cpu.reg.pc = cpu_pop16(cpu);
-	cpu.reg.cb = cpu_pop8(cpu);
-	cpu.reg.nb = cpu.reg.cb;
+	cpu.reg.nb = cpu.reg.cb = cpu_pop8(cpu);
 	cpu.reg.pc += 2;
 }
 
