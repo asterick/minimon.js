@@ -61,8 +61,10 @@ static void refresh_irqs(MachineState& cpu) {
 	for (int irq = FIRST_MASKABLE_IRQ; irq < TOTAL_HARDWARE_IRQS; irq++) {
 		const IRQVectorTable& info = IRQ_TABLE[irq];
 
+		bool active = (1 << info.bit_group) & cpu.irq.active & cpu.irq.enable;
+
 		// Is IRQ active and enabled?
-		if ((1 << info.bit_group) & ~cpu.irq.active & cpu.irq.enable) {
+		if (!active) {
 			continue ;
 		}
 

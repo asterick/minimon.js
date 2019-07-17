@@ -49,10 +49,11 @@ void cpu_write_reg(MachineState& cpu, uint8_t data, uint32_t address) {
 		irq_write_reg(cpu, data, address);
 		break ;
 	case 0x20FE: case 0x20FF:
-		irq_write_reg(cpu, data, address);
+		lcd_write_reg(cpu, data, address);
 		break ;
 	default:
 		dprintf("Unhandled register write %x: %x", address, data);
+		break ;
 	}
 }
 
@@ -73,9 +74,9 @@ __attribute__ ((visibility ("default"))) extern "C"
 void cpu_write8(MachineState& cpu, uint8_t data, uint32_t address) {
 	if (address >= 0x2100) {
 		cpu_write_cart(cpu, data, address);
-	} else if (address > 0x2000) {
+	} else if (address >= 0x2000) {
 		cpu_write_reg(cpu, data, address);
-	} else if (address > 0x1000) {
+	} else if (address >= 0x1000) {
 		cpu.ram[address & 0xFFF] = data;
 	}
 }
