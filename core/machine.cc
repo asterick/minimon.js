@@ -41,13 +41,7 @@ void cpu_write16(MachineState& cpu, uint16_t data, uint32_t address) {
 }
 
 uint8_t cpu_imm8(MachineState& cpu) {
-	uint32_t address = cpu.reg.pc++;
-
-	if (address & 0x8000) {
-		address = (address & 0x7FFF) | (cpu.reg.cb << 15);
-	}
-
-	return cpu_read8(cpu, cpu_translate(cpu, address));
+	return cpu_read8(cpu, cpu_translate(cpu, cpu.reg.pc++));
 }
 
 uint16_t cpu_imm16(MachineState& cpu) {
@@ -56,8 +50,7 @@ uint16_t cpu_imm16(MachineState& cpu) {
 }
 
 void cpu_push8(MachineState& cpu, uint8_t t) {
-	cpu.reg.sp--;
-	cpu_write8(cpu, t, cpu.reg.sp);
+	cpu_write8(cpu, t, --cpu.reg.sp);
 }
 
 uint8_t cpu_pop8(MachineState& cpu) {
