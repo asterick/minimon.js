@@ -30,12 +30,17 @@ export default class Minimon {
 		// Reset our CPU
 		this.reset();
 
+		/*
 		// This is when it all falls apart
-		while (this.registers.pc !== 0x8c4) {
+		while (this.registers.pc !== 0x8c5) {
 			this.step();
 		}
 		this.trace();
-		this.step();
+		
+		while (this.registers.pc < 0x8000) {
+			this.step();
+		}
+		*/
 	}
 
 	get running() {
