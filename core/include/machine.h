@@ -54,11 +54,11 @@ union CPUState {
 struct MachineState {
 	CPUState reg;
 	IRQState irq;
+	LCDState lcd;
 
 	int clocks;
 
 	uint8_t ram[0x1000];
-	uint8_t gddram[9][132];
 };
 
 #include "irq.h"

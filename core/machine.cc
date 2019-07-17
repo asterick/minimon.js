@@ -12,6 +12,7 @@ void cpu_reset(MachineState& cpu) {
 	cpu.reg.nb = 0x01;
 
 	irq_reset(cpu);
+	lcd_reset(cpu);
 }
 
 __attribute__ ((visibility ("default"))) extern "C"
