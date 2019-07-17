@@ -446,14 +446,6 @@ static inline void op_jp16(MachineState& cpu, uint16_t& t) {
 	cpu.reg.pc = t;
 }
 
-static inline void op_djr8(MachineState& cpu, uint8_t& t) {
-	cpu.reg.flag.z = --cpu.reg.b == 0;
-	if (cpu.reg.flag.z) {
-		cpu.reg.cb = cpu.reg.nb;
-		cpu.reg.pc += (int8_t)t - 1;
-	}
-}
-
 static inline void op_cars8(MachineState& cpu, uint8_t& t) {
 	cpu_push8(cpu, cpu.reg.cb);
 	cpu_push16(cpu, cpu.reg.pc);
@@ -510,6 +502,16 @@ static void inst_rets(MachineState& cpu) {
 /**
  * S1C88 Special purpose instructions
  **/
+
+static void inst_djr_nz_rr(MachineState& cpu) {
+	int8_t off = cpu_imm8(cpu);
+
+	cpu.reg.flag.z = --cpu.reg.b == 0;
+	if (cpu.reg.flag.z) {
+		cpu.reg.cb = cpu.reg.nb;
+		cpu.reg.pc += off - 1;
+	}
+}
 
 static void inst_nop(MachineState& cpu) {
 

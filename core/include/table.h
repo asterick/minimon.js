@@ -3965,13 +3965,8 @@ void inst_ld_hl_sp(MachineState& cpu) {
 	cpu.clocks -= 2;
 }
 
-void inst_djr_nz_imm8(MachineState& cpu) {
-	uint8_t data0 = cpu_imm8(cpu);
-	if (!(!cpu.reg.flag.z)) {
-		cpu.clocks -= 4;
-		return ;
-	}
-	op_djr8(cpu, data0);
+void clock_inst_djr_nz_rr(MachineState& cpu) {
+	inst_djr_nz_rr(cpu);
 	cpu.clocks -= 4;
 }
 
@@ -4410,7 +4405,7 @@ static InstructionCall inst_table0[] = {
 	inst_carl_imm16,
 	inst_jrl_imm16,
 	inst_jp_hl,
-	inst_djr_nz_imm8,
+	clock_inst_djr_nz_rr,
 	inst_swap_a,
 	inst_swap_abshl,
 	clock_inst_ret,

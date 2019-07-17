@@ -101,7 +101,6 @@ OPERATIONS = {
     'JRS': (8, 'Read'),
     'JRL': (8, 'Read'),
     'JP': (8, 'Read'),
-    'DJR': (8, 'Read'),
     'INT': (8, 'Read'),
 
     'PUSH': (-1, 'Read'),
