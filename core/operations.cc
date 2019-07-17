@@ -257,6 +257,7 @@ static void inst_div(MachineState& cpu) {
 
 	int div = cpu.reg.hl / cpu.reg.a;
 
+	// NOTE: sure if these are set when result overflows
 	cpu.reg.flag.c = 0;
 	cpu.reg.flag.z = (div & 0xFF) == 0;
 	cpu.reg.flag.n = (div & 0x80) != 0;
@@ -385,8 +386,7 @@ static inline void op_push16(MachineState& cpu, uint16_t t) {
 }
 
 static inline void op_pop16(MachineState& cpu, uint16_t& t) {
-	t = cpu_pop8(cpu) << 8;
-	t |= cpu_pop8(cpu);
+	t = cpu_pop16(cpu);
 }
 
 static inline void inst_push_ip(MachineState& cpu) {
@@ -404,6 +404,7 @@ static inline void inst_push_all(MachineState& cpu) {
 
 static void inst_push_ale(MachineState& cpu) {
 	inst_push_all(cpu);
+	op_push8(cpu, cpu.reg.ep);
 	inst_push_ip(cpu);
 }
 
@@ -422,6 +423,7 @@ static inline void inst_pop_all(MachineState& cpu) {
 
 static void inst_pop_ale(MachineState& cpu) {
 	inst_pop_ip(cpu);
+	cpu.reg.ep = cpu_pop8(cpu);
 	inst_pop_all(cpu);
 }
 
