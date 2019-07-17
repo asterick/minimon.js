@@ -161,36 +161,41 @@ export default class Disassembler {
 		}
 	}
 
+	next() {
+		const address = this._address;
+
+		this._data = [];
+
+		let inst = Table.INSTRUCTION_TABLE;
+
+		do {
+			inst = inst[this._read8()];
+		} while(Array.isArray(inst));
+
+		if (!inst) return null;
+
+		let { op, condition, args } = inst;
+
+		args = args.map(a => this._processArg(a))
+
+		if (condition !== Table.CONDITION_NONE) {
+			args.unshift(this._processCondition(condition))
+		}
+
+		return {
+			data: this._data,
+			op, args, address
+		};
+	}
+
 	process(target, rows) {
 		const lines = [];
+		let next;
 
 		this._address = target;
 
-		while (lines.length < rows) {
-			const address = this._address;
-
-			this._data = [];
-
-			let inst = Table.INSTRUCTION_TABLE;
-
-			do {
-				inst = inst[this._read8()];
-			} while(Array.isArray(inst));
-
-			if (!inst) break ;
-
-			let { op, condition, args } = inst;
-
-			args = args.map(a => this._processArg(a))
-
-			if (condition !== Table.CONDITION_NONE) {
-				args.unshift(this._processCondition(condition))
-			}
-
-			lines.push({
-				data: this._data,
-				op, args, address
-			});
+		while (rows-- > 0 && (next = this.next())) {
+			lines.push(next);
 		}
 
 		return lines;

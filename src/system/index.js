@@ -1,5 +1,7 @@
 import Registers from "./registers";
 
+import disasm from "./disassemble";
+
 export default class Minimon {
 	async init() {
 		const data = await fetch("./libminimon.wasm");
@@ -7,7 +9,13 @@ export default class Minimon {
 			env: {
 				cpu_read_cart: (cpu, address) => this.cpu_read_cart(address),
 				cpu_write_cart: (cpu, data, address) => this.cpu_write_cart(data, address),
-				debug_print: (... rest) => this.debug_print.apply(this, rest)
+				debug_print: (a) => {
+					const str = [];
+					let ch;
+					while (ch = this._machineBytes[a++]) str.push(String.fromCharCode(ch));
+
+					console.log(str.join(""));
+				}
 			}
 		});
 
@@ -21,14 +29,13 @@ export default class Minimon {
 
 		// Reset our CPU
 		this.reset();
-	}
 
-	debug_print(a) {
-		const str = [];
-		let ch;
-		while (ch = this._machineBytes[a++]) str.push(String.fromCharCode(ch));
-
-		console.log(str.join(""));
+		// This is when it all falls apart
+		while (this.registers.pc !== 0x8c4) {
+			this.step();
+		}
+		this.trace();
+		this.step();
 	}
 
 	get running() {
@@ -88,6 +95,19 @@ export default class Minimon {
 		// Unsupported
 	}
 
+	trace() {
+		const old_step = this.step;
+
+		this._disasm = new disasm(this);
+		this.step = () => {
+			this._disasm._address = this.registers.pc;
+			const { op, args, address } = this._disasm.next();
+			console.log(`${address.toString(16)}: ${op} ${args.join(", ")}`);
+
+			old_step.call(this);
+		}
+	}
+
 	// WASM shim functions
 	step() {
 		this._exports.cpu_step(this._cpu_state);
@@ -98,7 +118,7 @@ export default class Minimon {
 		this._exports.cpu_reset(this._cpu_state);
 		this.update();
 
-		this.running = true;
+		this.running = false;
 	}
 
 	read(address) {
