@@ -85,12 +85,12 @@ static inline void op_swap8(MachineState& cpu, uint8_t& t) {
  **/
 
 static inline void add8(MachineState& cpu, uint8_t& t, uint8_t s, int carry) {
-	unsigned int uo = t + s + carry;
-
 	if (cpu.reg.flag.u) {
 		t <<= 4;
 		s <<= 4;
 	}
+
+	unsigned int uo = t + s + carry;
 
 	if (cpu.reg.flag.d) {
 		unsigned int h = (t & 0xF) + (s & 0xF) + carry;
@@ -115,12 +115,12 @@ static inline void add8(MachineState& cpu, uint8_t& t, uint8_t s, int carry) {
 }
 
 static inline void sub8(MachineState& cpu, uint8_t& t, uint8_t s, int carry) {
-	unsigned int uo = t - s - carry;
-
 	if (cpu.reg.flag.u) {
 		t <<= 4;
 		s <<= 4;
 	}
+
+	unsigned int uo = t - s - carry;
 
 	if (cpu.reg.flag.d) {
 		unsigned int h = (t & 0xF) - (s & 0xF) - carry;
