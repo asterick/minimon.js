@@ -37,7 +37,7 @@ uint8_t cpu_read_reg(MachineState& cpu, uint32_t address) {
 		return lcd_read_reg(cpu, address);
 	default:
 		//dprintf("Unhandled register read %x", address);
-		return 0xCD;
+		return 0xA0;
 	}
 }
 

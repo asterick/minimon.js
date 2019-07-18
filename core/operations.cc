@@ -163,7 +163,7 @@ static inline void op_sbc8(MachineState& cpu, uint8_t& t, uint8_t s) {
 static inline void op_add16(MachineState& cpu, uint16_t& t, uint16_t s) {
 	unsigned int uo = t + s;
 
-	cpu.reg.flag.v = ((t ^ s) & (~uo ^ t) & 0x80) != 0;
+	cpu.reg.flag.v = ((t ^ s) & (t ^ ~uo) & 0x80) != 0;
 	t = (uint16_t)uo;
 	cpu.reg.flag.z = t == 0;
 	cpu.reg.flag.c = uo >= 0x10000;
@@ -173,7 +173,7 @@ static inline void op_add16(MachineState& cpu, uint16_t& t, uint16_t s) {
 static inline void op_adc16(MachineState& cpu, uint16_t& t, uint16_t s) {
 	unsigned int uo = t + s + cpu.reg.flag.c;
 
-	cpu.reg.flag.v = ((t ^ s) & (~uo ^ t) & 0x8000) != 0;
+	cpu.reg.flag.v = ((t ^ s) & (t ^ ~uo) & 0x8000) != 0;
 	t = (uint16_t)uo;
 	cpu.reg.flag.z = t == 0;
 	cpu.reg.flag.c = uo >= 0x10000;
@@ -183,7 +183,7 @@ static inline void op_adc16(MachineState& cpu, uint16_t& t, uint16_t s) {
 static inline void op_sub16(MachineState& cpu, uint16_t& t, uint16_t s) {
 	unsigned int uo = t - s;
 
-	cpu.reg.flag.v = ((t ^ ~s) & (~uo ^ t) & 0x8000) != 0;
+	cpu.reg.flag.v = ((t ^ ~s) & (t ^ ~uo) & 0x8000) != 0;
 	t = (uint16_t)uo;
 	cpu.reg.flag.z = t == 0;
 	cpu.reg.flag.c = uo >= 0x10000;
@@ -193,7 +193,7 @@ static inline void op_sub16(MachineState& cpu, uint16_t& t, uint16_t s) {
 static inline void op_sbc16(MachineState& cpu, uint16_t& t, uint16_t s) {
 	unsigned int uo = t - s - cpu.reg.flag.c;
 
-	cpu.reg.flag.v = ((t ^ ~s) & (~uo ^ t) & 0x8000) != 0;
+	cpu.reg.flag.v = ((t ^ ~s) & (t ^ ~uo) & 0x8000) != 0;
 	t = (uint16_t)uo;
 	cpu.reg.flag.z = t == 0;
 	cpu.reg.flag.c = uo >= 0x10000;
@@ -203,7 +203,7 @@ static inline void op_sbc16(MachineState& cpu, uint16_t& t, uint16_t s) {
 static inline void op_cp8(MachineState& cpu, uint8_t t, uint8_t s) {
 	unsigned int uo = t - s;
 
-	cpu.reg.flag.v = ((t ^ ~s) & (~uo ^ t) & 0x80) != 0;
+	cpu.reg.flag.v = ((t ^ ~s) & (t ^ ~uo) & 0x80) != 0;
 	cpu.reg.flag.z = (uo & 0xFF) == 0;
 	cpu.reg.flag.c = uo >= 0x100;
 	cpu.reg.flag.n = (t & 0x80) != 0;
@@ -212,7 +212,7 @@ static inline void op_cp8(MachineState& cpu, uint8_t t, uint8_t s) {
 static inline void op_cp16(MachineState& cpu, uint16_t t, uint16_t s) {
 	unsigned int uo = t - s;
 
-	cpu.reg.flag.v = ((t ^ ~s) & (~uo ^ t) & 0x8000) != 0;
+	cpu.reg.flag.v = ((t ^ ~s) & (t ^ ~uo) & 0x8000) != 0;
 	cpu.reg.flag.z = (uo & 0xFFFF) == 0;
 	cpu.reg.flag.c = uo >= 0x10000;
 	cpu.reg.flag.n = (uo & 0x8000) != 0;

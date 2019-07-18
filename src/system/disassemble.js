@@ -83,7 +83,7 @@ export class Disassembler {
 		case Table.MEM_IY:
 			return "[IY]";
 		case Table.MEM_IX_OFF:
-			return "[IY+L]";
+			return "[IX+L]";
 		case Table.MEM_IY_OFF:
 			return "[IY+L]";
 		case Table.MEM_SP_DISP:
