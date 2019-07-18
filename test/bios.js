@@ -23,13 +23,30 @@ function pad(s, l) {
 	return s;
 }
 
+const verified = [
+	0x9A,	// DEC IX
+	0xE7	// JNZ NZ, #rr
+]
+
+system.code = function () {
+	const first = this.read(this.translate(this.registers.pc));
+
+	if (first == 0xCE || first == 0xCF) {
+		return (first << 8) | this.read(this.translate((this.registers.pc + 1) & 0xFFFF));
+	}
+
+	return first;
+}
+
 system.step = function() {
 	disasm._address = this.registers.pc;
 
-	const { data, op, args, address } = disasm.next();
-	const { ba, hl, ix, iy, pc, sp, br, ep, xp, yp, cb, nb, sc } = this.registers;
+	if (verified.indexOf(this.code()) < 0) {
+		const { data, op, args, address } = disasm.next();
+		const { ba, hl, ix, iy, pc, sp, br, ep, xp, yp, cb, nb, sc } = this.registers;
 
-	console.log(`${hex16(address)}: ${pad(data.map(hex8).join(" "), 11)}: ${pad(`${op} ${args.join(", ")}`, 32)} ; PC: ${hex16(pc)} BA: ${hex16(ba)} HL: ${hex16(hl)} IX: ${hex16(ix)} IY: ${hex16(iy)} SP: ${hex16(sp)} BR: ${hex8(br)} EP: ${hex8(ep)} XP: ${hex8(xp)} YP: ${hex8(yp)} CB: ${hex8(cb)} NB: ${hex8(nb)} SC: ${hex8(sc)}`);
+		console.log(`${hex16(address)}: ${pad(data.map(hex8).join(" "), 11)}: ${pad(`${op} ${args.join(", ")}`, 32)} ; PC: ${hex16(pc)} BA: ${hex16(ba)} HL: ${hex16(hl)} IX: ${hex16(ix)} IY: ${hex16(iy)} SP: ${hex16(sp)} BR: ${hex8(br)} EP: ${hex8(ep)} XP: ${hex8(xp)} YP: ${hex8(yp)} CB: ${hex8(cb)} NB: ${hex8(nb)} SC: ${hex8(sc)}`);
+	}
 
 	this._exports.cpu_step(this._cpu_state);
 	this.update();
