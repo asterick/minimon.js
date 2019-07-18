@@ -7,7 +7,7 @@
     "core": "cd data; python table.py s1c88.csv > ../core/include/table.h; cd ../core; make",
     "start": "webpack-dev-server --open --mode development",
     "build": "webpack --mode production",
-    "test": "webpack --config webpack.test.config.js; node test/bios.js"
+    "test": "npm run core; webpack --config webpack.test.config.js; node test/bios.js"
   },
   "keywords": [],
   "author": "Bryon Vandiver",

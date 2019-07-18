@@ -6,7 +6,7 @@ function toHex(v, c) {
 	return v;
 }
 
-export default class Disassembler {
+export class Disassembler {
 	constructor(system) {
 		this._system = system;
 	}

@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
-import Minimon from "./system";
+import { Minimon } from "./system";
 
 import UI from "./ui";
 import SystemContext from "./ui/context";

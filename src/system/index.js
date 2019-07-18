@@ -1,5 +1,4 @@
 const { struct, union, sizeOf } = require("@thi.ng/unionstruct");
-const disasm = require("./disassemble").default;
 
 const registerHeader = [
 	["ba", "u16"],
@@ -17,22 +16,7 @@ const registerHeader = [
 	["sc", "u8"]
 ];
 
-function hex16(v) {
-	v = v.toString(16);
-	return "0000".substr(v.length) + v;
-}
-
-function hex8(v) {
-	v = v.toString(16);
-	return "00".substr(v.length) + v;
-}
-
-function pad(s, l) {
-	while (s.length < l) s += " ";
-	return s;
-}
-
-export default class Minimon {
+export class Minimon {
 	async init(data) {
 		this._module = await WebAssembly.instantiate(data, {
 			env: {
@@ -58,35 +42,6 @@ export default class Minimon {
 
 		// Reset our CPU
 		this.reset();
-
-		// This is when it all falls apart
-		const contains = [];
-		this._disasm = new disasm(this);
-
-		while (this.registers.pc < 0x8000) {
-			const addy = this.registers.pc;
-			if (contains.indexOf(addy) < 0) {
-				this._disasm._address = this.registers.pc;
-				const { data, op, args, address } = this._disasm.next();
-
-				//console.log("----------------------------------------------------------------")
-				//this.dump_regs();
-				console.log(`${address.toString(16)}: ${pad(data.map(hex8).join(" "), 11)}: ${op} ${args.join(", ")}`);
-				//this.dump_regs();
-
-				contains.push(addy)
-			}
-			
-			this.step();
-		}
-
-		this.trace();
-	}
-
-	dump_regs() {
-		const { ba, hl, ix, iy, pc, sp, br, ep, xp, yp, cb, nb, sc } = this.registers;
-		console.log(`BA: ${hex16(ba)} HL: ${hex16(hl)} IX: ${hex16(ba)} IY: ${hex16(ba)} PC: ${hex16(pc)} SP: ${hex16(sp)} `)
-		console.log(`BR: ${hex8(br)} XP: ${hex8(xp)} YP: ${hex8(yp)} BR: ${hex8(br)} CB: ${hex8(cb)} NB: ${hex8(nb)} SC: ${hex8(sc)} `);
 	}
 
 	get running() {
@@ -143,20 +98,7 @@ export default class Minimon {
 	}
 
 	cpu_write_cart(data, address) {
-		// Unsupported
-	}
-
-	trace() {
-		const old_step = this.step;
-
-		this._disasm = new disasm(this);
-		this.step = () => {
-			this._disasm._address = this.registers.pc;
-			const { op, args, address } = this._disasm.next();
-			console.log(`${address.toString(16)}: ${op} ${args.join(", ")}`);
-
-			old_step.call(this);
-		}
+		// ROM, no multi-cart support yet
 	}
 
 	// WASM shim functions

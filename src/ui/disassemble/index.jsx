@@ -4,7 +4,7 @@ import { AutoSizer } from 'react-virtualized';
 import classes from "./style.scss";
 import SystemContext from "../context";
 
-import Disassembler from "../../system/disassemble.js";
+import { Disassembler } from "../../system/disassemble.js";
 
 function toHex(v, c) {
 	v = v.toString(16).toUpperCase();

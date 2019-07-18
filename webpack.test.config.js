@@ -4,7 +4,7 @@ const webpack = require("webpack");
 module.exports = {
     target: 'node',
     mode: "development",
-    entry: './src/system/index.js',
+    entry: './src/test.index.js',
     output: {
         libraryTarget: 'umd',
         path: path.join(__dirname, 'public'),
