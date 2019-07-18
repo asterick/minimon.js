@@ -488,6 +488,7 @@ static void inst_rete(MachineState& cpu) {
 	cpu.reg.sc = cpu_pop8(cpu);
 	cpu.reg.pc = cpu_pop16(cpu);
 	cpu.reg.nb = cpu.reg.cb = cpu_pop8(cpu);
+	cpu.irq.block = true;
 }
 
 static void inst_rets(MachineState& cpu) {

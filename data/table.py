@@ -150,6 +150,7 @@ def format(cycles, op, *args):
 
         if condition:
             print ("\tif (!(%s)) {" % CONDITIONS[condition])
+            print ("\t\tcpu.reg.nb = cpu.reg.cb;")
             print ("\t\tcpu.clocks -= %i;" % skipped)
             print ("\t\treturn ;")
             print ("\t}")
@@ -159,6 +160,8 @@ def format(cycles, op, *args):
         for i, (siz, mem, ind, nam) in enumerate(args):
             if ind and "Write" in directions[i]:
                 print ("\tcpu_write%s(cpu, data%i, addr%i);" % (size, i, i))
+            if nam in ['sc', 'nb'] and "Write" in directions[i]:
+                print ("\tcpu.irq.block = true;")
 
         print ("\tcpu.clocks -= %i;" % cycles)
         print ("}\n")
