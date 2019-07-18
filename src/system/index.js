@@ -12,6 +12,11 @@ function hex8(v) {
 	return "00".substr(v.length) + v;
 }
 
+function pad(s, l) {
+	while (s.length < l) s += " ";
+	return s;
+}
+
 export default class Minimon {
 	async init() {
 		const data = await fetch("./libminimon.wasm");
@@ -20,7 +25,6 @@ export default class Minimon {
 				cpu_read_cart: (cpu, address) => this.cpu_read_cart(address),
 				cpu_write_cart: (cpu, data, address) => this.cpu_write_cart(data, address),
 				debug_print: (a) => {
-					return ;
 					const str = [];
 					let ch;
 					while (ch = this._machineBytes[a++]) str.push(String.fromCharCode(ch));
@@ -41,20 +45,20 @@ export default class Minimon {
 		// Reset our CPU
 		this.reset();
 
+		// This is when it all falls apart
 		const contains = [];
 		this._disasm = new disasm(this);
 
-		// This is when it all falls apart
 		while (this.registers.pc < 0x8000) {
 			const addy = this.registers.pc;
 			if (contains.indexOf(addy) < 0) {
 				this._disasm._address = this.registers.pc;
-				const { op, args, address } = this._disasm.next();
+				const { data, op, args, address } = this._disasm.next();
 
-				console.log("----------------------------------------------------------------")
-				this.dump_regs();
-				console.log(`${address.toString(16)}: ${op} ${args.join(", ")}`);
-				this.dump_regs();
+				//console.log("----------------------------------------------------------------")
+				//this.dump_regs();
+				console.log(`${address.toString(16)}: ${pad(data.map(hex8).join(" "), 11)}: ${op} ${args.join(", ")}`);
+				//this.dump_regs();
 
 				contains.push(addy)
 			}
