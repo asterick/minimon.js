@@ -36,7 +36,7 @@ uint8_t cpu_read_reg(MachineState& cpu, uint32_t address) {
 	case 0x20FE: case 0x20FF:
 		return lcd_read_reg(cpu, address);
 	default:
-		dprintf("Unhandled register read %x", address);
+		//dprintf("Unhandled register read %x", address);
 		return 0xCD;
 	}
 }
@@ -52,7 +52,7 @@ void cpu_write_reg(MachineState& cpu, uint8_t data, uint32_t address) {
 		lcd_write_reg(cpu, data, address);
 		break ;
 	default:
-		dprintf("Unhandled register write %x: %x", address, data);
+		//dprintf("Unhandled register write %x: %x", address, data);
 		break ;
 	}
 }

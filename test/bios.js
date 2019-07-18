@@ -29,7 +29,7 @@ system.step = function() {
 	const { data, op, args, address } = disasm.next();
 	const { ba, hl, ix, iy, pc, sp, br, ep, xp, yp, cb, nb, sc } = this.registers;
 
-	console.log(`${hex16(address)}: ${pad(data.map(hex8).join(" "), 11)}: ${pad(`${op} ${args.join(", ")}`, 32)} ; BA: ${hex16(ba)} HL: ${hex16(hl)} IX: ${hex16(ba)} IY: ${hex16(ba)} PC: ${hex16(pc)} SP: ${hex16(sp)} BR: ${hex8(br)} XP: ${hex8(xp)} YP: ${hex8(yp)} BR: ${hex8(br)} CB: ${hex8(cb)} NB: ${hex8(nb)} SC: ${hex8(sc)}`);
+	console.log(`${hex16(address)}: ${pad(data.map(hex8).join(" "), 11)}: ${pad(`${op} ${args.join(", ")}`, 32)} ; PC: ${hex16(pc)} BA: ${hex16(ba)} HL: ${hex16(hl)} IX: ${hex16(ix)} IY: ${hex16(iy)} SP: ${hex16(sp)} BR: ${hex8(br)} EP: ${hex8(ep)} XP: ${hex8(xp)} YP: ${hex8(yp)} CB: ${hex8(cb)} NB: ${hex8(nb)} SC: ${hex8(sc)}`);
 
 	this._exports.cpu_step(this._cpu_state);
 	this.update();
