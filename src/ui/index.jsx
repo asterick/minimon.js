@@ -66,7 +66,7 @@ export default class MinimonDebugger extends Component {
 				<div className={style.sidebar}>
 					<Screen />
 					<Registers />
-					<Memory memoryBottom={0x1000} memoryTop={0x20FF} />
+					<Memory memoryBottom={0x1000} memoryTop={0x20F7} />
 				</div>
 				<div className={style.document}>
 					<Disassembler target={system.translate(system.registers.pc)} />

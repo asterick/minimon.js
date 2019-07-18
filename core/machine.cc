@@ -6,7 +6,7 @@ __attribute__ ((visibility ("default"))) extern "C"
 void cpu_reset(MachineState& cpu) {
 	cpu.reg.pc = cpu_read16(cpu, 0x0000);
 	cpu.reg.sc = 0xC0;
-	cpu.reg.ep = 0x00;
+	cpu.reg.ep = 0xFF;
 	cpu.reg.xp = 0x00;
 	cpu.reg.yp = 0x00;
 	cpu.reg.nb = 0x01;

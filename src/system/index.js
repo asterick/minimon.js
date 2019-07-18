@@ -2,6 +2,16 @@ import Registers from "./registers";
 
 import disasm from "./disassemble";
 
+function hex16(v) {
+	v = v.toString(16);
+	return "0000".substr(v.length) + v;
+}
+
+function hex8(v) {
+	v = v.toString(16);
+	return "00".substr(v.length) + v;
+}
+
 export default class Minimon {
 	async init() {
 		const data = await fetch("./libminimon.wasm");
@@ -10,6 +20,7 @@ export default class Minimon {
 				cpu_read_cart: (cpu, address) => this.cpu_read_cart(address),
 				cpu_write_cart: (cpu, data, address) => this.cpu_write_cart(data, address),
 				debug_print: (a) => {
+					return ;
 					const str = [];
 					let ch;
 					while (ch = this._machineBytes[a++]) str.push(String.fromCharCode(ch));
@@ -30,17 +41,32 @@ export default class Minimon {
 		// Reset our CPU
 		this.reset();
 
-		/*
+		const contains = [];
+		this._disasm = new disasm(this);
+
 		// This is when it all falls apart
-		while (this.registers.pc !== 0x8c5) {
-			this.step();
-		}
-		this.trace();
-		
 		while (this.registers.pc < 0x8000) {
+			const addy = this.registers.pc;
+			if (contains.indexOf(addy) < 0) {
+				this._disasm._address = this.registers.pc;
+				const { op, args, address } = this._disasm.next();
+
+				console.log("----------------------------------------------------------------")
+				this.dump_regs();
+				console.log(`${address.toString(16)}: ${op} ${args.join(", ")}`);
+				this.dump_regs();
+
+				contains.push(addy)
+			}
+			
 			this.step();
 		}
-		*/
+	}
+
+	dump_regs() {
+		const { ba, hl, ix, iy, pc, sp, br, ep, xp, yp, cb, nb, sc } = this.registers;
+		console.log(`BA: ${hex16(ba)} HL: ${hex16(hl)} IX: ${hex16(ba)} IY: ${hex16(ba)} PC: ${hex16(pc)} SP: ${hex16(sp)} `)
+		console.log(`BR: ${hex8(br)} XP: ${hex8(xp)} YP: ${hex8(yp)} BR: ${hex8(br)} CB: ${hex8(cb)} NB: ${hex8(nb)} SC: ${hex8(sc)} `);
 	}
 
 	get running() {
