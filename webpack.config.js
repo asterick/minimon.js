@@ -61,9 +61,3 @@ module.exports = {
         extensions: ['.js', '.jsx']
     }
 };
-
-if (mode !== 'production') {
-    module.exports.resolve.alias = {
-        inferno: __dirname + "/node_modules/inferno/dist/index.dev.esm.js"
-    }
-}

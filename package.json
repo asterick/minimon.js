@@ -6,7 +6,8 @@
   "scripts": {
     "core": "cd data; python table.py s1c88.csv > ../core/include/table.h; cd ../core; make",
     "start": "webpack-dev-server --open --mode development",
-    "build": "webpack --mode production"
+    "build": "webpack --mode production",
+    "test": "webpack --config webpack.test.config.js; node test/bios.js"
   },
   "keywords": [],
   "author": "Bryon Vandiver",
@@ -31,22 +32,25 @@
   },
   "homepage": "https://github.com/asterick/minimon.js#readme",
   "dependencies": {
-    "@babel/core": "^7.5.4",
-    "@babel/plugin-proposal-class-properties": "^7.5.0",
+    "@babel/core": "^7.5.5",
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
     "@babel/preset-react": "^7.0.0",
     "@thi.ng/unionstruct": "^1.1.1",
     "babel-loader": "^8.0.6",
-    "css-loader": "^3.0.0",
+    "css-loader": "^3.1.0",
     "node-sass": "^4.12.0",
     "normalize.css": "^8.0.1",
-    "raw-loader": "^3.0.0",
+    "raw-loader": "^3.1.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-virtualized": "^9.21.1",
     "sass-loader": "^7.1.0",
     "style-loader": "^0.23.1",
-    "webpack": "^4.35.3",
+    "webpack": "^4.36.1",
     "webpack-cli": "^3.3.6",
     "webpack-dev-server": "^3.7.2"
+  },
+  "devDependencies": {
+    "test": "^0.6.0"
   }
 }

@@ -1,6 +1,21 @@
-import Registers from "./registers";
+const { struct, union, sizeOf } = require("@thi.ng/unionstruct");
+const disasm = require("./disassemble").default;
 
-import disasm from "./disassemble";
+const registerHeader = [
+	["ba", "u16"],
+	["hl", "u16"],
+	["ix", "u16"],
+	["iy", "u16"],
+	["pc", "u16"],
+	["sp", "u16"],
+	["br", "u8"],
+	["ep", "u8"],
+	["xp", "u8"],
+	["yp", "u8"],
+	["cb", "u8"],
+	["nb", "u8"],
+	["sc", "u8"]
+];
 
 function hex16(v) {
 	v = v.toString(16);
@@ -18,9 +33,8 @@ function pad(s, l) {
 }
 
 export default class Minimon {
-	async init() {
-		const data = await fetch("./libminimon.wasm");
-		this._module = await WebAssembly.instantiate(await data.arrayBuffer(), {
+	async init(data) {
+		this._module = await WebAssembly.instantiate(data, {
 			env: {
 				cpu_read_cart: (cpu, address) => this.cpu_read_cart(address),
 				cpu_write_cart: (cpu, data, address) => this.cpu_write_cart(data, address),
@@ -38,7 +52,7 @@ export default class Minimon {
 		this._cpu_state = this._exports.get_machine();
 		this._machineBytes = new Uint8Array(this._exports.memory.buffer);
 
-		this.registers = new Registers(this._exports.memory.buffer, this._cpu_state);
+		this.registers = struct(registerHeader, this._exports.memory.buffer, this._cpu_state, false, true);
 
 		this.cartridge = new Uint8Array(0x200000);
 
@@ -65,6 +79,8 @@ export default class Minimon {
 			
 			this.step();
 		}
+
+		this.trace();
 	}
 
 	dump_regs() {

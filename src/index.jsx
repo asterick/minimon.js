@@ -7,7 +7,9 @@ import SystemContext from "./ui/context";
 
 async function main() {
 	const system = new Minimon();
-	await system.init();
+	const wasm = await fetch("./libminimon.wasm");
+
+	await system.init(await wasm.arrayBuffer());
 
 	const ui = <SystemContext.Provider value={system}>
 		<UI />

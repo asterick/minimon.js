@@ -1,8 +1,8 @@
 .DS_Store
 node_modules
 npm-debug.log
-temp.*
-config.json
-public/app.js
+public
+!public/favicon.png
+!public/index.html
+compiled.js
 table.h
-*.wasm
