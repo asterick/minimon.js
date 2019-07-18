@@ -339,14 +339,14 @@ static inline void op_sll8(MachineState& cpu, uint8_t& t) {
 	cpu.reg.flag.n = (t & 0x80) != 0;
 }
 
-static inline void op_rr8(MachineState& cpu, uint8_t& t) {
+static inline void op_rrc8(MachineState& cpu, uint8_t& t) {
 	cpu.reg.flag.c = (t & 1);
 	t = (t >> 1) | (t << 7);
 	cpu.reg.flag.z = (t == 0);
 	cpu.reg.flag.n = (t & 0x80) != 0;
 }
 
-static inline void op_rrc8(MachineState& cpu, uint8_t& t) {
+static inline void op_rr8(MachineState& cpu, uint8_t& t) {
 	auto old = t;
 	t = (cpu.reg.flag.c << 7) | (t >> 1);
 	cpu.reg.flag.c = old & 1;
@@ -354,16 +354,16 @@ static inline void op_rrc8(MachineState& cpu, uint8_t& t) {
 	cpu.reg.flag.n = (t & 0x80) != 0;
 }
 
-static inline void op_rl8(MachineState& cpu, uint8_t& t) {
+static inline void op_rlc8(MachineState& cpu, uint8_t& t) {
 	cpu.reg.flag.c = (t & 0x80) != 0;
 	t = (t >> 7) | (t << 1);
 	cpu.reg.flag.z = (t == 0);
 	cpu.reg.flag.n = (t & 0x80) != 0;
 }
 
-static inline void op_rlc8(MachineState& cpu, uint8_t& t) {
+static inline void op_rl8(MachineState& cpu, uint8_t& t) {
 	auto old = t;
-	t = cpu.reg.flag.c | (t << 1);
+	t = (t << 1) | cpu.reg.flag.c;
 	cpu.reg.flag.c = (old & 0x80) != 0;
 	cpu.reg.flag.z = (t == 0);
 	cpu.reg.flag.n = (t & 0x80) != 0;

@@ -26,10 +26,13 @@ function pad(s, l) {
 const verified = [
  	0x38, 	// XOR A, A
  	0x44,	// LD A, [BR:nn]
+ 	0x46,	// LD A, [IX]
  	0x48,	// LD B, A
  	0x78,	// LD [BR:nn], A
  	0x79,	// LD [BR:nn], B
  	0x82,	// INC L
+ 	0x88,	// DEC A
+ 	0x8A,	// DEC L
  	0x92,	// INC IX
  	0x93,	// INC IY
 	0x9A,	// DEC IX
@@ -37,13 +40,18 @@ const verified = [
 	0xA0,	// PUSH BA
 	0xA2,	// PUSH IX
 	0xB4,	// LD BR, #nn
+	0xB5,	// LD [HL], #nn
 	0xC6,	// LD IX, #nn
+	0xD6,	// CP IX, #nnnn
+	0xD8,	// AND [BR:nn], #nn
 	0xD9,	// OR [BR:nn], #nn
 	0xDD,	// LD [BR:nn], #nn
 	0xE7,	// JNZ NZ, #rr
 	0xF2,	// CARL #nnnn
 	0xF8,	// RET
 
+	0xCE90,	// RL A
+	0xCE99,	// RR B
 	0xCEBD,	// CP L, #nn
 	0xCECD,	// LD EP, A
 	0xCECE, // LD XP, A
