@@ -5,6 +5,7 @@
 #include "lcd.h"
 #include "irq.h"
 #include "tim256.h"
+#include "rtc.h"
 #include "blitter.h"
 
 union CPUState {
@@ -56,6 +57,7 @@ struct MachineState {
 	CPUState reg;
 	IRQState irq;
 	LCDState lcd;
+	RTCState rtc;
 	TIM256State tim256;
 
 	uint8_t bus_cap;

@@ -30,7 +30,7 @@ export default class MinimonDebugger extends Component {
     }
 
 	componentDidMount() {
-		this.context.update = () => this.setState({});
+		this.context.update = () => this.forceUpdate();
 	}
 
 	componentWillUnmount() {

@@ -33,6 +33,7 @@ void cpu_reset(MachineState& cpu) {
 
 	irq_reset(cpu);
 	lcd_reset(cpu);
+	rtc_reset(cpu);
 	tim256_reset(cpu);
 }
 
@@ -48,6 +49,7 @@ void cpu_clock(MachineState& cpu, int cycles) {
 
 		// These are the devices that only advance with OSC3
 		tim256_clock(cpu, osc3);
+		rtc_clock(cpu, osc3);
  	} else {
  		osc3 = 0;
  	}
@@ -80,6 +82,8 @@ bool cpu_advance(MachineState& cpu, int ticks) {
 
 uint8_t cpu_read_reg(MachineState& cpu, uint32_t address) {
 	switch (address) {
+	case 0x2008 ... 0x200B:
+		return rtc_read_reg(cpu, address);
 	case 0x2020 ... 0x202A:
 		return irq_read_reg(cpu, address);
 	case 0x2040 ... 0x2041:
@@ -94,6 +98,9 @@ uint8_t cpu_read_reg(MachineState& cpu, uint32_t address) {
 
 void cpu_write_reg(MachineState& cpu, uint8_t data, uint32_t address) {
 	switch (address) {
+	case 0x2008 ... 0x200B:
+		rtc_write_reg(cpu, data, address);
+		break ;
 	case 0x2020 ... 0x202A:
 		irq_write_reg(cpu, data, address);
 		break ;
