@@ -6,7 +6,7 @@ CC=clang
 CPP=clang++
 
 CPPFLAGS = --target=wasm32-wasm -O2 -Iinclude -std=c++17
-LDFLAGS = --allow-undefined --export-dynamic --no-entry
+LDFLAGS = --allow-undefined --export-dynamic --no-entry --strip-all
 
 all:table $(DEPDIR) $(TARGET)
 
