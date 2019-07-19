@@ -11,6 +11,9 @@ void cpu_reset(MachineState& cpu) {
 	cpu.reg.yp = 0x00;
 	cpu.reg.nb = 0x01;
 
+	cpu.sleeping = false;
+	cpu.halted = false;
+
 	irq_reset(cpu);
 	lcd_reset(cpu);
 }

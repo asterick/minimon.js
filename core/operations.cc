@@ -529,18 +529,15 @@ static void inst_sep(MachineState& cpu) {
 }
 
 static void inst_halt(MachineState& cpu) {
-	// TODO
-	cpu.clocks = 0;
+	cpu.halted = true;
 }
 
 static void inst_slp(MachineState& cpu) {
-	// TODO
-	cpu.clocks = 0;
+	cpu.sleeping = true;
 }
 
 static void inst_undefined(MachineState& cpu) {
-	// TODO
-	cpu.clocks = 0;
+	cpu.halted = true;
 }
 
 static void inst_extended_ce(MachineState& cpu);
@@ -560,5 +557,11 @@ static void inst_extended_cf(MachineState& cpu) {
 __attribute__ ((visibility ("default")))
 void cpu_step(MachineState& cpu) {
 	irq_fire(cpu);
-	inst_table0[cpu_imm8(cpu)](cpu);
+	
+	if (!cpu.sleeping && !cpu.halted) {
+		inst_table0[cpu_imm8(cpu)](cpu);
+	} else {
+		// TODO: THIS SHOULD BE SMARTER
+		cpu.clocks--;
+	}
 }

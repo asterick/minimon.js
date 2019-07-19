@@ -57,6 +57,8 @@ struct MachineState {
 	LCDState lcd;
 
 	int clocks;
+	bool sleeping;
+	bool halted;
 
 	uint8_t ram[0x1000];
 };

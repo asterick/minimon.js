@@ -99,6 +99,8 @@ void irq_fire(MachineState& cpu) {
 	if (cpu.irq.block) {
 		cpu.irq.block = false;
 	} else if (cpu.reg.flag.i < cpu.irq.next_priority) {
+		cpu.halted = false;
+
 		cpu_interrupt(cpu, cpu.irq.next_irq, cpu.irq.next_priority);
 	}
 }
