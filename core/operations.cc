@@ -505,7 +505,7 @@ static void inst_djr_nz_rr(MachineState& cpu) {
 	int8_t off = cpu_imm8(cpu);
 
 	cpu.reg.flag.z = --cpu.reg.b == 0;
-	if (cpu.reg.flag.z) {
+	if (!cpu.reg.flag.z) {
 		cpu.reg.cb = cpu.reg.nb;
 		cpu.reg.pc += off - 1;
 	}
