@@ -8,8 +8,7 @@
 #include "rtc.h"
 #include "blitter.h"
 
-#define EXPORT   __attribute__ ((visibility ("default")))
-
+#define EXPORT   __attribute__((visibility ("default"))) extern "C"
 #define EXPORTED extern "C"
 #define IMPORTED extern "C"
 

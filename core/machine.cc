@@ -115,7 +115,7 @@ inline void cpu_write_reg(MachineState& cpu, uint8_t data, uint32_t address) {
 	}
 }
 
-EXPORT inline uint8_t cpu_read(MachineState& cpu, uint32_t address) {
+EXPORT uint8_t cpu_read(MachineState& cpu, uint32_t address) {
 	switch (address) {
 		case 0x0000 ... 0x0FFF:
 			return cpu.bus_cap = bios[address];
@@ -128,7 +128,7 @@ EXPORT inline uint8_t cpu_read(MachineState& cpu, uint32_t address) {
 	}
 }
 
-EXPORT inline void cpu_write(MachineState& cpu, uint8_t data, uint32_t address) {
+EXPORT void cpu_write(MachineState& cpu, uint8_t data, uint32_t address) {
 	cpu.bus_cap = data;
 	
 	switch (address) {
