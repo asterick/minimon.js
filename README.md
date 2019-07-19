@@ -13,7 +13,7 @@ Emulation Status
 | ----------------- | ---------- | ------------------------------------- |
 | S1C88 Core        | 100%       | Loop complete, instructions unverfied |
 | IRQ System        | 100%       | Unverified                            |
-| LCD               | 0%         | SED1565 LCD Controller                |
+| LCD (SED1565)     | 80%        | Most commands implemented             |
 | Blitter           | 0%         |                                       |
 | General Timers    | 0%         |                                       |
 | 256Hz Timer       | 0%         |                                       |

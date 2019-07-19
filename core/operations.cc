@@ -554,14 +554,6 @@ static void inst_extended_cf(MachineState& cpu) {
 	inst_table2[cpu_imm8(cpu)](cpu);
 }
 
-__attribute__ ((visibility ("default")))
-void cpu_step(MachineState& cpu) {
-	irq_fire(cpu);
-	
-	if (!cpu.sleeping && !cpu.halted) {
-		inst_table0[cpu_imm8(cpu)](cpu);
-	} else {
-		// TODO: THIS SHOULD BE SMARTER
-		cpu.clocks--;
-	}
+void inst_advance(MachineState& cpu) {
+	inst_table0[cpu_imm8(cpu)](cpu);
 }

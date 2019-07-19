@@ -123,6 +123,9 @@ export class Minimon {
 	}
 
 	translate(address) {
-		return this._exports.cpu_translate(this._cpu_state, address);
+		const test = this.registers.pc & 0x8000;
+		const low = this.registers.pc & 0x7FFF;
+		
+		return low | (test && (this.registers.cb << 15));
 	}
 }

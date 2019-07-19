@@ -4,6 +4,7 @@
 
 #include "lcd.h"
 #include "irq.h"
+#include "tim256.h"
 #include "blitter.h"
 
 union CPUState {
@@ -55,6 +56,7 @@ struct MachineState {
 	CPUState reg;
 	IRQState irq;
 	LCDState lcd;
+	uint8_t bus_cap;
 
 	int clocks;
 	bool sleeping;
@@ -83,3 +85,4 @@ void cpu_push8(MachineState& cpu, uint8_t t);
 uint8_t cpu_pop8(MachineState& cpu);
 void cpu_push16(MachineState& cpu, uint16_t t);
 uint16_t cpu_pop16(MachineState& cpu);
+void inst_advance(MachineState& cpu);
