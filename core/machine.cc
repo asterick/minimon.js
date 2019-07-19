@@ -39,13 +39,16 @@ void cpu_reset(MachineState& cpu) {
 
 void cpu_clock(MachineState& cpu, int cycles) {
 	int osc1 = cycles * OSC1_SPEED / CPU_SPEED;	
-	int osc3;
+	int osc3 = 0;
 
 	cpu.osc3_overflow += osc1 * OSC3_SPEED;
 
 	if (cpu.osc3_overflow >= OSC1_SPEED) {
-		osc3 = cpu.osc3_overflow / OSC1_SPEED;
-		cpu.osc3_overflow %= OSC1_SPEED;
+		// Assume we are not going to get more than a couple ticks out of this thing
+		do {
+			cpu.osc3_overflow -= OSC1_SPEED;
+			osc3++;
+		} while (cpu.osc3_overflow >= OSC1_SPEED);
 
 		// These are the devices that only advance with OSC3
 		tim256_clock(cpu, osc3);

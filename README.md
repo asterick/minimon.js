@@ -18,7 +18,7 @@ Emulation Status
 | LCD (SED1565)     | 80%        | Most commands implemented             |
 | Blitter           | 0%         |                                       |
 | General Timers    | 0%         |                                       |
-| Control System    | 0%         |                                       |
+| Control Registers | 0%         |                                       |
 | I/O / Input Ports | 0%         |                                       |
 | EEPROM Emulation  | 0%         |                                       |
 | Sound Emulation   | 0%         |                                       |
