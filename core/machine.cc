@@ -33,6 +33,7 @@ void cpu_reset(MachineState& cpu) {
 
 	irq_reset(cpu);
 	lcd_reset(cpu);
+	tim256_reset(cpu);
 }
 
 void cpu_clock(MachineState& cpu, int cycles) {
@@ -44,6 +45,9 @@ void cpu_clock(MachineState& cpu, int cycles) {
 	if (cpu.osc3_overflow >= OSC1_SPEED) {
 		osc3 = cpu.osc3_overflow / OSC1_SPEED;
 		cpu.osc3_overflow %= OSC1_SPEED;
+
+		// These are the devices that only advance with OSC3
+		tim256_clock(cpu, osc3);
  	} else {
  		osc3 = 0;
  	}
@@ -78,6 +82,8 @@ uint8_t cpu_read_reg(MachineState& cpu, uint32_t address) {
 	switch (address) {
 	case 0x2020 ... 0x202A:
 		return irq_read_reg(cpu, address);
+	case 0x2040 ... 0x2041:
+		return tim256_read_reg(cpu, address);
 	case 0x20FE ... 0x20FF:
 		return lcd_read_reg(cpu, address);
 	default:
@@ -90,6 +96,9 @@ void cpu_write_reg(MachineState& cpu, uint8_t data, uint32_t address) {
 	switch (address) {
 	case 0x2020 ... 0x202A:
 		irq_write_reg(cpu, data, address);
+		break ;
+	case 0x2040 ... 0x2041:
+		tim256_write_reg(cpu, data, address);
 		break ;
 	case 0x20FE ... 0x20FF:
 		lcd_write_reg(cpu, data, address);

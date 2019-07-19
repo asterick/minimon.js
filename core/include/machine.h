@@ -56,8 +56,9 @@ struct MachineState {
 	CPUState reg;
 	IRQState irq;
 	LCDState lcd;
-	uint8_t bus_cap;
+	TIM256State tim256;
 
+	uint8_t bus_cap;
 	int clocks;
 	int osc3_overflow;
 	bool sleeping;
