@@ -123,9 +123,6 @@ export class Minimon {
 	}
 
 	translate(address) {
-		const test = this.registers.pc & 0x8000;
-		const low = this.registers.pc & 0x7FFF;
-		
-		return low | (test && (this.registers.cb << 15));
+		return (address & 0x7FFF) | ((address & 0x8000) && (this.registers.cb << 15));
 	}
 }
