@@ -77,6 +77,8 @@ extern "C" {
 	bool cpu_advance(MachineState& cpu, int ticks);
 }
 
+void cpu_clock(MachineState& cpu, int cycles);
+
 // These are memory access helpers
 uint16_t cpu_read16(MachineState& cpu, uint32_t address);
 void cpu_write16(MachineState& cpu, uint16_t data, uint32_t address);
@@ -86,4 +88,4 @@ void cpu_push8(MachineState& cpu, uint8_t t);
 uint8_t cpu_pop8(MachineState& cpu);
 void cpu_push16(MachineState& cpu, uint16_t t);
 uint16_t cpu_pop16(MachineState& cpu);
-void inst_advance(MachineState& cpu);
+int inst_advance(MachineState& cpu);

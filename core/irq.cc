@@ -90,7 +90,7 @@ static void cpu_interrupt(MachineState& cpu, InterruptVector irq, int level) {
 	cpu_push16(cpu, cpu.reg.pc);
 	cpu_push8(cpu, cpu.reg.sc);
 
-	cpu.clocks -= 7;
+	cpu_clock(cpu, 7);
 	cpu.reg.pc = cpu_read16(cpu, 2 * (int) irq);
 	cpu.reg.flag.i = level;
 }

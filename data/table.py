@@ -9,6 +9,8 @@ op0s, op1s, op2s = [None] * 0x100, [None] * 0x100, [None] * 0x100
 op0s[0xCE] = "inst_extended_ce"
 op0s[0xCF] = "inst_extended_cf"
 
+print ("typedef int (*InstructionCall)(MachineState& cpu);")
+
 CONDITIONS = {
     'C': 'cpu.reg.flag.c',
     'NC': '!cpu.reg.flag.c',
@@ -135,7 +137,7 @@ def format(cycles, op, *args):
         size = max(default_size, *[s for s, i, m, n in args])
         name = get_name(op, condition, *[n for s, i, m, n in args])
 
-        print ("void %s(MachineState& cpu) {" % name)
+        print ("int %s(MachineState& cpu) {" % name)
 
         for i, (siz, mem, ind, nam) in enumerate(args):
             if ind:
@@ -151,8 +153,7 @@ def format(cycles, op, *args):
         if condition:
             print ("\tif (!(%s)) {" % CONDITIONS[condition])
             print ("\t\tcpu.reg.nb = cpu.reg.cb;")
-            print ("\t\tcpu.clocks -= %i;" % skipped)
-            print ("\t\treturn ;")
+            print ("\t\treturn %i;" % skipped)
             print ("\t}")
 
         print ("\top_%s%i(cpu, %s);" % (op.lower(), size, ', '.join([format_arg(i, *a) for i, a in enumerate(args)])));
@@ -164,17 +165,18 @@ def format(cycles, op, *args):
             if nam in ['sc', 'nb'] and "Write" in directions[i]:
                 block = True
 
-        print ("\tcpu.clocks -= %i;" % cycles)
         if block:
-            print ("\tinst_advance(cpu); // Block IRQs")
+            print ("\treturn %i + inst_advance(cpu); // Block IRQs" % cycles)
+        else:
+            print ("\treturn %i;" % cycles)
         print ("}\n")
         return name
     except:
         name = get_name(op, condition, *args)
 
-        print ("void clock_%s(MachineState& cpu) {" % name)
+        print ("int clock_%s(MachineState& cpu) {" % name)
         print ("\t%s(cpu);" % name)
-        print ("\tcpu.clocks -= %i;" % cycles)
+        print ("\treturn %i;" % cycles)
         print ("}\n")
         return "clock_%s" % name
 

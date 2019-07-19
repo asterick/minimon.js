@@ -2,8 +2,6 @@
 
 #include "machine.h"
 
-typedef void (*InstructionCall)(MachineState& cpu);
-
 /**
  * S1C88 Effective address calculations
  **/
@@ -538,24 +536,25 @@ static void inst_slp(MachineState& cpu) {
 	cpu.sleeping = true;
 }
 
-static void inst_undefined(MachineState& cpu) {
-	cpu.halted = true;
+static int inst_undefined(MachineState& cpu) {
+	cpu.sleeping = true;
+	return 0;
 }
 
-static void inst_extended_ce(MachineState& cpu);
-static void inst_extended_cf(MachineState& cpu);
+static int inst_extended_ce(MachineState& cpu);
+static int inst_extended_cf(MachineState& cpu);
 
 // Generated compound instructions and tables
 #include "table.h"
 
-static void inst_extended_ce(MachineState& cpu) {
-	inst_table1[cpu_imm8(cpu)](cpu);
+static int inst_extended_ce(MachineState& cpu) {
+	return inst_table1[cpu_imm8(cpu)](cpu);
 }
 
-static void inst_extended_cf(MachineState& cpu) {
-	inst_table2[cpu_imm8(cpu)](cpu);
+static int inst_extended_cf(MachineState& cpu) {
+	return inst_table2[cpu_imm8(cpu)](cpu);
 }
 
-void inst_advance(MachineState& cpu) {
-	inst_table0[cpu_imm8(cpu)](cpu);
+int inst_advance(MachineState& cpu) {
+	return inst_table0[cpu_imm8(cpu)](cpu);
 }
