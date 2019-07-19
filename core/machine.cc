@@ -34,14 +34,6 @@ void cpu_reset(MachineState& cpu) {
 	lcd_reset(cpu);
 }
 
-static uint32_t cpu_translate(MachineState& cpu, uint16_t address) {
-	if (address & 0x8000) {
-		return (cpu.reg.cb << 15) | (address & 0x7FFF);
-	} else {
-		return address;
-	}
-}
-
 /**
  * S1C88 Memory access helper functions
  **/
@@ -59,7 +51,12 @@ void cpu_write16(MachineState& cpu, uint16_t data, uint32_t address) {
 }
 
 uint8_t cpu_imm8(MachineState& cpu) {
-	return cpu_read8(cpu, cpu_translate(cpu, cpu.reg.pc++));
+	uint16_t address = cpu.reg.pc++;
+
+	if (address & 0x8000) {
+		address = (cpu.reg.cb << 15) | (address & 0x7FFF);
+	}
+	return cpu_read8(cpu, address);
 }
 
 uint16_t cpu_imm16(MachineState& cpu) {
@@ -97,7 +94,7 @@ void cpu_step(MachineState& cpu) {
 	}
 }
 
-__attribute__ ((visibility ("default"))) extern "C"
+__attribute__ ((visibility ("default")))
 bool cpu_advance(MachineState& cpu, int ticks) {
 	cpu.clocks += OSC1_SPEED / CPU_DIVIDER / MS_SPEED * ticks;
 
@@ -138,7 +135,7 @@ void cpu_write_reg(MachineState& cpu, uint8_t data, uint32_t address) {
 	}
 }
 
-__attribute__ ((visibility ("default"))) extern "C"
+__attribute__ ((visibility ("default")))
 uint8_t cpu_read8(MachineState& cpu, uint32_t address) {
 	switch (address) {
 		case 0x0000 ... 0x0FFF:
@@ -152,7 +149,7 @@ uint8_t cpu_read8(MachineState& cpu, uint32_t address) {
 	}
 }
 
-__attribute__ ((visibility ("default"))) extern "C"
+__attribute__ ((visibility ("default")))
 void cpu_write8(MachineState& cpu, uint8_t data, uint32_t address) {
 	cpu.bus_cap = data;
 	

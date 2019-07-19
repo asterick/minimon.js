@@ -74,6 +74,7 @@ extern "C" {
 	uint8_t cpu_read8(MachineState& cpu, uint32_t address);
 	void cpu_write8(MachineState& cpu, uint8_t data, uint32_t address);
 	void cpu_step(MachineState& cpu);
+	bool cpu_advance(MachineState& cpu, int ticks);
 }
 
 // These are memory access helpers

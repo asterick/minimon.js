@@ -56,7 +56,6 @@ struct IRQState {
 
 	int next_priority;
 	InterruptVector next_irq;
-	bool block;
 };
 
 static const int IRQ_PRIO_HIGHEST = 3;

@@ -157,13 +157,16 @@ def format(cycles, op, *args):
 
         print ("\top_%s%i(cpu, %s);" % (op.lower(), size, ', '.join([format_arg(i, *a) for i, a in enumerate(args)])));
 
+        block = False
         for i, (siz, mem, ind, nam) in enumerate(args):
             if ind and "Write" in directions[i]:
                 print ("\tcpu_write%s(cpu, data%i, addr%i);" % (size, i, i))
             if nam in ['sc', 'nb'] and "Write" in directions[i]:
-                print ("\tcpu.irq.block = true;")
+                block = True
 
         print ("\tcpu.clocks -= %i;" % cycles)
+        if block:
+            print ("\tinst_advance(cpu); // Block IRQs")
         print ("}\n")
         return name
     except:
