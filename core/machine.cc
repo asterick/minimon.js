@@ -79,7 +79,7 @@ EXPORT bool cpu_advance(MachineState& cpu, int ticks) {
 	return true;
 }
 
-uint8_t cpu_read_reg(MachineState& cpu, uint32_t address) {
+inline uint8_t cpu_read_reg(MachineState& cpu, uint32_t address) {
 	switch (address) {
 	case 0x2008 ... 0x200B:
 		return rtc_read_reg(cpu, address);
@@ -95,7 +95,7 @@ uint8_t cpu_read_reg(MachineState& cpu, uint32_t address) {
 	}
 }
 
-void cpu_write_reg(MachineState& cpu, uint8_t data, uint32_t address) {
+inline void cpu_write_reg(MachineState& cpu, uint8_t data, uint32_t address) {
 	switch (address) {
 	case 0x2008 ... 0x200B:
 		rtc_write_reg(cpu, data, address);
@@ -115,7 +115,7 @@ void cpu_write_reg(MachineState& cpu, uint8_t data, uint32_t address) {
 	}
 }
 
-EXPORT uint8_t cpu_read(MachineState& cpu, uint32_t address) {
+EXPORT inline uint8_t cpu_read(MachineState& cpu, uint32_t address) {
 	switch (address) {
 		case 0x0000 ... 0x0FFF:
 			return cpu.bus_cap = bios[address];
@@ -128,7 +128,7 @@ EXPORT uint8_t cpu_read(MachineState& cpu, uint32_t address) {
 	}
 }
 
-EXPORT void cpu_write(MachineState& cpu, uint8_t data, uint32_t address) {
+EXPORT inline void cpu_write(MachineState& cpu, uint8_t data, uint32_t address) {
 	cpu.bus_cap = data;
 	
 	switch (address) {
