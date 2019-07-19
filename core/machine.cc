@@ -29,13 +29,27 @@ void cpu_reset(MachineState& cpu) {
 
 	cpu.sleeping = false;
 	cpu.halted = false;
+	cpu.osc3_overflow = 0;
 
 	irq_reset(cpu);
 	lcd_reset(cpu);
 }
 
 void cpu_clock(MachineState& cpu, int cycles) {
-	cpu.clocks -= cycles * OSC1_SPEED / CPU_SPEED;
+	int osc1 = cycles * OSC1_SPEED / CPU_SPEED;	
+	int osc3;
+
+	cpu.osc3_overflow += osc1 * OSC3_SPEED;
+
+	if (cpu.osc3_overflow >= OSC1_SPEED) {
+		osc3 = cpu.osc3_overflow / OSC1_SPEED;
+		cpu.osc3_overflow %= OSC1_SPEED;
+ 	} else {
+ 		osc3 = 0;
+ 	}
+
+ 	// OSC1 = 4mhz oscillator, OSC3 = 32khz oscillator
+	cpu.clocks -= osc1;
 }
 
 __attribute__ ((visibility ("default")))

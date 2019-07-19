@@ -59,6 +59,7 @@ struct MachineState {
 	uint8_t bus_cap;
 
 	int clocks;
+	int osc3_overflow;
 	bool sleeping;
 	bool halted;
 
