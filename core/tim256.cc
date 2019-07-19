@@ -17,8 +17,6 @@ void tim256_reset(MachineState& cpu) {
 	cpu.tim256.value = 0;
 }
 
-#include "debug.h"
-
 static inline void trigger_overflow(MachineState& cpu, int mask, InterruptVector vec, int before, int ticks) {
 	if ((before & mask) + ticks > mask) {
 		irq_trigger(cpu, vec);
