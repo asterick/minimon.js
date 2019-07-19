@@ -115,11 +115,11 @@ export class Minimon {
 	}
 
 	read(address) {
-		return this._exports.cpu_read8(this._cpu_state, address);
+		return this._exports.cpu_read(this._cpu_state, address);
 	}
 
 	write(data, address) {
-		return this._exports.cpu_read8(this._cpu_state, data, address);
+		return this._exports.cpu_write(this._cpu_state, data, address);
 	}
 
 	translate(address) {

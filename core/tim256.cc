@@ -3,9 +3,9 @@
 #include "machine.h"
 
 // This is the fractional part before an overflow of the clock timer
-static const int FRACT_32Hz  = 0b11111111111;
-static const int FRACT_8Hz   = 0b1111111111111;
-static const int FRACT_2Hz   = 0b111111111111111;
+static const int FRACT_32Hz  = 0b0000011111111111;
+static const int FRACT_8Hz   = 0b0001111111111111;
+static const int FRACT_2Hz   = 0b0111111111111111;
 static const int FRACT_1Hz   = 0b1111111111111111;
 
 void tim256_reset(MachineState& cpu) {

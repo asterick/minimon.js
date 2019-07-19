@@ -12,14 +12,12 @@ static const uint8_t bios[0x2000] = {
 	#include "bios.h"
 };
 
-__attribute__ ((visibility ("default"))) extern "C"
-MachineState* const get_machine() {
+EXPORT MachineState* const get_machine() {
 	static MachineState state;
 	return &state;
 }
 
-__attribute__ ((visibility ("default"))) extern "C"
-void cpu_reset(MachineState& cpu) {
+EXPORT void cpu_reset(MachineState& cpu) {
 	cpu.reg.pc = cpu_read16(cpu, 0x0000);
 	cpu.reg.sc = 0xC0;
 	cpu.reg.ep = 0xFF;
@@ -61,8 +59,7 @@ void cpu_clock(MachineState& cpu, int cycles) {
 	cpu.clocks -= osc1;
 }
 
-__attribute__ ((visibility ("default")))
-void cpu_step(MachineState& cpu) {
+EXPORT void cpu_step(MachineState& cpu) {
 	irq_fire(cpu);
 	
 	if (!cpu.sleeping && !cpu.halted) {
@@ -72,8 +69,7 @@ void cpu_step(MachineState& cpu) {
 	}
 }
 
-__attribute__ ((visibility ("default")))
-bool cpu_advance(MachineState& cpu, int ticks) {
+EXPORT bool cpu_advance(MachineState& cpu, int ticks) {
 	cpu.clocks += OSC1_SPEED / TICK_SPEED * ticks;
 
 	while (cpu.clocks > 0) {
@@ -119,8 +115,7 @@ void cpu_write_reg(MachineState& cpu, uint8_t data, uint32_t address) {
 	}
 }
 
-__attribute__ ((visibility ("default")))
-uint8_t cpu_read8(MachineState& cpu, uint32_t address) {
+EXPORT uint8_t cpu_read(MachineState& cpu, uint32_t address) {
 	switch (address) {
 		case 0x0000 ... 0x0FFF:
 			return cpu.bus_cap = bios[address];
@@ -133,8 +128,7 @@ uint8_t cpu_read8(MachineState& cpu, uint32_t address) {
 	}
 }
 
-__attribute__ ((visibility ("default")))
-void cpu_write8(MachineState& cpu, uint8_t data, uint32_t address) {
+EXPORT void cpu_write(MachineState& cpu, uint8_t data, uint32_t address) {
 	cpu.bus_cap = data;
 	
 	switch (address) {
@@ -155,6 +149,15 @@ void cpu_write8(MachineState& cpu, uint8_t data, uint32_t address) {
 /**
  * S1C88 Memory access helper functions
  **/
+
+
+uint8_t cpu_read8(MachineState& cpu, uint32_t address) {
+	return cpu.bus_cap = cpu_read(cpu, address);
+}
+
+void cpu_write8(MachineState& cpu, uint8_t data, uint32_t address) {
+	cpu_write(cpu, cpu.bus_cap = data, address);
+}
 
 uint16_t cpu_read16(MachineState& cpu, uint32_t address) {
 	uint16_t lo = cpu_read8(cpu, address);

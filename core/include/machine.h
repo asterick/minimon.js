@@ -8,6 +8,11 @@
 #include "rtc.h"
 #include "blitter.h"
 
+#define EXPORT   __attribute__ ((visibility ("default")))
+
+#define EXPORTED extern "C"
+#define IMPORTED extern "C"
+
 union CPUState {
 	struct {
 		uint8_t a;
@@ -71,19 +76,22 @@ struct MachineState {
 
 #include "irq.h"
 
-extern "C" {
-	uint8_t cpu_read_cart(MachineState& cpu, uint32_t address);
-	void cpu_write_cart(MachineState& cpu, uint8_t data, uint32_t address);
+// Library functions
+IMPORTED uint8_t cpu_read_cart(MachineState& cpu, uint32_t address);
+IMPORTED void cpu_write_cart(MachineState& cpu, uint8_t data, uint32_t address);
 
-	uint8_t cpu_read8(MachineState& cpu, uint32_t address);
-	void cpu_write8(MachineState& cpu, uint8_t data, uint32_t address);
-	void cpu_step(MachineState& cpu);
-	bool cpu_advance(MachineState& cpu, int ticks);
-}
+EXPORTED uint8_t cpu_read(MachineState& cpu, uint32_t address);
+EXPORTED void cpu_write(MachineState& cpu, uint8_t data, uint32_t address);
 
+EXPORTED void cpu_step(MachineState& cpu);
+EXPORTED bool cpu_advance(MachineState& cpu, int ticks);
+
+// Clock management
 void cpu_clock(MachineState& cpu, int cycles);
 
 // These are memory access helpers
+uint8_t cpu_read8(MachineState& cpu, uint32_t address);
+void cpu_write8(MachineState& cpu, uint8_t data, uint32_t address);
 uint16_t cpu_read16(MachineState& cpu, uint32_t address);
 void cpu_write16(MachineState& cpu, uint16_t data, uint32_t address);
 uint8_t cpu_imm8(MachineState& cpu);
