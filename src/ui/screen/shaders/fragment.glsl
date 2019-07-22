@@ -6,8 +6,8 @@ uniform mediump usampler2D vram;
 uniform float time;
 uniform int frame;
 
-uniform vec3 background;
-uniform vec3 foreground;
+uniform vec3 color_light;
+uniform vec3 color_dark;
 
 uniform bool simulate_gray;
 uniform bool dot_mask;
@@ -49,6 +49,6 @@ void main(void) {
 		intensity *= lcd(pixel);
 	}
 
-	fragColor.rgb = mix(background, foreground, vec3(intensity));
+	fragColor.rgb = mix(color_dark, color_light, vec3(intensity));
 	fragColor.a = time * (1000.0 / analog);
 }

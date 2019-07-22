@@ -164,8 +164,8 @@ export default class Registers extends Component {
 
 			gl.uniform1f(this._shader.uniforms.time, delta);
 			gl.uniform1i(this._shader.uniforms.frame, this._flip ? VRAM_HEIGHT : 0);
-			gl.uniform3f(this._shader.uniforms.background, 0.75, 0.86, 0.63);
-			gl.uniform3f(this._shader.uniforms.foreground, 0.05, 0.05, 0.05);
+			gl.uniform3f(this._shader.uniforms.color_light, 0.75, 0.86, 0.63);
+			gl.uniform3f(this._shader.uniforms.color_dark, 0.05, 0.05, 0.05);
 
 			gl.uniform1f(this._shader.uniforms.analog, 0);
 			gl.uniform1i(this._shader.uniforms.dot_mask, 0);
