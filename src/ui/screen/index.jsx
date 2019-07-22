@@ -26,7 +26,7 @@ export default class Registers extends Component {
 		this.context.repaint = (memory, address) => {
 			const gl = this._ctx;
 
-			//this._flip = !this._flip;
+			this._flip = !this._flip;	// TODO: THIS SHOULD BE TRIGGERED BY BLITTER FRAME COPY
 			gl.bindTexture(gl.TEXTURE_2D, this._vram);
 
 			gl.texSubImage2D(
@@ -164,12 +164,12 @@ export default class Registers extends Component {
 
 			gl.uniform1f(this._shader.uniforms.time, delta);
 			gl.uniform1i(this._shader.uniforms.frame, this._flip ? VRAM_HEIGHT : 0);
-			gl.uniform3f(this._shader.uniforms.color_light, 0.75, 0.86, 0.63);
-			gl.uniform3f(this._shader.uniforms.color_dark, 0.05, 0.05, 0.05);
+			gl.uniform3f(this._shader.uniforms.color_light, 0xA8 / 255.0, 0xC6 / 255.0, 0x4E / 255.0);
+			gl.uniform3f(this._shader.uniforms.color_dark, 0x3C / 255.0, 0x41 / 255.0, 0x2C / 255.0);
 
 			gl.uniform1f(this._shader.uniforms.analog, 0);
 			gl.uniform1i(this._shader.uniforms.dot_mask, 0);
-			gl.uniform1i(this._shader.uniforms.simulate_gray, 1);
+			gl.uniform1i(this._shader.uniforms.simulate_gray, 0);
 
 			gl.enableVertexAttribArray(this._shader.attributes.vertex);
 			gl.bindBuffer(gl.ARRAY_BUFFER, this._copyBuffer);

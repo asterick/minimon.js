@@ -8,8 +8,8 @@ static const int LCD_WIDTH = 96;
 static const int LCD_HEIGHT = 64;
 
 struct ContrastSetting {
-	uint8_t off;
 	uint8_t on;
+	uint8_t off;
 };
 
 static const ContrastSetting levels[0x40] = {
@@ -43,7 +43,7 @@ EXPORT const void* lcd_render(MachineState& cpu) {
 	const uint8_t on = levels[cpu.lcd.volume].on;
 
 	if (!cpu.lcd.display_enable) {
-		return memset(&framebuffer[0][0], off, sizeof(framebuffer));
+		return memset(&framebuffer[0][0], 0xFF, sizeof(framebuffer));
 	} else if (cpu.lcd.all_on) {
 		return memset(&framebuffer[0][0], on, sizeof(framebuffer));
 	}
