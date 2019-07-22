@@ -7,6 +7,7 @@
 #include "tim256.h"
 #include "rtc.h"
 #include "blitter.h"
+#include "control.h"
 
 #define EXPORT   __attribute__((visibility ("default"))) extern "C"
 #define EXPORTED extern "C"
@@ -62,6 +63,7 @@ struct MachineState {
 	IRQState irq;
 	LCDState lcd;
 	RTCState rtc;
+	ControlState ctrl;
 	TIM256State tim256;
 
 	uint8_t bus_cap;
@@ -72,8 +74,6 @@ struct MachineState {
 
 	uint8_t ram[0x1000];
 };
-
-#include "irq.h"
 
 // Library functions
 IMPORTED uint8_t cpu_read_cart(MachineState& cpu, uint32_t address);

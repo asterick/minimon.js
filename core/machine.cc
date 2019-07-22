@@ -83,6 +83,8 @@ EXPORT bool cpu_advance(MachineState& cpu, int ticks) {
 
 inline uint8_t cpu_read_reg(MachineState& cpu, uint32_t address) {
 	switch (address) {
+	case 0x2000 ... 0x2002:
+		return ctrl_read_reg(cpu, address);
 	case 0x2008 ... 0x200B:
 		return rtc_read_reg(cpu, address);
 	case 0x2020 ... 0x202A:
@@ -99,6 +101,9 @@ inline uint8_t cpu_read_reg(MachineState& cpu, uint32_t address) {
 
 inline void cpu_write_reg(MachineState& cpu, uint8_t data, uint32_t address) {
 	switch (address) {
+	case 0x2000 ... 0x2002:
+		ctrl_write_reg(cpu, data, address);
+		break ;
 	case 0x2008 ... 0x200B:
 		rtc_write_reg(cpu, data, address);
 		break ;
@@ -126,7 +131,11 @@ EXPORT uint8_t cpu_read(MachineState& cpu, uint32_t address) {
 		case 0x2000 ... 0x20FF:
 			return cpu.bus_cap = cpu_read_reg(cpu, address);
 		default:
-			return cpu.bus_cap = cpu_read_cart(cpu, address);		
+			if (cpu.ctrl.cart_enabled) {
+				return cpu.bus_cap = cpu_read_cart(cpu, address);		
+			} else {
+				return cpu.bus_cap;
+			}
 	}
 }
 
@@ -143,7 +152,9 @@ EXPORT void cpu_write(MachineState& cpu, uint8_t data, uint32_t address) {
 			cpu_write_reg(cpu, data, address);
 			break ;
 		default:
-			cpu_write_cart(cpu, data, address);
+			if (cpu.ctrl.cart_enabled) {
+				cpu_write_cart(cpu, data, address);
+			}
 			break ;	
 	}
 }
