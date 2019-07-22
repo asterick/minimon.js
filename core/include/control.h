@@ -4,10 +4,9 @@
 
 union ControlState {
 	uint8_t data[3];
-	struct {
-		unsigned lcd_enabled:1;
-		unsigned cart_enabled:1;
-	};
+
+	bool lcd_enabled;
+	bool cart_enabled;
 };
 
 void ctrl_reset(ControlState& ctrl);
