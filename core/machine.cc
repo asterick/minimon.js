@@ -29,6 +29,7 @@ EXPORT void cpu_reset(MachineState& cpu) {
 	cpu.halted = false;
 	cpu.osc3_overflow = 0;
 
+	ctrl_reset(cpu.ctrl);
 	irq_reset(cpu);
 	lcd_reset(cpu);
 	rtc_reset(cpu);
@@ -84,7 +85,7 @@ EXPORT bool cpu_advance(MachineState& cpu, int ticks) {
 inline uint8_t cpu_read_reg(MachineState& cpu, uint32_t address) {
 	switch (address) {
 	case 0x2000 ... 0x2002:
-		return ctrl_read_reg(cpu, address);
+		return ctrl_read_reg(cpu.ctrl, address);
 	case 0x2008 ... 0x200B:
 		return rtc_read_reg(cpu, address);
 	case 0x2020 ... 0x202A:
@@ -102,7 +103,7 @@ inline uint8_t cpu_read_reg(MachineState& cpu, uint32_t address) {
 inline void cpu_write_reg(MachineState& cpu, uint8_t data, uint32_t address) {
 	switch (address) {
 	case 0x2000 ... 0x2002:
-		ctrl_write_reg(cpu, data, address);
+		ctrl_write_reg(cpu.ctrl, data, address);
 		break ;
 	case 0x2008 ... 0x200B:
 		rtc_write_reg(cpu, data, address);
