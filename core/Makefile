@@ -5,8 +5,8 @@ LD=wasm-ld
 CC=clang
 CPP=clang++
 
-CPPFLAGS = --target=wasm32-wasm -O2 -Iinclude -std=c++17
-LDFLAGS = --allow-undefined --export-dynamic --no-entry --strip-all
+CPPFLAGS = --target=wasm32-wasm -O2 -Iinclude -std=c++17 --sysroot=./wasi-libc/sysroot
+LDFLAGS = --allow-undefined --export-dynamic --no-entry --strip-all -L ./wasi-libc/sysroot/lib/wasm32-wasi -lc
 
 all:table $(DEPDIR) $(TARGET)
 

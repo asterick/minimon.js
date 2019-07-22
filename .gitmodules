@@ -1,0 +1,3 @@
+[submodule "core/wasi-libc"]
+	path = core/wasi-libc
+	url = git@github.com:CraneStation/wasi-libc.git

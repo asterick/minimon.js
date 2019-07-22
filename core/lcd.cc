@@ -5,7 +5,7 @@
 #include "debug.h"
 
 static const int LCD_WIDTH = 96;
-static const int LCD_HEIGHT = 6;
+static const int LCD_HEIGHT = 64;
 
 struct ContrastSetting {
 	uint8_t off;
@@ -66,7 +66,7 @@ EXPORT const void* lcd_render(MachineState& cpu) {
 		}
 	}
 
-	return &framebuffer[0][0];
+	return framebuffer;
 }
 
 uint8_t lcd_read_reg(MachineState& cpu, uint32_t address) {
