@@ -41,6 +41,16 @@ function rowRenderer ({ key, style, index, parent }) {
 class Memory extends Component {
 	static contextType = SystemContext;
 
+	constructor(props) {
+		super(props);
+
+		this._list = React.createRef();
+	}
+
+	componentDidUpdate() {
+		this._list.current.forceUpdateGrid();
+	}
+
 	render() {
 		const system = this.context;
 
@@ -53,6 +63,7 @@ class Memory extends Component {
 							bytesPerRow={this.props.bytesPerRow}
 							memoryTop={this.props.memoryTop}
 							memoryBottom={this.props.memoryBottom}
+							ref={this._list}
 
 							width={width}
 							height={height}
