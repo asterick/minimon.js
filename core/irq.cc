@@ -85,29 +85,26 @@ void irq_reset(MachineState& cpu) {
 	refresh_irqs(cpu);
 }
 
-static void cpu_interrupt(MachineState& cpu, InterruptVector irq, int level) {
+void irq_fire(MachineState& cpu) {
+	if (cpu.reg.flag.i >= cpu.irq.next_priority) return ;
+
+	cpu.halted = false;
+
 	cpu_push8(cpu, cpu.reg.cb);
 	cpu_push16(cpu, cpu.reg.pc);
 	cpu_push8(cpu, cpu.reg.sc);
 
 	cpu_clock(cpu, 7);
-	cpu.reg.pc = cpu_read16(cpu, 2 * (int) irq);
-	cpu.reg.flag.i = level;
-}
-
-void irq_fire(MachineState& cpu) {
-	if (cpu.reg.flag.i < cpu.irq.next_priority) {
-		cpu.halted = false;
-
-		cpu_interrupt(cpu, cpu.irq.next_irq, cpu.irq.next_priority);
-	}
+	cpu.reg.pc = cpu_read16(cpu, 2 * (int) cpu.irq.next_irq);
+	cpu.reg.flag.i = cpu.irq.next_priority;
 }
 
 void irq_trigger(MachineState& cpu, InterruptVector irq) {
 	const IRQVectorTable& info = IRQ_TABLE[irq];
 
 	if (irq < FIRST_MASKABLE_IRQ) {
-		cpu_interrupt(cpu, irq, IRQ_PRIO_HIGHEST);
+		cpu.irq.next_priority = IRQ_PRIO_HIGHEST;
+		cpu.irq.next_irq = irq;
 	} else {
 		cpu.irq.active |= 1 << info.bit_group;
 		refresh_irqs(cpu);
