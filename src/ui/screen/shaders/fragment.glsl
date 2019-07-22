@@ -16,15 +16,9 @@ uniform float analog;
 in vec2 position;
 out vec4 fragColor;
 
-bool toggle(ivec2 pixel) {
-	uint byte = texelFetch(vram, ivec2(pixel.x, pixel.y / 8), 0).r;
-
-	return (byte & uint(1 << (pixel.y & 7)))  >= 1u;
-}
-
 vec2 fetch(vec2 pixel) {
-	float a = toggle(ivec2(pixel)) ? 1.0 : 0.0;
-	float b = toggle(ivec2(pixel) + ivec2(0, 64)) ? 1.0 : 0.0;
+	float a = float(texelFetch(vram, ivec2(pixel), 0).r) / 255.0;
+	float b = float(texelFetch(vram, ivec2(pixel) + ivec2(0.0, 64.0), 0).r) / 255.0;
 
 	if (frame > 0) {
 		return vec2(a, b);
@@ -39,7 +33,6 @@ float lcd(vec2 pixel) {
 
 void main(void) {
 	vec2 pixel = vec2((position + 1.0) * vec2(96.0, 64.0) / 2.0);
-
 	vec2 colors = fetch(pixel);
 
 	float intensity;

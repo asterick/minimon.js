@@ -60,7 +60,10 @@ export class Minimon {
 			let delta = Math.min(50, now - time);
 
 
-			this._exports.cpu_advance(this._cpu_state, delta);
+			if (true || this._exports.cpu_advance(this._cpu_state, delta)) {
+				this.repaint(this._machineBytes, this._exports.lcd_render(this._cpu_state));
+			}
+
 			time = now;
 
 			this.update();
@@ -78,6 +81,10 @@ export class Minimon {
 	}
 
 	// Trigger an update to the UI
+	repaint() {
+
+	}
+
 	update() {
 		// This will be overidden elsewhere
 	}

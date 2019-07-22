@@ -76,7 +76,9 @@ EXPORT bool cpu_advance(MachineState& cpu, int ticks) {
 		cpu_step(cpu);
 	}
 
-	return true;
+	bool updated = cpu.lcd.updated;
+	cpu.lcd.updated = false;
+	return updated;
 }
 
 inline uint8_t cpu_read_reg(MachineState& cpu, uint32_t address) {

@@ -17,6 +17,8 @@ struct LCDState {
 	bool	reverse_display;
 	bool	all_on;
 	bool	reverse_com_scan;
+
+	bool	updated;
 };
 
 void lcd_reset(MachineState& cpu);

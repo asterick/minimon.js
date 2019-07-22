@@ -12,13 +12,8 @@ function toHex(i, c) {
 	return v;
 }
 
-class MemoryCell extends Component {
-	render() {
-		return (
-			<span className={classes['byte-cell']}>{toHex(this.props.value, 2)}</span>
-		);
-	}
-}
+const MemoryCell = (props) =>
+	<span className={classes['byte-cell']}>{toHex(props.value, 2)}</span>;
 
 function rowRenderer ({ key, style, index, parent }) {
 	const { system, memoryBottom, memoryTop, bytesPerRow } = parent.props;

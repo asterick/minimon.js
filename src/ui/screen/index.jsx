@@ -5,38 +5,44 @@ import FragmentShader from "./shaders/fragment.glsl";
 
 import classes from "./style.scss";
 
+import SystemContext from "../context";
+
 const VRAM_WIDTH  = 96;
-const VRAM_HEIGHT = 8;
+const VRAM_HEIGHT = 64;
 
 export default class Registers extends Component {
+	static contextType = SystemContext;
+
 	constructor(props) {
 		super(props);
 
-		this._memory = new Uint8Array(VRAM_WIDTH * VRAM_HEIGHT);
 		this._ref = React.createRef();
 	}
 
 	componentDidMount() {
+		const system = this.context;
+
 		this._repainter();
+		this.context.repaint = (memory, address) => {
+			const gl = this._ctx;
+
+			//this._flip = !this._flip;
+			gl.bindTexture(gl.TEXTURE_2D, this._vram);
+
+			gl.texSubImage2D(
+				gl.TEXTURE_2D, 0, 
+				0, this._flip ? VRAM_HEIGHT : 0, 
+				VRAM_WIDTH, VRAM_HEIGHT, 
+				gl.RED_INTEGER, gl.UNSIGNED_BYTE, 
+				memory, address);
+		}
 	}
 
 	componentWillUnmount() {
 		cancelAnimationFrame(this._af);
 		this._ctx = null;
-	}
 
-	_updateTexture(memory) {
-		const gl = this._ctx;
-
-		this._flip = !this._flip;
-		gl.bindTexture(gl.TEXTURE_2D, this._vram);
-
-		gl.texSubImage2D(
-			gl.TEXTURE_2D, 0, 
-			0, this._flip ? VRAM_HEIGHT : 0, 
-			VRAM_WIDTH, VRAM_HEIGHT, 
-			gl.RED_INTEGER, gl.UNSIGNED_BYTE, 
-			memory, 0);
+		delete this.context.repaint;
 	}
 
 	init() {
