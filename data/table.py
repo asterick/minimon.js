@@ -14,7 +14,7 @@ print ("typedef int (*InstructionCall)(Machine::State& cpu);")
 CONDITIONS = {
     'C': 'cpu.reg.flag.c',
     'NC': '!cpu.reg.flag.c',
-    'Z': '!cpu.reg.flag.z',
+    'Z': 'cpu.reg.flag.z',
     'NZ': '!cpu.reg.flag.z',
     'V': 'cpu.reg.flag.v',
     'NV': '!cpu.reg.flag.v',
