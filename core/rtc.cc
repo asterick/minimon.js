@@ -2,18 +2,18 @@
 
 #include "machine.h"
 
-void rtc_reset(MachineState& cpu) {
+void RTC::reset(Machine::State& cpu) {
 	cpu.rtc.running = false;
 	cpu.rtc.value = 0;
 }
 
-void rtc_clock(MachineState& cpu, int osc3) {
+void RTC::clock(Machine::State& cpu, int osc3) {
 	if (cpu.rtc.running) {
 		cpu.rtc.value ++;
 	}
 }
 
-uint8_t rtc_read_reg(MachineState& cpu, uint32_t address) {
+uint8_t RTC::read(Machine::State& cpu, uint32_t address) {
 	switch (address) {
 		case 0x2008: return cpu.rtc.running ? 0b1 :0b0;
 		case 0x2009: return cpu.rtc.value >> 15;
@@ -24,7 +24,7 @@ uint8_t rtc_read_reg(MachineState& cpu, uint32_t address) {
 	return 0;
 }
 
-void rtc_write_reg(MachineState& cpu, uint8_t data, uint32_t address) {
+void RTC::write(Machine::State& cpu, uint8_t data, uint32_t address) {
 	if (address == 0x2008) {
 		cpu.rtc.running = (data & 0b01);
 

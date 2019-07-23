@@ -12,12 +12,12 @@ static const uint8_t bios[0x2000] = {
 	#include "bios.h"
 };
 
-EXPORT MachineState* const get_machine() {
-	static MachineState state;
+EXPORT Machine::State* const get_machine() {
+	static Machine::State state;
 	return &state;
 }
 
-EXPORT void cpu_reset(MachineState& cpu) {
+EXPORT void cpu_reset(Machine::State& cpu) {
 	cpu.reg.pc = cpu_read16(cpu, 0x0000);
 	cpu.reg.sc = 0xC0;
 	cpu.reg.ep = 0xFF;
@@ -29,14 +29,19 @@ EXPORT void cpu_reset(MachineState& cpu) {
 	cpu.halted = false;
 	cpu.osc3_overflow = 0;
 
-	cpu.ctrl.reset();
-	irq_reset(cpu);
-	lcd_reset(cpu);
-	rtc_reset(cpu);
-	tim256_reset(cpu);
+	Control::reset(cpu.ctrl);
+	IRQ::reset(cpu);
+	LCD::reset(cpu);
+	RTC::reset(cpu);
+	TIM256::reset(cpu);
+	Blitter::reset(cpu);
 }
 
-void cpu_clock(MachineState& cpu, int cycles) {
+EXPORT const void* lcd_render(Machine::State& cpu) {
+	return LCD::render(cpu);
+}
+
+void cpu_clock(Machine::State& cpu, int cycles) {
 	int osc1 = cycles * OSC1_SPEED / CPU_SPEED;	
 	int osc3 = 0;
 
@@ -50,19 +55,33 @@ void cpu_clock(MachineState& cpu, int cycles) {
 		} while (cpu.osc3_overflow >= OSC1_SPEED);
 
 		// These are the devices that only advance with OSC3
-		tim256_clock(cpu, osc3);
-		rtc_clock(cpu, osc3);
+		TIM256::clock(cpu, osc3);
+		RTC::clock(cpu, osc3);
  	} else {
  		osc3 = 0;
  	}
+
+	Blitter::clock(cpu, osc1);
 
  	// OSC1 = 4mhz oscillator, OSC3 = 32khz oscillator
 	cpu.clocks -= osc1;
 }
 
-EXPORT void cpu_step(MachineState& cpu) {
-	irq_fire(cpu);
-	
+EXPORT void cpu_step(Machine::State& cpu) {
+	// We have an IRQ Scheduled
+	if (cpu.reg.flag.i < cpu.irq.next_priority) {
+		cpu.halted = false;
+
+		cpu_push8(cpu, cpu.reg.cb);
+		cpu_push16(cpu, cpu.reg.pc);
+		cpu_push8(cpu, cpu.reg.sc);
+
+		cpu_clock(cpu, 7);
+		cpu.reg.pc = cpu_read16(cpu, 2 * (int) cpu.irq.next_irq);
+		cpu.reg.flag.i = cpu.irq.next_priority;
+	}
+
+	// CPU Core steps
 	if (!cpu.sleeping && !cpu.halted) {
 		cpu_clock(cpu, inst_advance(cpu));
 	} else {
@@ -70,7 +89,7 @@ EXPORT void cpu_step(MachineState& cpu) {
 	}
 }
 
-EXPORT bool cpu_advance(MachineState& cpu, int ticks) {
+EXPORT bool cpu_advance(Machine::State& cpu, int ticks) {
 	cpu.clocks += OSC1_SPEED / TICK_SPEED * ticks;
 
 	while (cpu.clocks > 0) {
@@ -82,40 +101,45 @@ EXPORT bool cpu_advance(MachineState& cpu, int ticks) {
 	return updated;
 }
 
-inline uint8_t cpu_read_reg(MachineState& cpu, uint32_t address) {
+inline uint8_t cpu_read_reg(Machine::State& cpu, uint32_t address) {
 	switch (address) {
 	case 0x2000 ... 0x2002:
-		return cpu.ctrl.read(address);
+		return Control::read(cpu.ctrl, address);
 	case 0x2008 ... 0x200B:
-		return rtc_read_reg(cpu, address);
+		return RTC::read(cpu, address);
 	case 0x2020 ... 0x202A:
-		return irq_read_reg(cpu, address);
+		return IRQ::read(cpu, address);
 	case 0x2040 ... 0x2041:
-		return tim256_read_reg(cpu, address);
+		return TIM256::read(cpu, address);
 	case 0x20FE ... 0x20FF:
-		return lcd_read_reg(cpu, address);
+		return LCD::read(cpu, address);
+	case 0x2080 ... 0x208A:
+		return Blitter::read(cpu, address);
 	default:
 		dprintf("Unhandled register read %x", address);
 		return cpu.bus_cap;
 	}
 }
 
-inline void cpu_write_reg(MachineState& cpu, uint8_t data, uint32_t address) {
+inline void cpu_write_reg(Machine::State& cpu, uint8_t data, uint32_t address) {
 	switch (address) {
 	case 0x2000 ... 0x2002:
-		cpu.ctrl.write(data, address);
+		Control::write(cpu.ctrl, data, address);
 		break ;
 	case 0x2008 ... 0x200B:
-		rtc_write_reg(cpu, data, address);
+		RTC::write(cpu, data, address);
 		break ;
 	case 0x2020 ... 0x202A:
-		irq_write_reg(cpu, data, address);
+		IRQ::write(cpu, data, address);
 		break ;
 	case 0x2040 ... 0x2041:
-		tim256_write_reg(cpu, data, address);
+		TIM256::write(cpu, data, address);
+		break ;
+	case 0x2080 ... 0x208A:
+		Blitter::write(cpu, data, address);
 		break ;
 	case 0x20FE ... 0x20FF:
-		lcd_write_reg(cpu, data, address);
+		LCD::write(cpu, data, address);
 		break ;
 	default:
 		dprintf("Unhandled register write %x: %x", address, data);
@@ -123,7 +147,7 @@ inline void cpu_write_reg(MachineState& cpu, uint8_t data, uint32_t address) {
 	}
 }
 
-EXPORT uint8_t cpu_read(MachineState& cpu, uint32_t address) {
+EXPORT uint8_t cpu_read(Machine::State& cpu, uint32_t address) {
 	switch (address) {
 		case 0x0000 ... 0x0FFF:
 			return cpu.bus_cap = bios[address];
@@ -140,7 +164,7 @@ EXPORT uint8_t cpu_read(MachineState& cpu, uint32_t address) {
 	}
 }
 
-EXPORT void cpu_write(MachineState& cpu, uint8_t data, uint32_t address) {
+EXPORT void cpu_write(Machine::State& cpu, uint8_t data, uint32_t address) {
 	cpu.bus_cap = data;
 	
 	switch (address) {
@@ -165,27 +189,27 @@ EXPORT void cpu_write(MachineState& cpu, uint8_t data, uint32_t address) {
  **/
 
 
-uint8_t cpu_read8(MachineState& cpu, uint32_t address) {
+uint8_t cpu_read8(Machine::State& cpu, uint32_t address) {
 	return cpu.bus_cap = cpu_read(cpu, address);
 }
 
-void cpu_write8(MachineState& cpu, uint8_t data, uint32_t address) {
+void cpu_write8(Machine::State& cpu, uint8_t data, uint32_t address) {
 	cpu_write(cpu, cpu.bus_cap = data, address);
 }
 
-uint16_t cpu_read16(MachineState& cpu, uint32_t address) {
+uint16_t cpu_read16(Machine::State& cpu, uint32_t address) {
 	uint16_t lo = cpu_read8(cpu, address);
 	address = ((address + 1) & 0xFFFF) | (address & 0xFF0000);
 	return (cpu_read8(cpu, address) << 8) | lo;
 }
 
-void cpu_write16(MachineState& cpu, uint16_t data, uint32_t address) {
+void cpu_write16(Machine::State& cpu, uint16_t data, uint32_t address) {
 	cpu_write8(cpu, (uint8_t) data, address);
 	address = ((address + 1) & 0xFFFF) | (address & 0xFF0000);
 	cpu_write8(cpu, data >> 8, address);
 }
 
-uint8_t cpu_imm8(MachineState& cpu) {
+uint8_t cpu_imm8(Machine::State& cpu) {
 	uint16_t address = cpu.reg.pc++;
 
 	if (address & 0x8000) {
@@ -195,25 +219,25 @@ uint8_t cpu_imm8(MachineState& cpu) {
 	}
 }
 
-uint16_t cpu_imm16(MachineState& cpu) {
+uint16_t cpu_imm16(Machine::State& cpu) {
 	uint8_t lo = cpu_imm8(cpu);
 	return (cpu_imm8(cpu) << 8) | lo;
 }
 
-void cpu_push8(MachineState& cpu, uint8_t t) {
+void cpu_push8(Machine::State& cpu, uint8_t t) {
 	cpu_write8(cpu, t, --cpu.reg.sp);
 }
 
-uint8_t cpu_pop8(MachineState& cpu) {
+uint8_t cpu_pop8(Machine::State& cpu) {
 	return cpu_read8(cpu, cpu.reg.sp++);
 }
 
-void cpu_push16(MachineState& cpu, uint16_t t) {
+void cpu_push16(Machine::State& cpu, uint16_t t) {
 	cpu_push8(cpu, t >> 8);
 	cpu_push8(cpu, (uint8_t)t);
 }
 
-uint16_t cpu_pop16(MachineState& cpu) {
+uint16_t cpu_pop16(Machine::State& cpu) {
 	uint16_t t = cpu_pop8(cpu);
 	return (cpu_pop8(cpu) << 8) | t;
 }

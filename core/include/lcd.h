@@ -1,27 +1,32 @@
 #pragma once
 
-struct MachineState;
+#include <stdint.h>
 
-struct LCDState {
-	uint8_t gddram[9][132];
-	uint8_t read_buffer;
-	uint8_t volume;
-	uint8_t column_address;
-	uint8_t page_address;
-	uint8_t start_address;
+namespace Machine { struct State; };
 
-	bool	rmw_mode;
-	bool 	adc_select;
-	bool	setting_volume;
-	bool	display_enable;
-	bool	reverse_display;
-	bool	all_on;
-	bool	reverse_com_scan;
+namespace LCD {
+	struct State {
+		uint8_t gddram[9][132];
+		uint8_t read_buffer;
+		uint8_t volume;
+		uint8_t column_address;
+		uint8_t page_address;
+		uint8_t start_address;
 
-	bool	updated;
-};
+		bool	rmw_mode;
+		bool 	adc_select;
+		bool	setting_volume;
+		bool	display_enable;
+		bool	reverse_display;
+		bool	all_on;
+		bool	reverse_com_scan;
 
-void lcd_reset(MachineState& cpu);
+		bool	updated;
+	};
 
-uint8_t lcd_read_reg(MachineState& cpu, uint32_t address);
-void lcd_write_reg(MachineState& cpu, uint8_t data, uint32_t address);
+	void reset(Machine::State& cpu);
+
+	const void* render(Machine::State& cpu);
+	uint8_t read(Machine::State& cpu, uint32_t address);
+	void write(Machine::State& cpu, uint8_t data, uint32_t address);
+}

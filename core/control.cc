@@ -2,21 +2,21 @@
 
 #include "control.h"
 
-void ControlState::reset() {
-	this->data[0] = 0;
-	this->data[1] = 0;
-	this->data[2] = 0;
+void Control::reset(Control::State& ctrl) {
+	ctrl.data[0] = 0;
+	ctrl.data[1] = 0;
+	ctrl.data[2] = 0;
 }
 
-uint8_t ControlState::read(uint32_t address) {
-	return this->data[address & 3];
+uint8_t Control::read(Control::State& ctrl, uint32_t address) {
+	return ctrl.data[address & 3];
 }
 
-void ControlState::write(uint8_t data, uint32_t address) {
-	this->data[address & 3] = data;
+void Control::write(Control::State& ctrl, uint8_t data, uint32_t address) {
+	ctrl.data[address & 3] = data;
 
 	if (address == 0x2000) {
-		this->lcd_enabled = (data & 1) != 0;
-		this->cart_enabled = (data & 2) != 0;
+		ctrl.lcd_enabled = (data & 1) != 0;
+		ctrl.cart_enabled = (data & 2) != 0;
 	}
 }

@@ -2,13 +2,15 @@
 
 #include "machine.h"
 
-struct IRQVectorTable {
+using namespace IRQ;
+
+struct VectorTable {
 	bool maskable;
 	int priority_group;
 	int bit_group;
 };
 
-static const IRQVectorTable IRQ_TABLE[TOTAL_HARDWARE_IRQS] = {
+static const VectorTable IRQ_TABLE[TOTAL_HARDWARE_IRQS] = {
 	{ false },			// IRQ_RESET
 	{ false },			// IRQ_DIV_ZERO
 	{ false },			// IRQ_WATCHDOG
@@ -55,11 +57,11 @@ static const uint8_t BIT_MASK[] = {
 	0b11110111
 };
 
-static void refresh_irqs(MachineState& cpu) {
+static void refresh_irqs(Machine::State& cpu) {
 	cpu.irq.next_priority = 0;
 
-	for (int irq = FIRST_MASKABLE_IRQ; irq < TOTAL_HARDWARE_IRQS; irq++) {
-		const IRQVectorTable& info = IRQ_TABLE[irq];
+	for (int irq = FIRST_MASKABLE; irq < TOTAL_HARDWARE_IRQS; irq++) {
+		const VectorTable& info = IRQ_TABLE[irq];
 
 		bool active = (1 << info.bit_group) & cpu.irq.active & cpu.irq.enable;
 
@@ -68,16 +70,16 @@ static void refresh_irqs(MachineState& cpu) {
 			continue ;
 		}
 
-		int priority = (cpu.irq.priority >> info.priority_group) & IRQ_PRIO_HIGHEST;
+		int priority = (cpu.irq.priority >> info.priority_group) & HIGHEST_PRIO;
 
 		if (cpu.irq.next_priority < priority) {
 			cpu.irq.next_priority = priority;
-			cpu.irq.next_irq = (InterruptVector) irq;
+			cpu.irq.next_irq = (Vector) irq;
 		}
 	}
 }
 
-void irq_reset(MachineState& cpu) {
+void IRQ::reset(Machine::State& cpu) {
 	cpu.irq.priority = 0;
 	cpu.irq.enable = 0;
 	cpu.irq.active = 0;
@@ -85,25 +87,11 @@ void irq_reset(MachineState& cpu) {
 	refresh_irqs(cpu);
 }
 
-void irq_fire(MachineState& cpu) {
-	if (cpu.reg.flag.i >= cpu.irq.next_priority) return ;
+void IRQ::trigger(Machine::State& cpu, Vector irq) {
+	const VectorTable& info = IRQ_TABLE[irq];
 
-	cpu.halted = false;
-
-	cpu_push8(cpu, cpu.reg.cb);
-	cpu_push16(cpu, cpu.reg.pc);
-	cpu_push8(cpu, cpu.reg.sc);
-
-	cpu_clock(cpu, 7);
-	cpu.reg.pc = cpu_read16(cpu, 2 * (int) cpu.irq.next_irq);
-	cpu.reg.flag.i = cpu.irq.next_priority;
-}
-
-void irq_trigger(MachineState& cpu, InterruptVector irq) {
-	const IRQVectorTable& info = IRQ_TABLE[irq];
-
-	if (irq < FIRST_MASKABLE_IRQ) {
-		cpu.irq.next_priority = IRQ_PRIO_HIGHEST;
+	if (irq < FIRST_MASKABLE) {
+		cpu.irq.next_priority = HIGHEST_PRIO;
 		cpu.irq.next_irq = irq;
 	} else {
 		cpu.irq.active |= 1 << info.bit_group;
@@ -111,7 +99,7 @@ void irq_trigger(MachineState& cpu, InterruptVector irq) {
 	}
 }
 
-uint8_t irq_read_reg(MachineState& cpu, uint32_t address) {
+uint8_t IRQ::read(Machine::State& cpu, uint32_t address) {
 	switch (address) {
 		case 0x2020: return cpu.irq.priority_bytes[0];
 		case 0x2021: return cpu.irq.priority_bytes[1];
@@ -128,7 +116,7 @@ uint8_t irq_read_reg(MachineState& cpu, uint32_t address) {
 	return 0xFF;
 }
 
-void irq_write_reg(MachineState& cpu, uint8_t data, uint32_t address) {
+void IRQ::write(Machine::State& cpu, uint8_t data, uint32_t address) {
 	switch (address) {
 		case 0x2020: cpu.irq.priority_bytes[0] = data & BIT_MASK[0];
 		case 0x2021: cpu.irq.priority_bytes[1] = data & BIT_MASK[1];

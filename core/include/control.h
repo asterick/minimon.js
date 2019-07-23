@@ -2,15 +2,17 @@
 
 #include <stdint.h>
 
-class ControlState {
-public:
-	bool lcd_enabled;
-	bool cart_enabled;
+namespace Machine { struct State; };
 
-	void reset();
-	uint8_t read(uint32_t address);
-	void write(uint8_t data, uint32_t address);
+namespace Control {
+	struct State {
+		uint8_t data[3];
 
-private:
-	uint8_t data[3];
+		bool lcd_enabled;
+		bool cart_enabled;
+	};
+
+	void reset(State&);
+	uint8_t read(State&, uint32_t address);
+	void write(State&, uint8_t data, uint32_t address);
 };

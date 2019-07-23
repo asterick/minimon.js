@@ -31,12 +31,11 @@ static const ContrastSetting levels[0x40] = {
 	{ 0x00, 0x18 },	{ 0x00, 0x10 },	{ 0x00, 0x08 },	{ 0x00, 0x00 }
 };
 
-void lcd_reset(MachineState& cpu) {
+void LCD::reset(Machine::State& cpu) {
 	cpu.lcd.rmw_mode = false;	
 }
 
-// Generage
-EXPORT const void* lcd_render(MachineState& cpu) {
+const void* LCD::render(Machine::State& cpu) {
 	static uint8_t framebuffer[LCD_HEIGHT][LCD_WIDTH];
 
 	const uint8_t off = levels[cpu.lcd.volume].off;
@@ -69,7 +68,7 @@ EXPORT const void* lcd_render(MachineState& cpu) {
 	return framebuffer;
 }
 
-uint8_t lcd_read_reg(MachineState& cpu, uint32_t address) {
+uint8_t LCD::read(Machine::State& cpu, uint32_t address) {
 	if (address == 0x20FE) {
 		dprintf("READ DISPLAY STATUS");
 		return 0;
@@ -86,7 +85,7 @@ uint8_t lcd_read_reg(MachineState& cpu, uint32_t address) {
 	}
 }
 
-void lcd_write_reg(MachineState& cpu, uint8_t data, uint32_t address) {
+void LCD::write(Machine::State& cpu, uint8_t data, uint32_t address) {
 	cpu.lcd.read_buffer = data;
 
 	if (cpu.lcd.setting_volume) {

@@ -9,7 +9,7 @@ op0s, op1s, op2s = [None] * 0x100, [None] * 0x100, [None] * 0x100
 op0s[0xCE] = "inst_extended_ce"
 op0s[0xCF] = "inst_extended_cf"
 
-print ("typedef int (*InstructionCall)(MachineState& cpu);")
+print ("typedef int (*InstructionCall)(Machine::State& cpu);")
 
 CONDITIONS = {
     'C': 'cpu.reg.flag.c',
@@ -137,7 +137,7 @@ def format(cycles, op, *args):
         size = max(default_size, *[s for s, i, m, n in args])
         name = get_name(op, condition, *[n for s, i, m, n in args])
 
-        print ("int %s(MachineState& cpu) {" % name)
+        print ("int %s(Machine::State& cpu) {" % name)
 
         for i, (siz, mem, ind, nam) in enumerate(args):
             if ind:
@@ -174,7 +174,7 @@ def format(cycles, op, *args):
     except:
         name = get_name(op, condition, *args)
 
-        print ("int clock_%s(MachineState& cpu) {" % name)
+        print ("int clock_%s(Machine::State& cpu) {" % name)
         print ("\t%s(cpu);" % name)
         print ("\treturn %i;" % cycles)
         print ("}\n")
