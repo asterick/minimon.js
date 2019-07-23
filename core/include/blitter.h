@@ -7,6 +7,16 @@ namespace Machine { struct State; };
 namespace Blitter {
 	struct State {
 		union {
+			uint8_t enables;
+			struct {
+				unsigned invert_map:1;
+				unsigned enable_map:1;
+				unsigned enable_sprites:1;
+				unsigned enable_copy:1;
+				unsigned map_size:2;
+			};
+		};
+		union {
 			unsigned int map_base;
 			uint8_t map_bytes[3];
 		};

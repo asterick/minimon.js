@@ -76,7 +76,10 @@ namespace Machine {
 		bool sleeping;
 		bool halted;
 
-		uint8_t ram[0x1000];
+		union {
+			uint8_t ram[0x1000];
+			uint8_t framebuffer[96][64];
+		};
 	};
 }
 

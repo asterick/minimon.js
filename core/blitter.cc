@@ -1,5 +1,12 @@
 #include "machine.h"
 
+union FrameBuffer {
+	uint8_t  bytes[96][64];
+	uint64_t column[96];
+};
+
+static FrameBuffer render;
+
 static const uint8_t BIT_MASK[] = {
 	0b00111111,
 	0b00001111,
@@ -24,7 +31,7 @@ void Blitter::clock(Machine::State& cpu, int osc3) {
 uint8_t Blitter::read(Machine::State& cpu, uint32_t address) {
 	switch (address) {
 		case 0x2080:
-			return 0 ;
+			return cpu.blitter.enables;
 		case 0x2081:
 			return 0 ;
 		case 0x2082:
@@ -55,6 +62,7 @@ void Blitter::write(Machine::State& cpu, uint8_t data, uint32_t address) {
 
 	switch (address) {
 		case 0x2080:
+			cpu.blitter.enables = data;
 			break ;
 		case 0x2081:
 			break ;
