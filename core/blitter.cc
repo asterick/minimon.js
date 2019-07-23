@@ -1,11 +1,9 @@
 #include "machine.h"
 
 union FrameBuffer {
-	uint8_t  bytes[96][64];
+	uint8_t  bytes[96][8];
 	uint64_t column[96];
 };
-
-static FrameBuffer render;
 
 static const uint8_t BIT_MASK[] = {
 	0b00111111,
@@ -19,6 +17,36 @@ static const uint8_t BIT_MASK[] = {
 	0b11111111,
 	0b00011111,
 };
+
+static void render(Machine::State& cpu) {
+	FrameBuffer target;
+
+	// Prepare background layer
+	if (cpu.blitter.enable_map)	{
+		// TODO: DRAW MAP HERE
+
+		if (cpu.blitter.invert_map) {
+			for (int x = 0; x < 96; x++) target.column[x] = ~target.column[x];
+		}
+	} else {
+		for (int x = 0; x < 96; x++) {
+			for (int y = 0; y < 8; y++) {
+				target.bytes[x][y] = cpu.overlay.framebuffer[y][x];
+			}
+		}
+	}
+
+	if (cpu.blitter.enable_sprites) {
+		// TODO: DRAW ALL SPRITES		
+	}
+
+	// Copy back to ram
+	for (int x = 0; x < 96; x++) {
+		for (int y = 0; y < 8; y++) {
+			cpu.overlay.framebuffer[y][x] = target.bytes[x][y];
+		}
+	}
+}
 
 void Blitter::reset(Machine::State& cpu) {
 

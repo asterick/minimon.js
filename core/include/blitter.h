@@ -5,6 +5,27 @@
 namespace Machine { struct State; };
 
 namespace Blitter {
+	struct Sprite {
+		unsigned x:7;
+		unsigned:1;
+
+		unsigned y;
+		unsigned:1;
+
+		unsigned tile;
+
+		unsigned x_flip: 1;
+		unsigned y_flip: 1;
+		unsigned invert: 1;
+		unsigned enable: 1;
+	};
+
+	struct Overlay {
+		uint8_t framebuffer[8][96];
+		Sprite  oam[24];
+		uint8_t map[];
+	};
+
 	struct State {
 		union {
 			uint8_t enables;
@@ -33,3 +54,4 @@ namespace Blitter {
 	uint8_t read(Machine::State& cpu, uint32_t address);
 	void write(Machine::State& cpu, uint8_t data, uint32_t address);
 }
+
