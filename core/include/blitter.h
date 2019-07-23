@@ -5,14 +5,14 @@
 namespace Machine { struct State; };
 
 namespace Blitter {
-	struct Sprite {
+	struct __attribute__((packed)) Sprite {
 		unsigned x:7;
 		unsigned:1;
 
-		unsigned y;
+		unsigned y:7;
 		unsigned:1;
 
-		unsigned tile;
+		unsigned tile:8;
 
 		unsigned x_flip: 1;
 		unsigned y_flip: 1;
@@ -54,4 +54,3 @@ namespace Blitter {
 	uint8_t read(Machine::State& cpu, uint32_t address);
 	void write(Machine::State& cpu, uint8_t data, uint32_t address);
 }
-
