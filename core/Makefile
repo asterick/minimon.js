@@ -15,7 +15,7 @@ EXPORTS = \
 	--export cpu_write
 
 CPPFLAGS = --target=wasm32-wasm -O2 -Iinclude -std=c++17 --sysroot=./wasi-libc/sysroot
-LDFLAGS = --no-entry --allow-undefined --demangle $(EXPORTS) -L ./wasi-libc/sysroot/lib/wasm32-wasi -lc
+LDFLAGS = --no-entry --allow-undefined $(EXPORTS) -L ./wasi-libc/sysroot/lib/wasm32-wasi -lc
 
 all:table $(DEPDIR) $(TARGET)
 
