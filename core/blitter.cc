@@ -124,9 +124,10 @@ void Blitter::clock(Machine::State& cpu, int osc3) {
 		}
 	}
 
-	// TODO: IRQS
 	// Send to LCD
-	if (true || cpu.blitter.enable_copy) {
+	if (cpu.blitter.enable_copy) {
+		IRQ::trigger(cpu, IRQ::IRQ_BLT_COPY);
+
 		for (int p = 0, a = 0; p < 8; p++) {
 			LCD::write(cpu, 0b10110000 | p, 0x20FE);
 			LCD::write(cpu, 0b00000000, 0x20FE);
@@ -135,9 +136,11 @@ void Blitter::clock(Machine::State& cpu, int osc3) {
 				LCD::write(cpu, cpu.ram[a++], 0x20FF);
 			}
 		}
-
-		cpu.blitter.flipped = true;
+	} else {
+		cpu.lcd.updated = true;
 	}
+
+	IRQ::trigger(cpu, IRQ::IRQ_BLT_OVERFLOW);
 }
 
 uint8_t Blitter::read(Machine::State& cpu, uint32_t address) {

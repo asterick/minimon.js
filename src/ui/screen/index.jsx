@@ -23,10 +23,10 @@ export default class Registers extends Component {
 		const system = this.context;
 
 		this._repainter();
-		this.context.repaint = (memory, address, flipped) => {
+		this.context.repaint = (memory, address) => {
 			const gl = this._ctx;
 
-			if (flipped) this._flip = !this._flip;
+			this._flip = !this._flip;
 			gl.bindTexture(gl.TEXTURE_2D, this._vram);
 
 			gl.texSubImage2D(

@@ -8,7 +8,6 @@ CPP=clang++
 EXPORTS = \
 	--export get_machine \
 	--export lcd_render \
-	--export lcd_flipped \
 	--export cpu_reset \
 	--export cpu_advance \
 	--export cpu_step \
