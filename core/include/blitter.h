@@ -38,6 +38,14 @@ namespace Blitter {
 			};
 		};
 		union {
+			uint8_t rate_control;
+			struct {
+				unsigned:1;	// Unknown flag: Possible frame counter enable?
+				unsigned frame_divider:3;
+			};
+		};
+
+		union {
 			unsigned int map_base;
 			uint8_t map_bytes[3];
 		};
@@ -45,8 +53,11 @@ namespace Blitter {
 			unsigned int sprite_base;
 			uint8_t sprite_bytes[3];
 		};
+
 		uint8_t scroll_x;
 		uint8_t scroll_y;
+		uint8_t divider;
+		uint8_t counter;
 	};
 
 	void reset(Machine::State& cpu);
