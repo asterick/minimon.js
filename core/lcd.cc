@@ -90,6 +90,7 @@ void LCD::write(Machine::State& cpu, uint8_t data, uint32_t address) {
 
 	if (cpu.lcd.setting_volume) {
 		cpu.lcd.volume = data & 0x3F;
+		cpu.lcd.setting_volume = false;
 		return;
 	}
 
@@ -153,7 +154,7 @@ void LCD::write(Machine::State& cpu, uint8_t data, uint32_t address) {
 			break ;
 
 		default:
-			dprintf("LCD COMMAND %x", data);
+			dprintf("LCD COMMAND %b", data);
 		}
 	} else {
 		if (cpu.lcd.page_address >= 8) data &= 1;

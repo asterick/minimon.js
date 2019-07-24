@@ -23,10 +23,10 @@ export default class Registers extends Component {
 		const system = this.context;
 
 		this._repainter();
-		this.context.repaint = (memory, address) => {
+		this.context.repaint = (memory, address, flipped) => {
 			const gl = this._ctx;
 
-			this._flip = !this._flip;	// TODO: THIS SHOULD BE TRIGGERED BY BLITTER FRAME COPY
+			if (flipped) this._flip = !this._flip;
 			gl.bindTexture(gl.TEXTURE_2D, this._vram);
 
 			gl.texSubImage2D(
@@ -169,7 +169,7 @@ export default class Registers extends Component {
 
 			gl.uniform1f(this._shader.uniforms.analog, 0);
 			gl.uniform1i(this._shader.uniforms.dot_mask, 0);
-			gl.uniform1i(this._shader.uniforms.simulate_gray, 0);
+			gl.uniform1i(this._shader.uniforms.simulate_gray, 1);
 
 			gl.enableVertexAttribArray(this._shader.attributes.vertex);
 			gl.bindBuffer(gl.ARRAY_BUFFER, this._copyBuffer);

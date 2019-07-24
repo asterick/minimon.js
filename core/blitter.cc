@@ -1,6 +1,5 @@
 #include <string.h>
 #include "machine.h"
-#include "debug.h"
 
 union FrameBuffer {
 	uint8_t  bytes[96][8];
@@ -39,6 +38,8 @@ static const uint8_t BIT_MASK[] = {
 
 static const int SCREEN_WIDTH = 96;
 static const int SCREEN_HEIGHT = 64;
+static const int TICKS_PER_COUNT = 843;
+static const int TICK_OVERFLOW = TICKS_PER_COUNT * 72;
 
 static inline uint64_t shift(uint64_t value, int offset) {
 	if (offset < 0) {
@@ -56,27 +57,47 @@ static inline int min(int a, int b) {
 	return (a < b) ? a : b;
 }
 
-static void render(Machine::State& cpu) {
+void Blitter::reset(Machine::State& cpu) {
+	memset(&cpu.blitter, 0, sizeof(cpu.blitter));
+}
+
+void Blitter::clock(Machine::State& cpu, int osc3) {
+	bool overflow = false;
+	cpu.blitter.counter += osc3;
+
+	while (cpu.blitter.counter >= TICK_OVERFLOW) {
+		// Framerate divider
+		if (++cpu.blitter.divider >= FRAME_DIVIDERS[cpu.blitter.frame_divider]) {
+			cpu.blitter.divider = 0;
+			overflow = true;
+		}
+
+		cpu.blitter.counter -= TICK_OVERFLOW;
+	}
+
+	if (!overflow) return ;
+
+	// Rendering loop
 	FrameBuffer target;
 
-	// Prepare background layer
 	if (cpu.blitter.enable_map)	{
 		const MapSize& size = MAP_SIZES[cpu.blitter.map_size];
 		int dx = min(cpu.blitter.scroll_x, size.width * 8 - SCREEN_WIDTH);
 		int dy = min(cpu.blitter.scroll_y, size.height * 8 - SCREEN_HEIGHT);
 
 		int y_fine = dy % 8;
-		int y_tile = dy / 8;
+		int y_tile = (dy / 8) * size.width;
 
 		for (int x = 0; x < SCREEN_WIDTH; x++, dx++) {
 			int x_fine = dx % 8;
 			int x_tile = dx / 8;
-			int address = y_tile * size.width + x_tile;
+			int address = y_tile + x_tile;
 
 			target.column[x] = 0;
 
-			for(int y = -y_fine, yt; y < SCREEN_HEIGHT; y++, address += size.width) {
-				uint8_t graphic = cpu_read8(cpu, cpu.blitter.map_base + cpu.overlay.map[address] + x_fine);
+			for(int y = -y_fine, yt; y < SCREEN_HEIGHT; y += 8, address += size.width) {
+				uint8_t tile = cpu.overlay.map[address];
+				uint8_t graphic = cpu_read8(cpu, cpu.blitter.map_base + x_fine + tile * 8);
 				target.column[x] |= shift(graphic, y);
 			}
 		}
@@ -103,15 +124,20 @@ static void render(Machine::State& cpu) {
 		}
 	}
 
-	// TODO: SEND TO LCD
-}
+	// TODO: IRQS
+	// Send to LCD
+	if (true || cpu.blitter.enable_copy) {
+		for (int p = 0, a = 0; p < 8; p++) {
+			LCD::write(cpu, 0b10110000 | p, 0x20FE);
+			LCD::write(cpu, 0b00000000, 0x20FE);
+			LCD::write(cpu, 0b00010000, 0x20FE);
+			for (int x = 0; x < 96; x++) {
+				LCD::write(cpu, cpu.ram[a++], 0x20FF);
+			}
+		}
 
-void Blitter::reset(Machine::State& cpu) {
-	memset(&cpu.blitter, 0, sizeof(cpu.blitter));
-}
-
-void Blitter::clock(Machine::State& cpu, int osc3) {
-	// TODO: Frame rate control
+		cpu.blitter.flipped = true;
+	}
 }
 
 uint8_t Blitter::read(Machine::State& cpu, uint32_t address) {
@@ -137,7 +163,7 @@ uint8_t Blitter::read(Machine::State& cpu, uint32_t address) {
 		case 0x2089:
 			return cpu.blitter.sprite_bytes[2];
 		case 0x208A:
-			return cpu.blitter.counter ;
+			return cpu.blitter.counter / TICKS_PER_COUNT;
 	}
 
 	return 0;

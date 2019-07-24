@@ -41,6 +41,12 @@ extern "C" const void* lcd_render(Machine::State& cpu) {
 	return LCD::render(cpu);
 }
 
+extern "C" bool lcd_flipped(Machine::State& cpu) {
+	bool flipped = cpu.blitter.flipped;
+	cpu.blitter.flipped = false;
+	return flipped;
+}
+
 void cpu_clock(Machine::State& cpu, int cycles) {
 	int osc1 = cycles * OSC1_SPEED / CPU_SPEED;	
 	int osc3 = 0;

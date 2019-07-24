@@ -16,7 +16,7 @@ Emulation Status
 | RTC Timer         | 100%       | Unverified                            |
 | 256Hz Timer       | 100%       | Unverified                            |
 | LCD (SED1565)     | 80%        | Most commands implemented             |
-| Blitter           | 0%         |                                       |
+| Blitter           | 60%        | No sprites / IRQs                     |
 | General Timers    | 0%         |                                       |
 | Control Registers | 0%         |                                       |
 | I/O / Input Ports | 0%         |                                       |

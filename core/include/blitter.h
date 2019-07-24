@@ -56,8 +56,11 @@ namespace Blitter {
 
 		uint8_t scroll_x;
 		uint8_t scroll_y;
+
+		// Counters
 		uint8_t divider;
-		uint8_t counter;
+		int counter;
+		bool flipped;
 	};
 
 	void reset(Machine::State& cpu);
