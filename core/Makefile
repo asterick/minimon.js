@@ -5,8 +5,17 @@ LD=wasm-ld
 CC=clang
 CPP=clang++
 
+EXPORTS = \
+	--export get_machine \
+	--export lcd_render \
+	--export cpu_reset \
+	--export cpu_advance \
+	--export cpu_step \
+	--export cpu_read \
+	--export cpu_write
+
 CPPFLAGS = --target=wasm32-wasm -O2 -Iinclude -std=c++17 --sysroot=./wasi-libc/sysroot
-LDFLAGS = --allow-undefined --export-dynamic --no-entry --strip-all -L ./wasi-libc/sysroot/lib/wasm32-wasi -lc
+LDFLAGS = --no-entry --allow-undefined --demangle $(EXPORTS) -L ./wasi-libc/sysroot/lib/wasm32-wasi -lc
 
 all:table $(DEPDIR) $(TARGET)
 

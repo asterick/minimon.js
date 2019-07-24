@@ -12,12 +12,12 @@ static const uint8_t bios[0x2000] = {
 	#include "bios.h"
 };
 
-EXPORT Machine::State* const get_machine() {
+extern "C" Machine::State* const get_machine() {
 	static Machine::State state;
 	return &state;
 }
 
-EXPORT void cpu_reset(Machine::State& cpu) {
+extern "C" void cpu_reset(Machine::State& cpu) {
 	cpu.reg.pc = cpu_read16(cpu, 0x0000);
 	cpu.reg.sc = 0xC0;
 	cpu.reg.ep = 0xFF;
@@ -37,7 +37,7 @@ EXPORT void cpu_reset(Machine::State& cpu) {
 	Blitter::reset(cpu);
 }
 
-EXPORT const void* lcd_render(Machine::State& cpu) {
+extern "C" const void* lcd_render(Machine::State& cpu) {
 	return LCD::render(cpu);
 }
 
@@ -67,7 +67,7 @@ void cpu_clock(Machine::State& cpu, int cycles) {
 	cpu.clocks -= osc1;
 }
 
-EXPORT void cpu_step(Machine::State& cpu) {
+extern "C" void cpu_step(Machine::State& cpu) {
 	// We have an IRQ Scheduled
 	if (cpu.reg.flag.i < cpu.irq.next_priority) {
 		cpu.halted = false;
@@ -89,7 +89,7 @@ EXPORT void cpu_step(Machine::State& cpu) {
 	}
 }
 
-EXPORT bool cpu_advance(Machine::State& cpu, int ticks) {
+extern "C" bool cpu_advance(Machine::State& cpu, int ticks) {
 	cpu.clocks += OSC1_SPEED / TICK_SPEED * ticks;
 
 	while (cpu.clocks > 0) {
@@ -101,7 +101,7 @@ EXPORT bool cpu_advance(Machine::State& cpu, int ticks) {
 	return updated;
 }
 
-inline uint8_t cpu_read_reg(Machine::State& cpu, uint32_t address) {
+static inline uint8_t cpu_read_reg(Machine::State& cpu, uint32_t address) {
 	switch (address) {
 	case 0x2000 ... 0x2002:
 		return Control::read(cpu.ctrl, address);
@@ -121,7 +121,7 @@ inline uint8_t cpu_read_reg(Machine::State& cpu, uint32_t address) {
 	}
 }
 
-inline void cpu_write_reg(Machine::State& cpu, uint8_t data, uint32_t address) {
+static inline void cpu_write_reg(Machine::State& cpu, uint8_t data, uint32_t address) {
 	switch (address) {
 	case 0x2000 ... 0x2002:
 		Control::write(cpu.ctrl, data, address);
@@ -147,7 +147,7 @@ inline void cpu_write_reg(Machine::State& cpu, uint8_t data, uint32_t address) {
 	}
 }
 
-EXPORT uint8_t cpu_read(Machine::State& cpu, uint32_t address) {
+extern "C" uint8_t cpu_read(Machine::State& cpu, uint32_t address) {
 	switch (address) {
 		case 0x0000 ... 0x0FFF:
 			return cpu.bus_cap = bios[address];
@@ -164,7 +164,7 @@ EXPORT uint8_t cpu_read(Machine::State& cpu, uint32_t address) {
 	}
 }
 
-EXPORT void cpu_write(Machine::State& cpu, uint8_t data, uint32_t address) {
+extern "C" void cpu_write(Machine::State& cpu, uint8_t data, uint32_t address) {
 	cpu.bus_cap = data;
 	
 	switch (address) {

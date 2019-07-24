@@ -9,10 +9,6 @@
 #include "blitter.h"
 #include "control.h"
 
-#define EXPORT   __attribute__((visibility ("default"))) extern "C"
-#define EXPORTED extern "C"
-#define IMPORTED extern "C"
-
 namespace CPU {
 	union State {
 		struct {
@@ -83,15 +79,20 @@ namespace Machine {
 	};
 }
 
+// External defines
+extern "C" uint8_t cpu_read_cart(Machine::State& cpu, uint32_t address);
+extern "C" void cpu_write_cart(Machine::State& cpu, uint8_t data, uint32_t address);
+
 // Library functions
-IMPORTED uint8_t cpu_read_cart(Machine::State& cpu, uint32_t address);
-IMPORTED void cpu_write_cart(Machine::State& cpu, uint8_t data, uint32_t address);
+extern "C" Machine::State* const get_machine();
+extern "C" uint8_t cpu_read_cart(Machine::State& cpu, uint32_t address);
+extern "C" void cpu_write_cart(Machine::State& cpu, uint8_t data, uint32_t address);
 
-EXPORTED uint8_t cpu_read(Machine::State& cpu, uint32_t address);
-EXPORTED void cpu_write(Machine::State& cpu, uint8_t data, uint32_t address);
+extern "C" uint8_t cpu_read(Machine::State& cpu, uint32_t address);
+extern "C" void cpu_write(Machine::State& cpu, uint8_t data, uint32_t address);
 
-EXPORTED void cpu_step(Machine::State& cpu);
-EXPORTED bool cpu_advance(Machine::State& cpu, int ticks);
+extern "C" void cpu_step(Machine::State& cpu);
+extern "C" bool cpu_advance(Machine::State& cpu, int ticks);
 
 // Clock management
 void cpu_clock(Machine::State& cpu, int cycles);
