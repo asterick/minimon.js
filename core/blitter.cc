@@ -57,6 +57,14 @@ static inline int min(int a, int b) {
 	return (a < b) ? a : b;
 }
 
+static inline uint16_t rev(uint16_t a) {
+	a = ((a & 0xAAAA) >> 1) | ((a & 0x5555) << 1);
+	a = ((a & 0xCCCC) >> 2) | ((a & 0x3333) << 2);
+	a = ((a & 0xF0F0) >> 4) | ((a & 0x0F0F) << 4);
+
+	return (a >> 8) | (a << 8);
+}
+
 void Blitter::reset(Machine::State& cpu) {
 	memset(&cpu.blitter, 0, sizeof(cpu.blitter));
 }
@@ -114,7 +122,50 @@ void Blitter::clock(Machine::State& cpu, int osc3) {
 	}
 
 	if (cpu.blitter.enable_sprites) {
-		// TODO: DRAW ALL SPRITES		
+		for (int i = 23; i >= 0; i--) {
+			Sprite& sprite = cpu.overlay.oam[i];
+		
+			if (!sprite.enable) continue ;
+
+			auto address = cpu.blitter.sprite_base + sprite.tile * (8 * 8);
+			int dx = sprite.x - 16;
+			int dy = sprite.y - 16;
+
+			// Off screen
+			if (dy <= -16 || dy >= 64) {
+				continue ;
+			}
+
+			int invert = sprite.x_flip ? 15 : 0;
+
+			for (int s = 0; s < 2; s++) {
+				for (int x = 0; x < 8; x++, address++) {
+					// Offscreen
+					if (dx >= 96) {
+						break ;
+					} else if (dx < 0) {
+						dx++;
+						continue;
+					}
+
+					uint16_t mask = cpu_read8(cpu, (address^invert) +  0) | (cpu_read8(cpu, (address^invert) +  8) << 8);
+					uint16_t draw = cpu_read8(cpu, (address^invert) + 16) | (cpu_read8(cpu, (address^invert) + 24) << 8);
+
+					if (sprite.y_flip) {
+						mask = rev(mask);
+						draw = rev(draw);
+					}
+
+					if (sprite.invert) {
+						draw = ~draw;
+					}
+
+					target.column[dy] = (target.column[dy] & ~shift(~mask, dy)) | (target.column[dy] & ~shift(mask, dy));
+				}
+
+				address += 24;
+			}
+		}
 	}
 
 	// Copy back to ram
