@@ -100,6 +100,7 @@ export class Minimon {
 	}
 
 	cpu_read_cart(address) {
+		console.log(address.toString(16))
 		return this.cartridge[address & 0x1FFFFF];
 	}
 

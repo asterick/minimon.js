@@ -116,6 +116,14 @@ void LCD::write(Machine::State& cpu, uint8_t data, uint32_t address) {
 			if (cpu.lcd.column_address > 0x83) cpu.lcd.column_address = 0x83;
 			break ;
 
+		case 0b00100000 ... 0b00100111:
+			cpu.lcd.resistor_ratio = data & 0b111;
+			break ;
+
+		case 0b00101000 ... 0b00101111:
+			cpu.lcd.operating_mode = data & 0b111;
+			break ;
+
 		case 0b10110000 ... 0b10111111:
 			cpu.lcd.page_address = data & 0xF;
 
@@ -132,6 +140,14 @@ void LCD::write(Machine::State& cpu, uint8_t data, uint32_t address) {
 
 		case 0b10100100 ... 0b10100101:
 			cpu.lcd.all_on = data & 1;
+			break ;
+
+		case 0b10100010 ... 0b10100011:
+			cpu.lcd.lcd_bias = data & 1;
+			break ;
+
+		case 0b10101100 ... 0b10101101:
+			cpu.lcd.static_indicator = data & 1;
 			break ;
 
 		case 0b11100000: // Set RMW mode

@@ -11,7 +11,7 @@ namespace RTC {
 	};
 
 	void reset(Machine::State& cpu);
-	void clock(Machine::State& cpu, int osc3);
+	void clock(Machine::State& cpu, int osc1);
 	uint8_t read(Machine::State& cpu, uint32_t address);
 	void write(Machine::State& cpu, uint8_t data, uint32_t address);
 }

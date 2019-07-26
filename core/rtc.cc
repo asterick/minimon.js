@@ -7,9 +7,9 @@ void RTC::reset(Machine::State& cpu) {
 	cpu.rtc.value = 0;
 }
 
-void RTC::clock(Machine::State& cpu, int osc3) {
+void RTC::clock(Machine::State& cpu, int osc1) {
 	if (cpu.rtc.running) {
-		cpu.rtc.value ++;
+		cpu.rtc.value += osc1;
 	}
 }
 

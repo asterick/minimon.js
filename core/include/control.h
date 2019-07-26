@@ -5,11 +5,13 @@
 namespace Machine { struct State; };
 
 namespace Control {
-	struct State {
+	union State {
 		uint8_t data[3];
 
-		bool lcd_enabled;
-		bool cart_enabled;
+		struct {
+			unsigned lcd_enabled:1;
+			unsigned cart_enabled:1;
+		};
 	};
 
 	void reset(State&);

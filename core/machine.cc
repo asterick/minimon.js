@@ -3,8 +3,8 @@
 #include "machine.h"
 #include "debug.h"
 
-const auto OSC1_SPEED	= 4000000;
-const auto OSC3_SPEED	= 32768;
+const auto OSC1_SPEED	= 32768;
+const auto OSC3_SPEED	= 4000000;
 const auto TICK_SPEED	= 1000;
 const auto CPU_SPEED	= 1000000;
 
@@ -27,7 +27,7 @@ extern "C" void cpu_reset(Machine::State& cpu) {
 
 	cpu.sleeping = false;
 	cpu.halted = false;
-	cpu.osc3_overflow = 0;
+	cpu.osc1_overflow = 0;
 
 	Control::reset(cpu.ctrl);
 	IRQ::reset(cpu);
@@ -42,29 +42,29 @@ extern "C" const void* lcd_render(Machine::State& cpu) {
 }
 
 void cpu_clock(Machine::State& cpu, int cycles) {
-	int osc1 = cycles * OSC1_SPEED / CPU_SPEED;	
-	int osc3 = 0;
+	int osc3 = cycles * OSC3_SPEED / CPU_SPEED;	
+	int osc1 = 0;
 
-	cpu.osc3_overflow += osc1 * OSC3_SPEED;
+	cpu.osc1_overflow += osc3 * OSC1_SPEED;
 
-	if (cpu.osc3_overflow >= OSC1_SPEED) {
+	if (cpu.osc1_overflow >= OSC3_SPEED) {
 		// Assume we are not going to get more than a couple ticks out of this thing
 		do {
-			cpu.osc3_overflow -= OSC1_SPEED;
+			cpu.osc1_overflow -= OSC3_SPEED;
 			osc3++;
-		} while (cpu.osc3_overflow >= OSC1_SPEED);
+		} while (cpu.osc1_overflow >= OSC3_SPEED);
 
 		// These are the devices that only advance with OSC3
-		TIM256::clock(cpu, osc3);
-		RTC::clock(cpu, osc3);
+		TIM256::clock(cpu, osc1);
+		RTC::clock(cpu, osc1);
  	} else {
  		osc3 = 0;
  	}
 
-	Blitter::clock(cpu, osc1);
+	Blitter::clock(cpu, osc3);
 
- 	// OSC1 = 4mhz oscillator, OSC3 = 32khz oscillator
-	cpu.clocks -= osc1;
+ 	// OSC3 = 4mhz oscillator, OSC1 = 32khz oscillator
+	cpu.clocks -= osc3;
 }
 
 extern "C" void cpu_step(Machine::State& cpu) {
@@ -90,7 +90,7 @@ extern "C" void cpu_step(Machine::State& cpu) {
 }
 
 extern "C" bool cpu_advance(Machine::State& cpu, int ticks) {
-	cpu.clocks += OSC1_SPEED / TICK_SPEED * ticks;
+	cpu.clocks += OSC3_SPEED / TICK_SPEED * ticks;
 
 	while (cpu.clocks > 0) {
 		cpu_step(cpu);

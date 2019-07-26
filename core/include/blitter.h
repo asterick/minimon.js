@@ -18,6 +18,7 @@ namespace Blitter {
 		unsigned y_flip: 1;
 		unsigned invert: 1;
 		unsigned enable: 1;
+		unsigned:4;
 	};
 
 	struct Overlay {
@@ -42,6 +43,7 @@ namespace Blitter {
 			struct {
 				unsigned:1;	// Unknown flag: Possible frame counter enable?
 				unsigned frame_divider:3;
+				unsigned frame_count:4;
 			};
 		};
 

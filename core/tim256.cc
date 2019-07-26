@@ -19,15 +19,15 @@ static inline void trigger_overflow(Machine::State& cpu, int mask, IRQ::Vector v
 	}
 }
 
-void TIM256::clock(Machine::State& cpu, int osc3) {
+void TIM256::clock(Machine::State& cpu, int osc1) {
 	if (!cpu.tim256.running) return ;
 
-	trigger_overflow(cpu, FRACT_32Hz, IRQ::IRQ_32HZ, cpu.tim256.value, osc3);
-	trigger_overflow(cpu,  FRACT_8Hz,  IRQ::IRQ_8HZ, cpu.tim256.value, osc3);
-	trigger_overflow(cpu,  FRACT_2Hz,  IRQ::IRQ_2HZ, cpu.tim256.value, osc3);
-	trigger_overflow(cpu,  FRACT_1Hz,  IRQ::IRQ_1HZ, cpu.tim256.value, osc3);
+	trigger_overflow(cpu, FRACT_32Hz, IRQ::IRQ_32HZ, cpu.tim256.value, osc1);
+	trigger_overflow(cpu,  FRACT_8Hz,  IRQ::IRQ_8HZ, cpu.tim256.value, osc1);
+	trigger_overflow(cpu,  FRACT_2Hz,  IRQ::IRQ_2HZ, cpu.tim256.value, osc1);
+	trigger_overflow(cpu,  FRACT_1Hz,  IRQ::IRQ_1HZ, cpu.tim256.value, osc1);
 
-	cpu.tim256.value += osc3;
+	cpu.tim256.value += osc1;
 }
 
 uint8_t TIM256::read(Machine::State& cpu, uint32_t address) {

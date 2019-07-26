@@ -1,6 +1,7 @@
 #include <stdarg.h>
-
 #include "debug.h"
+
+extern "C" void debug_print(const void* data);
 
 static char OUTPUT_BUFFER[0x1000];
 

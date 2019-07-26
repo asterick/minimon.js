@@ -68,7 +68,7 @@ namespace Machine {
 
 		uint8_t bus_cap;
 		int clocks;
-		int osc3_overflow;
+		int osc1_overflow;
 		bool sleeping;
 		bool halted;
 

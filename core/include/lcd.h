@@ -20,6 +20,10 @@ namespace LCD {
 		bool	reverse_display;
 		bool	all_on;
 		bool	reverse_com_scan;
+		bool	static_indicator;
+		bool	lcd_bias;
+		uint8_t	resistor_ratio;
+		uint8_t	operating_mode;
 
 		bool	updated;
 	};
