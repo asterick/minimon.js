@@ -1,9 +1,14 @@
 #include <string.h>
 #include "machine.h"
 
+static const int SCREEN_WIDTH = 96;
+static const int SCREEN_HEIGHT = 64;
+static const int TICKS_PER_COUNT = 843;
+static const int TICK_OVERFLOW = TICKS_PER_COUNT * 72;
+
 union FrameBuffer {
-	uint8_t  bytes[96][8];
-	uint64_t column[96];
+	uint8_t  bytes[SCREEN_WIDTH][8];
+	uint64_t column[SCREEN_WIDTH];
 };
 
 struct MapSize {
@@ -35,11 +40,6 @@ static const uint8_t BIT_MASK[] = {
 	0b11111111,
 	0b00011111,
 };
-
-static const int SCREEN_WIDTH = 96;
-static const int SCREEN_HEIGHT = 64;
-static const int TICKS_PER_COUNT = 843;
-static const int TICK_OVERFLOW = TICKS_PER_COUNT * 72;
 
 static inline uint64_t shift(uint64_t value, int offset) {
 	if (offset < 0) {
@@ -111,10 +111,10 @@ void Blitter::clock(Machine::State& cpu, int osc3) {
 		}
 
 		if (cpu.blitter.invert_map) {
-			for (int x = 0; x < 96; x++) target.column[x] = ~target.column[x];
+			for (int x = 0; x < SCREEN_WIDTH; x++) target.column[x] = ~target.column[x];
 		}
 	} else {
-		for (int x = 0; x < 96; x++) {
+		for (int x = 0; x < SCREEN_WIDTH; x++) {
 			for (int y = 0; y < 8; y++) {
 				target.bytes[x][y] = cpu.overlay.framebuffer[y][x];
 			}
@@ -132,7 +132,7 @@ void Blitter::clock(Machine::State& cpu, int osc3) {
 			int dy = sprite.y - 16;
 
 			// Off screen
-			if (dy <= -16 || dy >= 64) {
+			if (dy <= -16 || dy >= SCREEN_HEIGHT) {
 				continue ;
 			}
 
@@ -141,7 +141,7 @@ void Blitter::clock(Machine::State& cpu, int osc3) {
 			for (int s = 0; s < 2; s++) {
 				for (int x = 0; x < 8; x++, address++) {
 					// Offscreen
-					if (dx >= 96) {
+					if (dx >= SCREEN_WIDTH) {
 						break ;
 					} else if (dx < 0) {
 						dx++;
@@ -169,7 +169,7 @@ void Blitter::clock(Machine::State& cpu, int osc3) {
 	}
 
 	// Copy back to ram
-	for (int x = 0; x < 96; x++) {
+	for (int x = 0; x < SCREEN_WIDTH; x++) {
 		for (int y = 0; y < 8; y++) {
 			cpu.overlay.framebuffer[y][x] = target.bytes[x][y];
 		}
@@ -183,7 +183,7 @@ void Blitter::clock(Machine::State& cpu, int osc3) {
 			LCD::write(cpu, 0b10110000 | p, 0x20FE);
 			LCD::write(cpu, 0b00000000, 0x20FE);
 			LCD::write(cpu, 0b00010000, 0x20FE);
-			for (int x = 0; x < 96; x++) {
+			for (int x = 0; x < SCREEN_WIDTH; x++) {
 				LCD::write(cpu, cpu.ram[a++], 0x20FF);
 			}
 		}
