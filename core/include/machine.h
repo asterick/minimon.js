@@ -5,6 +5,7 @@
 #include "lcd.h"
 #include "irq.h"
 #include "tim256.h"
+#include "timer.h"
 #include "rtc.h"
 #include "blitter.h"
 #include "control.h"
