@@ -39,6 +39,7 @@ static const uint8_t BIT_MASK[] = {
 	0b11000000,
 	0b11111111,
 	0b00011111,
+	0b00000000
 };
 
 static inline uint64_t shift(uint64_t value, int offset) {

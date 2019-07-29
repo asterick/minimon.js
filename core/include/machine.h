@@ -66,6 +66,7 @@ namespace Machine {
 		Control::State ctrl;
 		TIM256::State tim256;
 		Blitter::State blitter;
+		Timer::State timer;
 
 		uint8_t bus_cap;
 		int clocks;

@@ -17,7 +17,7 @@ EXPORTS = \
 CPPFLAGS = --target=wasm32-wasm -O2 -Iinclude -std=c++17 --sysroot=./wasi-libc/sysroot
 LDFLAGS = --no-entry --allow-undefined $(EXPORTS) -L ./wasi-libc/sysroot/lib/wasm32-wasi -lc
 
-all:table $(DEPDIR) $(TARGET)
+all: $(DEPDIR) $(TARGET)
 
 clean:
 	rm -Rf $(TARGET) $(OBJECTS)
@@ -25,16 +25,16 @@ clean:
 dasm: $(TARGET)
 	wasm-dis $<
 
-$(TARGET): $(OBJECTS)
+$(TARGET): include/table.h $(OBJECTS)
 	$(LD) $(LDFLAGS) $(OBJECTS) -o $@
 
-table: ../data/table.py ../data/s1c88.csv
+include/table.h: ../data/table.py ../data/s1c88.csv
 	python3 ../data/table.py > include/table.h
 
-%.o: %.c include/*.h
+%.o: %.c include/table.h include/*.h
 	$(CC) $(CFLAGS) $< -c -o $@
 
-%.o: %.cc include/*.h
+%.o: %.cc include/table.h include/*.h
 	$(CPP) $(CPPFLAGS) $< -c -o $@
 
 $(DEPDIR):

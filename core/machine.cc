@@ -120,7 +120,7 @@ static inline uint8_t cpu_read_reg(Machine::State& cpu, uint32_t address) {
 	case 0x2018 ... 0x201D:
 	case 0x2030 ... 0x203F:
 	case 0x2048 ... 0x204F:
-		return Timer::read(cpu, address);		
+		return Timer::read(cpu, address);
 	default:
 		dprintf("Unhandled register read %x", address);
 		return cpu.bus_cap;
@@ -150,7 +150,7 @@ static inline void cpu_write_reg(Machine::State& cpu, uint8_t data, uint32_t add
 	case 0x2018 ... 0x201D:
 	case 0x2030 ... 0x203F:
 	case 0x2048 ... 0x204F:
-		Timer::write(cpu, data, address);		
+		Timer::write(cpu, data, address);
 	default:
 		dprintf("Unhandled register write %x: %x", address, data);
 		break ;
