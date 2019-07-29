@@ -1,4 +1,4 @@
-OBJECTS=irq.o lcd.o blitter.o operations.o machine.o debug.o tim256.o rtc.o control.o timer.o
+OBJECTS=irq.o lcd.o blitter.o operations.o machine.o debug.o tim256.o rtc.o control.o timers.o
 TARGET=../public/libminimon.wasm
 
 LD=wasm-ld

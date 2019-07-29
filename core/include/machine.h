@@ -5,7 +5,7 @@
 #include "lcd.h"
 #include "irq.h"
 #include "tim256.h"
-#include "timer.h"
+#include "timers.h"
 #include "rtc.h"
 #include "blitter.h"
 #include "control.h"
@@ -66,7 +66,7 @@ namespace Machine {
 		Control::State ctrl;
 		TIM256::State tim256;
 		Blitter::State blitter;
-		Timer::State timer;
+		Timers::State timers;
 
 		uint8_t bus_cap;
 		int clocks;
