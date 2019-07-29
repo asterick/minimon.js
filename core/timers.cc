@@ -24,7 +24,67 @@ void Timers::reset(Machine::State& cpu) {
 	memset(&cpu.timers, 0, sizeof(cpu.timers));
 }
 
+static inline int ticks(Timers::State& timers, bool clock_source, bool clock_ctrl, int clock_ratio, int osc1, int osc3) {
+	if (!clock_ctrl) return 0;
+
+	if (clock_source) {
+		int adjust = PRESCALE_OSC1[clock_ratio];
+		return (timers.osc1_prescale % adjust + osc1) / adjust;
+	} else {
+		int adjust = PRESCALE_OSC3[clock_ratio];
+		return (timers.osc3_prescale % adjust + osc3) / adjust;
+	}
+}
+
 void Timers::clock(Machine::State& cpu, int osc1, int osc3) {
+	if (!cpu.timers.osc1_enable) osc1 = 0;
+	if (!cpu.timers.osc3_enable) osc3 = 0;
+
+	for (int i = 0; i < 3; i++) {
+		Timer& timer = cpu.timers.timer[i];
+
+		if (timer.mode16) {
+			if (!timer.lo_running) continue ;
+
+			int count = timer.count - ticks(cpu.timers, timer.lo_clock_source, timer.lo_clock_ctrl, timer.lo_clock_ratio, osc1, osc3);
+			
+			if (count < 0) {
+				// TODO: FIRE INTERRUPT HERE
+				do {
+					count += timer.preset;	
+				} while (count < 0);
+			}
+
+			timer.count = count;
+		} else {
+			if (timer.lo_running) {
+				int count = timer.count_bytes[0] - ticks(cpu.timers, timer.lo_clock_source, timer.lo_clock_ctrl, timer.lo_clock_ratio, osc1, osc3);
+
+				if (count < 0) {
+					// TODO: FIRE INTERRUPT HERE
+					do {
+						count += timer.preset_bytes[0];	
+					} while (count < 0);
+				}
+				timer.count_bytes[0] = count;
+			}
+
+			if (timer.lo_running) {
+				int count = timer.count_bytes[1] - ticks(cpu.timers, timer.hi_clock_source, timer.hi_clock_ctrl, timer.hi_clock_ratio, osc1, osc3);
+
+				if (count < 0) {
+					// TODO: FIRE INTERRUPT HERE
+					do {
+						count += timer.preset_bytes[1];	
+					} while (count < 0);
+				}
+				timer.count_bytes[1] = count;
+			}
+		}
+	}
+
+	cpu.timers.osc1_prescale += osc1;
+	cpu.timers.osc3_prescale += osc3;
 }
 
 uint8_t Timers::read(Machine::State& cpu, uint32_t address) {
