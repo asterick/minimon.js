@@ -12,13 +12,13 @@ Emulation Status
 | System            | Completion | Notes                                 |
 | ----------------- | ---------- | ------------------------------------- |
 | S1C88 Core        | 100%       | Loop complete, instructions unverfied |
+| Control Registers | 100%       | Unverified                            |
 | IRQ System        | 100%       | Unverified                            |
 | RTC Timer         | 100%       | Unverified                            |
 | 256Hz Timer       | 100%       | Unverified                            |
 | LCD (SED1565)     | 80%        | Most commands implemented             |
 | Blitter           | 100%       | Unverified sprites and scrolling      |
-| General Timers    | 0%         |                                       |
-| Control Registers | 0%         |                                       |
+| General Timers    | 80%        | No IRQs                               |
 | I/O / Input Ports | 0%         |                                       |
 | EEPROM Emulation  | 0%         |                                       |
 | Sound Emulation   | 0%         |                                       |
