@@ -4,7 +4,7 @@
   "description": "My personal webpage",
   "main": "server/index.js",
   "scripts": {
-    "core": "cd data; python table.py s1c88.csv > ../core/include/table.h; cd ../core; make",
+    "core": "cd data; cd ../core; make",
     "start": "webpack-dev-server --open --mode development",
     "build": "webpack --mode production",
     "test": "npm run core; webpack --config webpack.test.config.js; node test/bios.js"

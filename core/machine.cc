@@ -151,6 +151,7 @@ static inline void cpu_write_reg(Machine::State& cpu, uint8_t data, uint32_t add
 	case 0x2030 ... 0x203F:
 	case 0x2048 ... 0x204F:
 		Timers::write(cpu, data, address);
+		break ;
 	default:
 		dprintf("Unhandled register write %x: %x", address, data);
 		break ;
