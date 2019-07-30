@@ -22,7 +22,7 @@ void Input::reset(Input::State& inputs) {
 
 void Input::update(Machine::State& cpu, uint16_t value) {
 	uint16_t change = value ^ cpu.input.input_state;
-	cpu.input.input_state = change;
+	cpu.input.input_state = value;
 
 	uint16_t trigger = change & (value ^ cpu.input.interrupt_direction);
 
