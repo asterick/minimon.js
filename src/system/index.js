@@ -16,6 +16,17 @@ const registerHeader = [
 	["sc", "u8"]
 ];
 
+const KEYBOARD_CODES = {
+	90: 0b00000001,
+	88: 0b00000010,
+	67: 0b00000100,
+	38: 0b00001000,
+	40: 0b00010000,
+	37: 0b00100000,
+	39: 0b01000000,
+	 8: 0b10000000
+};
+
 export class Minimon {
 	async init(data) {
 		this._module = await WebAssembly.instantiate(data, {
@@ -39,6 +50,18 @@ export class Minimon {
 		this.registers = struct(registerHeader, this._exports.memory.buffer, this._cpu_state, false, true);
 
 		this.cartridge = new Uint8Array(0x200000);
+
+		this._inputState = 0b1100000000; // No cartridge inserted, no IRQ
+
+		document.body.addEventListener('keydown', (e) => {
+			this._inputState |= KEYBOARD_CODES[e.keyCode];
+			this._updateinput();
+		});
+
+		document.body.addEventListener('keyup', (e) => {
+			this._inputState &= ~KEYBOARD_CODES[e.keyCode];
+			this._updateinput();
+		});
 
 		// Reset our CPU
 		this.reset();
@@ -86,6 +109,10 @@ export class Minimon {
 
 	update() {
 		// This will be overidden elsewhere
+	}
+
+	_updateinput(v) {
+		this._exports.update_inputs(this._cpu_state, this._inputState);
 	}
 
 	// Cartridge I/O
