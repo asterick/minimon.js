@@ -162,7 +162,7 @@ void Blitter::clock(Machine::State& cpu, int osc3) {
 					target.column[dx] |= shift(draw & mask, dy);
 				}
 
-				address += (8*3);
+				address += 24;
 			}
 		}
 	}

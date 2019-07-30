@@ -1,7 +1,7 @@
 .screen {
 	position: relative;
-	width: 100%;
-	padding-top: 66%;
+	width: calc(96px * 3);
+	height: calc(64px * 3);
 }
 
 .screen .container {
