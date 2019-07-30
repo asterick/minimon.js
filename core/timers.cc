@@ -19,9 +19,7 @@ static const uint8_t TIMER_MASK[] = {
 	0b11111111,
 	0b11111111,
 	0b11111111,
-	0b11111111,
-	0b00000000,
-	0b00000000
+	0b11111111
 };
 
 int PRESCALE_OSC1[] = {
@@ -38,6 +36,7 @@ void Timers::reset(Machine::State& cpu) {
 
 static inline void irq(Machine::State& cpu, int vec) {
 	if (vec < 0) return ;
+
 	IRQ::trigger(cpu, (IRQ::Vector) vec);
 }
 
