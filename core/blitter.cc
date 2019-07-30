@@ -132,20 +132,16 @@ void Blitter::clock(Machine::State& cpu, int osc3) {
 			int dx = sprite.x - 16;
 			int dy = sprite.y - 16;
 
-			// Off screen
-			if (dy <= -16 || dy >= SCREEN_HEIGHT) {
-				continue ;
-			}
+			int invert = sprite.x_flip ? 0b0100111 : 0;
 
-			int invert = sprite.x_flip ? 15 : 0;
+			if (dy <= -16 || dy >= SCREEN_HEIGHT) continue ;
 
 			for (int s = 0; s < 2; s++) {
-				for (int x = 0; x < 8; x++, address++) {
+				for (int x = 0; x < 8; x++, address++, dx++) {
 					// Offscreen
 					if (dx >= SCREEN_WIDTH) {
 						break ;
 					} else if (dx < 0) {
-						dx++;
 						continue;
 					}
 
@@ -161,10 +157,11 @@ void Blitter::clock(Machine::State& cpu, int osc3) {
 						draw = ~draw;
 					}
 
-					target.column[dy] = (target.column[dy] & ~shift(~mask, dy)) | (target.column[dy] & ~shift(mask, dy));
+					target.column[dx] &= ~shift(0xFFFF ^ mask, dy);
+					target.column[dx] |= shift(draw & ~mask, dy);
 				}
 
-				address += 24;
+				address += (8*3);
 			}
 		}
 	}
