@@ -51,7 +51,7 @@ void Timers::clock(Machine::State& cpu, int osc1, int osc3) {
 			if (count < 0) {
 				// TODO: FIRE INTERRUPT HERE
 				do {
-					count += timer.preset;	
+					count += timer.preset + 1;	
 				} while (count < 0);
 			}
 
@@ -63,19 +63,19 @@ void Timers::clock(Machine::State& cpu, int osc1, int osc3) {
 				if (count < 0) {
 					// TODO: FIRE INTERRUPT HERE
 					do {
-						count += timer.preset_bytes[0];	
+						count += timer.preset_bytes[0] + 1;
 					} while (count < 0);
 				}
 				timer.count_bytes[0] = count;
 			}
 
-			if (timer.lo_running) {
+			if (timer.hi_running) {
 				int count = timer.count_bytes[1] - ticks(cpu.timers, timer.hi_clock_source, timer.hi_clock_ctrl, timer.hi_clock_ratio, osc1, osc3);
 
 				if (count < 0) {
 					// TODO: FIRE INTERRUPT HERE
 					do {
-						count += timer.preset_bytes[1];	
+						count += timer.preset_bytes[1] + 1;	
 					} while (count < 0);
 				}
 				timer.count_bytes[1] = count;
