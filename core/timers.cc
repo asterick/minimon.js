@@ -10,7 +10,7 @@ struct TimerIRQ {
 static const TimerIRQ irqs[] = {
 	{ IRQ::IRQ_TIM0, IRQ::IRQ_TIM1,                -1 },
 	{ IRQ::IRQ_TIM2, IRQ::IRQ_TIM3,                -1 },
-	{ IRQ::IRQ_TIM4,            -1, IRQ::IRQ_TIM5_CMP } 
+	{            -1, IRQ::IRQ_TIM5, IRQ::IRQ_TIM5_CMP } 
 };
 
 static const uint8_t TIMER_MASK[] = {
@@ -66,7 +66,7 @@ void Timers::clock(Machine::State& cpu, int osc1, int osc3) {
 			int count = timer.count - ticks(cpu.timers, timer.lo_clock_source, timer.lo_clock_ctrl, timer.lo_clock_ratio, osc1, osc3);
 			
 			if (count < 0) {
-				irq(cpu, vects.lo_underflow);
+				irq(cpu, vects.hi_underflow);
 				do {
 					count += timer.preset + 1;	
 				} while (count < 0);

@@ -21,10 +21,11 @@ void Input::reset(Input::State& inputs) {
 }
 
 void Input::update(Machine::State& cpu, uint16_t value) {
-	uint16_t change = value ^ cpu.input.input_state;
-	cpu.input.input_state = value;
+	value &= 0b1111111111;
 
-	uint16_t trigger = change & (value ^ cpu.input.interrupt_direction);
+	uint16_t trigger = (value ^ cpu.input.input_state) & (value ^ cpu.input.interrupt_direction);
+
+	cpu.input.input_state = value;
 
 	for (int i = 0; i < 10; i++) {
 		if (trigger & (1 << i)) IRQ::trigger(cpu, vectors[i]);

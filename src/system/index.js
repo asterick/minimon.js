@@ -27,6 +27,8 @@ const KEYBOARD_CODES = {
 	 8: 0b10000000
 };
 
+const INPUT_CART_N = 0b1000000000;
+
 export class Minimon {
 	async init(data) {
 		this._module = await WebAssembly.instantiate(data, {
@@ -123,11 +125,16 @@ export class Minimon {
 
 		for (let i = bytes.length - 1; i >= 0; i--) this.cartridge[(i+offset) & 0x1FFFFF] = bytes[i];
 
-		this.reset();		
+		this._inputState &= INPUT_CART_N;
+		this._updateinput();
+	}
+
+	eject() {
+		this._inputState |= INPUT_CART_N;
+		this._updateinput();
 	}
 
 	cpu_read_cart(address) {
-		console.log(address.toString(16))
 		return this.cartridge[address & 0x1FFFFF];
 	}
 
