@@ -36,10 +36,15 @@ extern "C" void cpu_reset(Machine::State& cpu) {
 	TIM256::reset(cpu);
 	Blitter::reset(cpu);
 	Timers::reset(cpu);
+	Input::reset(cpu.input);
 }
 
 extern "C" const void* lcd_render(Machine::State& cpu) {
 	return LCD::render(cpu);
+}
+
+extern "C" const void update_inputs(Machine::State& cpu, uint16_t value) {
+	Input::update(cpu, value);
 }
 
 void cpu_clock(Machine::State& cpu, int cycles) {
@@ -113,6 +118,8 @@ static inline uint8_t cpu_read_reg(Machine::State& cpu, uint32_t address) {
 		return IRQ::read(cpu, address);
 	case 0x2040 ... 0x2041:
 		return TIM256::read(cpu, address);
+	case 0x2050 ... 0x2055:
+		return Input::read(cpu.input, address);
 	case 0x20FE ... 0x20FF:
 		return LCD::read(cpu, address);
 	case 0x2080 ... 0x208A:
@@ -140,6 +147,9 @@ static inline void cpu_write_reg(Machine::State& cpu, uint8_t data, uint32_t add
 		break ;
 	case 0x2040 ... 0x2041:
 		TIM256::write(cpu, data, address);
+		break ;
+	case 0x2050 ... 0x2055:
+		Input::write(cpu.input, data, address);
 		break ;
 	case 0x2080 ... 0x208A:
 		Blitter::write(cpu, data, address);

@@ -32,6 +32,13 @@ body {
 
 .document {
 	display: flex;
+	flex-direction: row;
+	flex-grow: 1;
+}
+
+.viewer {
+	display: flex;
 	flex-direction: column;
 	flex-grow: 1;
+	overflow-x: hidden;
 }

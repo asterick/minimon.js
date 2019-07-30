@@ -19,7 +19,9 @@ Emulation Status
 | LCD (SED1565)     | 80%        | Most commands implemented             |
 | Blitter           | 100%       | Unverified sprites and scrolling      |
 | General Timers    | 90%        | Comparison IRQs                       |
-| I/O / Input Ports | 0%         |                                       |
+| Input Ports       | 50%        | Debounce circuit not done             |
+| Output Ports      | 0%         |                                       |
+| GPIO Ports        | 0%         |                                       |
 | EEPROM Emulation  | 0%         |                                       |
 | Sound Emulation   | 0%         |                                       |
 | ADC Emulation     | 0%         | Only used for low battery detection   |

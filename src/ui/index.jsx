@@ -69,8 +69,13 @@ export default class MinimonDebugger extends Component {
 					<Memory memoryBottom={0x1000} memoryTop={0x20F7} />
 				</div>
 				<div className={style.document}>
-					<Disassembler target={system.translate(system.registers.pc)} />
-				</div>
+					<div className={style.viewer}>
+						<Disassembler target={system.translate(system.registers.pc)} />
+					</div>
+					<div className={style.viewer}>
+
+					</div>
+				</div>				
 			</div>
 		</div>
 	}

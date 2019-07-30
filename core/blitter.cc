@@ -224,6 +224,8 @@ uint8_t Blitter::read(Machine::State& cpu, uint32_t address) {
 	return 0;
 }
 
+#include "debug.h"
+
 void Blitter::write(Machine::State& cpu, uint8_t data, uint32_t address) {
 	data &= BIT_MASK[address & 0xF];
 

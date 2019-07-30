@@ -9,6 +9,7 @@
 #include "rtc.h"
 #include "blitter.h"
 #include "control.h"
+#include "input.h"
 
 namespace CPU {
 	union State {
@@ -67,6 +68,7 @@ namespace Machine {
 		TIM256::State tim256;
 		Blitter::State blitter;
 		Timers::State timers;
+		Input::State input;
 
 		uint8_t bus_cap;
 		int clocks;

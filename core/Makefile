@@ -1,4 +1,4 @@
-OBJECTS=irq.o lcd.o blitter.o operations.o machine.o debug.o tim256.o rtc.o control.o timers.o
+OBJECTS=irq.o lcd.o blitter.o operations.o machine.o debug.o tim256.o rtc.o control.o timers.o input.o
 TARGET=../public/libminimon.wasm
 
 LD=wasm-ld
@@ -8,6 +8,7 @@ CPP=clang++
 EXPORTS = \
 	--export get_machine \
 	--export lcd_render \
+	--export update_inputs \
 	--export cpu_reset \
 	--export cpu_advance \
 	--export cpu_step \

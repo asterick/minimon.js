@@ -55,32 +55,30 @@ class Disassembly extends Component {
 		const { target } = this.props;
 
 		return (
-			<div className={classes.disasm}>
-				<AutoSizer>
-					{({ height, width }) => {
-						const rowCount = height / 20;
+			<AutoSizer className={classes.disasm}>
+				{({ height, width }) => {
+					const rowCount = Math.floor(height / 20);
 
-						const system = this.context;
-						const disasm = new Disassembler(system);
-						const lines = disasm.process(this.state.address, rowCount);
+					const system = this.context;
+					const disasm = new Disassembler(system);
+					const lines = disasm.process(this.state.address, rowCount);
 
-						return <table style={{width: `${width}px`, height: `${height}px`}}>
-							<tbody>
-								{
-								lines.map(line =>
-									<tr key={line.address} className={(target == line.address) ? classes['active'] : ''}>
-										<td className={classes["address"]}>{toHex(system.translate(line.address), 6)}</td>
-										<td>{line.data.map((v, i) => <span className={classes['byte-cell']} key={i}>{toHex(v, 2)}</span>)}</td>
-										<td>{line.op}</td>
-										<td>{line.args.map((s, i) => <span key={i}>{s}</span>)}</td>
-										<td>{line.comment}</td>
-									</tr>)
-								}
-							</tbody>
-						</table>
-					}}
-				</AutoSizer>
-			</div>
+					return <table style={{width: `${width}px`, height: `${height}px`}}>
+						<tbody>
+							{
+							lines.map(line =>
+								<tr key={line.address} className={(target == line.address) ? classes['active'] : ''}>
+									<td className={classes["address"]}>{toHex(system.translate(line.address), 6)}</td>
+									<td>{line.data.map((v, i) => <span className={classes['byte-cell']} key={i}>{toHex(v, 2)}</span>)}</td>
+									<td>{line.op}</td>
+									<td>{line.args.map((s, i) => <span key={i}>{s}</span>)}</td>
+									<td>{line.comment}</td>
+								</tr>)
+							}
+						</tbody>
+					</table>
+				}}
+			</AutoSizer>
 		);
 	}
 }
