@@ -1,6 +1,18 @@
 #include <string.h>
 #include "machine.h"
 
+struct TimerIRQ {
+	int lo_underflow;
+	int hi_underflow;
+	int lo_compare;
+};
+
+static const TimerIRQ irqs[] = {
+	{ IRQ::IRQ_TIM0, IRQ::IRQ_TIM1,                -1 },
+	{ IRQ::IRQ_TIM2, IRQ::IRQ_TIM3,                -1 },
+	{ IRQ::IRQ_TIM4,            -1, IRQ::IRQ_TIM5_CMP } 
+};
+
 static const uint8_t TIMER_MASK[] = {
 	0b10001111,
 	0b00001111,
@@ -24,6 +36,11 @@ void Timers::reset(Machine::State& cpu) {
 	memset(&cpu.timers, 0, sizeof(cpu.timers));
 }
 
+static inline void irq(Machine::State& cpu, int vec) {
+	if (vec < 0) return ;
+	IRQ::trigger(cpu, (IRQ::Vector) vec);
+}
+
 static inline int ticks(Timers::State& timers, bool clock_source, bool clock_ctrl, int clock_ratio, int osc1, int osc3) {
 	if (!clock_ctrl) return 0;
 
@@ -42,6 +59,7 @@ void Timers::clock(Machine::State& cpu, int osc1, int osc3) {
 
 	for (int i = 0; i < 3; i++) {
 		Timer& timer = cpu.timers.timer[i];
+		const TimerIRQ& vects = irqs[i];
 
 		if (timer.mode16) {
 			if (!timer.lo_running) continue ;
@@ -49,7 +67,7 @@ void Timers::clock(Machine::State& cpu, int osc1, int osc3) {
 			int count = timer.count - ticks(cpu.timers, timer.lo_clock_source, timer.lo_clock_ctrl, timer.lo_clock_ratio, osc1, osc3);
 			
 			if (count < 0) {
-				// TODO: FIRE INTERRUPT HERE
+				irq(cpu, vects.lo_underflow);
 				do {
 					count += timer.preset + 1;	
 				} while (count < 0);
@@ -61,7 +79,7 @@ void Timers::clock(Machine::State& cpu, int osc1, int osc3) {
 				int count = timer.count_bytes[0] - ticks(cpu.timers, timer.lo_clock_source, timer.lo_clock_ctrl, timer.lo_clock_ratio, osc1, osc3);
 
 				if (count < 0) {
-					// TODO: FIRE INTERRUPT HERE
+					irq(cpu, vects.lo_underflow);
 					do {
 						count += timer.preset_bytes[0] + 1;
 					} while (count < 0);
@@ -73,7 +91,7 @@ void Timers::clock(Machine::State& cpu, int osc1, int osc3) {
 				int count = timer.count_bytes[1] - ticks(cpu.timers, timer.hi_clock_source, timer.hi_clock_ctrl, timer.hi_clock_ratio, osc1, osc3);
 
 				if (count < 0) {
-					// TODO: FIRE INTERRUPT HERE
+					irq(cpu, vects.hi_underflow);
 					do {
 						count += timer.preset_bytes[1] + 1;	
 					} while (count < 0);
