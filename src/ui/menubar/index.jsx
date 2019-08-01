@@ -21,9 +21,35 @@ import React, { Component } from "react";
 import style from "./style.scss";
 import SystemContext from "../context";
 
-const MenuItem = (props) => {
-	const { title } = props;
-	return <span className={style.menuitem} {... props}>{title}</span>
+class MenuItem extends Component {
+	constructor(props) {
+		super(props);
+
+		this.keyevent = (e) => {
+			const keybind = this.props.keybind;
+
+			if (!keybind) return ;
+			
+			const fired = Object.keys(keybind).reduce((o, v) => o && e[v] == keybind[v], true);
+
+			if (fired) {
+				this.props.onClick();
+			}
+		}
+	}
+
+	componentDidMount() {
+		document.body.addEventListener('keydown', this.keyevent);
+	}
+
+	componentWillUnmount() {
+		document.body.removeEventListener('keydown', this.keyevent);
+	}
+
+	render() {
+		const { title } = this.props;
+		return <span className={style.menuitem} {... this.props}>{title}</span>
+	}
 }
 
 const DropDown = ({ title, children }) => 
@@ -55,7 +81,7 @@ export default class MenuBar extends Component {
 				<MenuItem title={this.context.running ? "stop" : "run"} onClick={() => (this.context.running = !this.context.running)} />
 				<Seperator />
 				<MenuItem title="step" onClick={() => this.step()} />
-				<MenuItem title="reset" onClick={() => this.reset()} />
+				<MenuItem title="reset" keybind={{code: "KeyR", ctrlKey: true}} onClick={() => this.reset()} />
 			</DropDown>
 		</div>
 	}
