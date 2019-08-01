@@ -143,8 +143,13 @@ export class Minimon {
 
 		for (let i = bytes.length - 1; i >= 0; i--) this.cartridge[(i+offset) & 0x1FFFFF] = bytes[i];
 
-		this._inputState &= INPUT_CART_N;
+		this._inputState |= INPUT_CART_N;
 		this._updateinput();
+
+		setTimeout(() => {
+			this._inputState &= INPUT_CART_N;
+			this._updateinput();
+		}, 100);
 	}
 
 	eject() {

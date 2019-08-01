@@ -21,7 +21,7 @@ Emulation Status
 | General Timers    | 90%        | Comparison IRQs                       |
 | Input Ports       | 50%        | Debounce circuit not done             |
 | Output Ports      | 0%         |                                       |
-| GPIO Ports        | 0%         |                                       |
+| GPIO Ports        | 25%        | EEPROM Wired                          |
 | Sound Emulation   | 0%         |                                       |
 | ADC Emulation     | 0%         | Only used for low battery detection   |
-| EEPROM Emulation  | 100%       | Not wired into GPIO                   |
+| EEPROM Emulation  | 100%       | Complete                              |

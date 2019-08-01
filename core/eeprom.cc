@@ -19,6 +19,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <string.h>
 
 #include "eeprom.h"
+#include "debug.h"
 
 void EEPROM::reset(EEPROM::State& state) {
 	memset(&state.data, 0, sizeof(state.data));
