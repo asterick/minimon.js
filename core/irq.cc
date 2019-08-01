@@ -28,39 +28,48 @@ struct VectorTable {
 	int bit_group;
 };
 
+
+
+
+
+
+
+
+
+
 static const VectorTable IRQ_TABLE[TOTAL_HARDWARE_IRQS] = {
-	{ false },			// IRQ_RESET
-	{ false },			// IRQ_DIV_ZERO
-	{ false },			// IRQ_WATCHDOG
-	{ true,   6, 007 },	// IRQ_BLT_COPY
-	{ true,   6, 006 },	// IRQ_BLT_OVERFLOW
-	{ true,   4, 005 },	// IRQ_TIM3
-	{ true,   4, 004 },	// IRQ_TIM2
-	{ true,   2, 003 },	// IRQ_TIM1
-	{ true,   2, 002 },	// IRQ_TIM0
-	{ true,   0, 001 },	// IRQ_TIM5
-	{ true,   0, 000 },	// IRQ_TIM5_CMP
-	{ true,  14, 015 },	// IRQ_32HZ
-	{ true,  14, 014 },	// IRQ_8HZ
-	{ true,  14, 013 },	// IRQ_2HZ
-	{ true,  14, 012 },	// IRQ_1HZ
-	{ true,  16, 037 },	// IRQ_IR_RCV
-	{ true,  16, 036 },	// IRQ_SHOCK
-	{ true, 000, 035 },	// IRQ_UNKNOWN1
-	{ true, 000, 034 },	// IRQ_UNKNOWN2
-	{ true,  12, 011 },	// IRQ_K09
-	{ true,  12, 010 },	// IRQ_K08
-	{ true,  10, 027 },	// IRQ_K07
-	{ true,  10, 026 },	// IRQ_K06
-	{ true,  10, 025 },	// IRQ_K05
-	{ true,  10, 024 },	// IRQ_K04
-	{ true,  10, 023 },	// IRQ_K03
-	{ true,  10, 022 },	// IRQ_K02
-	{ true,  10, 021 },	// IRQ_K01
-	{ true,  10, 020 },	// IRQ_K00
-	{ true, 000, 032 },	// IRQ_UNKNOWN3
-	{ true, 000, 031 },	// IRQ_UNKNOWN4
-	{ true, 000, 030 }	// IRQ_UNKNOWN5
+	{ false },			// 0x00 IRQ_RESET
+	{ false },			// 0x01 IRQ_DIV_ZERO
+	{ false },			// 0x02 IRQ_WATCHDOG
+	{ true, 006, 007 },	// 0x03 IRQ_BLT_COPY
+	{ true, 006, 006 },	// 0x04 IRQ_BLT_OVERFLOW
+	{ true, 004, 005 },	// 0x05 IRQ_TIM3
+	{ true, 004, 004 },	// 0x06 IRQ_TIM2
+	{ true, 002, 003 },	// 0x07 IRQ_TIM1
+	{ true, 002, 002 },	// 0x08 IRQ_TIM0
+	{ true, 000, 001 },	// 0x09 IRQ_TIM5
+	{ true, 000, 000 },	// 0x0A IRQ_TIM5_CMP
+	{ true, 016, 015 },	// 0x0B IRQ_32HZ
+	{ true, 016, 014 },	// 0x0C IRQ_8HZ
+	{ true, 016, 013 },	// 0x0D IRQ_2HZ
+	{ true, 016, 012 },	// 0x0E IRQ_1HZ
+	{ true, 020, 037 },	// 0x0F IRQ_IR_RCV
+	{ true, 020, 036 },	// 0x10 IRQ_SHOCK
+	{ true, 000, 035 },	// 0x11 IRQ_UNKNOWN1
+	{ true, 000, 034 },	// 0x12 IRQ_UNKNOWN2
+	{ true, 014, 011 },	// 0x13 IRQ_K09
+	{ true, 014, 010 },	// 0x14 IRQ_K08
+	{ true, 012, 027 },	// 0x15 IRQ_K07
+	{ true, 012, 026 },	// 0x16 IRQ_K06
+	{ true, 012, 025 },	// 0x17 IRQ_K05
+	{ true, 012, 024 },	// 0x18 IRQ_K04
+	{ true, 012, 023 },	// 0x19 IRQ_K03
+	{ true, 012, 022 },	// 0x1A IRQ_K02
+	{ true, 012, 021 },	// 0x1B IRQ_K01
+	{ true, 012, 020 },	// 0x1C IRQ_K00
+	{ true, 010, 032 },	// 0x1D IRQ_UNKNOWN3
+	{ true, 010, 031 },	// 0x1E IRQ_UNKNOWN4
+	{ true, 010, 030 }	// 0x1F IRQ_UNKNOWN5
 };
 
 // These are the write masks for the data pins (no mapped d-latch)
@@ -108,7 +117,7 @@ void IRQ::reset(Machine::State& cpu) {
 void IRQ::trigger(Machine::State& cpu, Vector irq) {
 	const VectorTable& info = IRQ_TABLE[irq];
 
-	if (irq < FIRST_MASKABLE) {
+	if (!info.maskable) {
 		cpu.irq.next_priority = HIGHEST_PRIO;
 		cpu.irq.next_irq = irq;
 	} else {
