@@ -79,7 +79,8 @@ namespace Blitter {
 
 		// Counters
 		uint8_t divider;
-		int counter;
+		int 	counter;
+		bool	updated;
 	};
 
 	void reset(Machine::State& cpu);

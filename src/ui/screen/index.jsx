@@ -188,7 +188,7 @@ export default class Registers extends Component {
 
 			gl.uniform1f(this._shader.uniforms.analog, 250);
 			gl.uniform1i(this._shader.uniforms.dot_mask, 0);
-			gl.uniform1i(this._shader.uniforms.simulate_gray, 1);
+			gl.uniform1i(this._shader.uniforms.simulate_gray, 0);
 
 			gl.enableVertexAttribArray(this._shader.attributes.vertex);
 			gl.bindBuffer(gl.ARRAY_BUFFER, this._copyBuffer);

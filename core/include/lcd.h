@@ -42,8 +42,6 @@ namespace LCD {
 		bool	lcd_bias;
 		uint8_t	resistor_ratio;
 		uint8_t	operating_mode;
-
-		bool	updated;
 	};
 
 	void reset(Machine::State& cpu);

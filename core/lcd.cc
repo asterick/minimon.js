@@ -199,6 +199,4 @@ void LCD::write(Machine::State& cpu, uint8_t data, uint32_t address) {
 			cpu.lcd.column_address++;
 		}
 	}
-
-	cpu.lcd.updated = true;
 }

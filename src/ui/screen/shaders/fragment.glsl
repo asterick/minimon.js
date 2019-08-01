@@ -28,7 +28,7 @@ vec2 fetch(vec2 pixel) {
 }
 
 float lcd(vec2 pixel) {
-	return clamp(1.0 - length(fract(pixel) - vec2(0.5)) * 0.75, 0.0, 1.0);
+	return clamp(1.0 - length(vec2(0.5) - fract(1.0 - pixel)) * 0.75, 0.0, 1.0);
 }
 
 void main(void) {

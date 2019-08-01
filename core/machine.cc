@@ -122,8 +122,8 @@ extern "C" bool cpu_advance(Machine::State& cpu, int ticks) {
 		cpu_step(cpu);
 	}
 
-	bool updated = cpu.lcd.updated;
-	cpu.lcd.updated = false;
+	bool updated = cpu.blitter.updated;
+	cpu.blitter.updated = false;
 	return updated;
 }
 

@@ -100,6 +100,7 @@ void Blitter::clock(Machine::State& cpu, int osc3) {
 		}
 
 		cpu.blitter.counter -= TICK_OVERFLOW;
+		cpu.blitter.updated = true;
 	}
 
 	if (!overflow) return ;
@@ -204,8 +205,6 @@ void Blitter::clock(Machine::State& cpu, int osc3) {
 				LCD::write(cpu, cpu.ram[a++], 0x20FF);
 			}
 		}
-	} else {
-		cpu.lcd.updated = true;
 	}
 
 	IRQ::trigger(cpu, IRQ::IRQ_BLT_OVERFLOW);
