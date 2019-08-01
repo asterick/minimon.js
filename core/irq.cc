@@ -29,14 +29,6 @@ struct VectorTable {
 };
 
 
-
-
-
-
-
-
-
-
 static const VectorTable IRQ_TABLE[TOTAL_HARDWARE_IRQS] = {
 	{ false },			// 0x00 IRQ_RESET
 	{ false },			// 0x01 IRQ_DIV_ZERO
