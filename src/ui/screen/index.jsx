@@ -201,9 +201,7 @@ export default class Registers extends Component {
 	render() {
 		return (
 			<div className={classes.screen}>
-				<div className={classes.container}>
-					<canvas ref={this._ref} />
-				</div>
+				<canvas ref={this._ref} />
 			</div>
 		);
 	}

@@ -34,7 +34,9 @@ export default class MinimonDebugger extends Component {
 	constructor(props) {
 		super(props);
 
-		this.state = {};
+		this.state = {
+			fullscreen: false
+		};
 	}
 
     onDragOver (e) {
@@ -70,19 +72,21 @@ export default class MinimonDebugger extends Component {
         });
     }
 
-	render() {
-		const system = this.context;
-
-		return <div 
-            onDragOver={(e) => this.onDragOver(e)}
-            onDragLeave={(e) => this.onDragLeave(e)}
-            onDrop={(e) => this.onDrop(e)}
-			className={style.mainview}>
-
-			<MenuBar />
-			<div className={style.debugger}>
-				<div className={style.sidebar}>
+    innerUI() {
+    	if (this.state.fullscreen) {
+    		return <div className={style.debugger}>
+    			<div className={`${style.screen} ${style.fullsize}`}>
 					<Screen />
+				</div>
+			</div>
+    	} else {
+			const system = this.context;
+
+    		return <div className={style.debugger}>
+    			<div className={style.sidebar}>
+					<div className={style.screen}>
+						<Screen />
+					</div>
 					<Registers />
 					<Memory memoryBottom={0x1000} memoryTop={0x20F7} />
 				</div>
@@ -93,8 +97,21 @@ export default class MinimonDebugger extends Component {
 					<div className={style.viewer}>
 
 					</div>
-				</div>				
-			</div>
+				</div>
+			</div>;
+    	}
+    }
+
+	render() {
+		return <div 
+            onDragOver={(e) => this.onDragOver(e)}
+            onDragLeave={(e) => this.onDragLeave(e)}
+            onDrop={(e) => this.onDrop(e)}
+			className={style.mainview}>
+
+			<MenuBar />
+			
+			{this.innerUI()}
 		</div>
 	}
 }
