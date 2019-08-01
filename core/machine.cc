@@ -37,6 +37,7 @@ extern "C" void cpu_reset(Machine::State& cpu) {
 	Blitter::reset(cpu);
 	Timers::reset(cpu);
 	Input::reset(cpu.input);
+	EEPROM::reset(cpu.eeprom);
 }
 
 extern "C" const void* lcd_render(Machine::State& cpu) {

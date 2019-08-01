@@ -22,6 +22,6 @@ Emulation Status
 | Input Ports       | 50%        | Debounce circuit not done             |
 | Output Ports      | 0%         |                                       |
 | GPIO Ports        | 0%         |                                       |
-| EEPROM Emulation  | 0%         |                                       |
 | Sound Emulation   | 0%         |                                       |
 | ADC Emulation     | 0%         | Only used for low battery detection   |
+| EEPROM Emulation  | 100%       | Not wired into GPIO                   |

@@ -10,6 +10,7 @@
 #include "blitter.h"
 #include "control.h"
 #include "input.h"
+#include "eeprom.h"
 
 namespace CPU {
 	union State {
@@ -69,6 +70,7 @@ namespace Machine {
 		Blitter::State blitter;
 		Timers::State timers;
 		Input::State input;
+		EEPROM::State eeprom;
 
 		uint8_t bus_cap;
 		int clocks;
