@@ -44,6 +44,8 @@ export default class Registers extends Component {
 		this.context.repaint = (memory, address) => {
 			const gl = this._ctx;
 
+			if (!gl) return ;
+
 			this._flip = !this._flip;
 			gl.bindTexture(gl.TEXTURE_2D, this._vram);
 
@@ -74,7 +76,7 @@ export default class Registers extends Component {
 		gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 		
 		gl.colorMask(true, true, true, false);
-		gl.clearColor(0.0, 0.0, 0.0, 1.0);
+		gl.clearColor(0xA8 / 255.0, 0xC6 / 255.0, 0x4E / 255.0, 1.0);
 		gl.clear(gl.COLOR_BUFFER_BIT);
 
 		this._shader = this._createShader(VertexShader, FragmentShader);
@@ -167,12 +169,11 @@ export default class Registers extends Component {
 
 			this._time = now;
 
-			this._ref.current.width = width;
-			this._ref.current.height = height;
-
-			if (!this.g) {
+			if (width != this._ref.current.width || height != this._ref.current.height) {
+				this._ref.current.width = width;
+				this._ref.current.height = height;
 				gl.viewport(0, 0, width, height);
-				this.g = true;
+				gl.clear(gl.COLOR_BUFFER_BIT);
 			}
 
 			gl.useProgram(this._shader.program);
@@ -185,7 +186,7 @@ export default class Registers extends Component {
 			gl.uniform3f(this._shader.uniforms.color_light, 0xA8 / 255.0, 0xC6 / 255.0, 0x4E / 255.0);
 			gl.uniform3f(this._shader.uniforms.color_dark, 0x3C / 255.0, 0x41 / 255.0, 0x2C / 255.0);
 
-			gl.uniform1f(this._shader.uniforms.analog, 0);
+			gl.uniform1f(this._shader.uniforms.analog, 250);
 			gl.uniform1i(this._shader.uniforms.dot_mask, 0);
 			gl.uniform1i(this._shader.uniforms.simulate_gray, 1);
 
