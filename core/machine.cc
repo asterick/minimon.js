@@ -55,7 +55,7 @@ extern "C" void cpu_reset(Machine::State& cpu) {
 	Blitter::reset(cpu);
 	Timers::reset(cpu);
 	Input::reset(cpu.input);
-	EEPROM::reset(cpu.eeprom);
+	GPIO::reset(cpu.gpio);
 }
 
 extern "C" const void* lcd_render(Machine::State& cpu) {
@@ -139,6 +139,8 @@ static inline uint8_t cpu_read_reg(Machine::State& cpu, uint32_t address) {
 		return TIM256::read(cpu, address);
 	case 0x2050 ... 0x2055:
 		return Input::read(cpu.input, address);
+	case 0x2060 ... 0x2062:
+		return GPIO::read(cpu.gpio, address);
 	case 0x20FE ... 0x20FF:
 		return LCD::read(cpu, address);
 	case 0x2080 ... 0x208A:
@@ -169,6 +171,9 @@ static inline void cpu_write_reg(Machine::State& cpu, uint8_t data, uint32_t add
 		break ;
 	case 0x2050 ... 0x2055:
 		Input::write(cpu.input, data, address);
+		break ;
+	case 0x2060 ... 0x2062:
+		GPIO::write(cpu.gpio, data, address);
 		break ;
 	case 0x2080 ... 0x208A:
 		Blitter::write(cpu, data, address);

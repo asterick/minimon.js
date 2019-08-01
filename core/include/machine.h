@@ -29,6 +29,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "control.h"
 #include "input.h"
 #include "eeprom.h"
+#include "gpio.h"
 
 namespace CPU {
 	union State {
@@ -88,7 +89,7 @@ namespace Machine {
 		Blitter::State blitter;
 		Timers::State timers;
 		Input::State input;
-		EEPROM::State eeprom;
+		GPIO::State gpio;
 
 		uint8_t bus_cap;
 		int clocks;
