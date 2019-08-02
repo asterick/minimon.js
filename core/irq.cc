@@ -107,11 +107,7 @@ void IRQ::reset(Machine::State& cpu) {
 	refresh_irqs(cpu);
 }
 
-void IRQ::manage(Machine::State& cpu) {
-	if (cpu.reg.flag.i >= cpu.irq.next_priority) {
-		return ;
-	}
-
+static inline void fire(Machine::State& cpu, Vector irq, int priority) {
 	cpu.halted = false;
 
 	cpu_push8(cpu, cpu.reg.cb);
@@ -119,18 +115,23 @@ void IRQ::manage(Machine::State& cpu) {
 	cpu_push8(cpu, cpu.reg.sc);
 
 	cpu_clock(cpu, 7);
-	cpu.reg.pc = cpu_read16(cpu, 2 * (int) cpu.irq.next_irq);
-	cpu.reg.flag.i = cpu.irq.next_priority;
+	cpu.reg.pc = cpu_read16(cpu, 2 * (int) irq);
+	cpu.reg.flag.i = priority;
+}
 
-	refresh_irqs(cpu);
+void IRQ::manage(Machine::State& cpu) {
+	if (cpu.reg.flag.i >= cpu.irq.next_priority) {
+		return ;
+	}
+
+	fire(cpu, cpu.irq.next_irq, cpu.irq.next_priority);
 }
 
 void IRQ::trigger(Machine::State& cpu, Vector irq) {
 	const VectorTable& info = IRQ_TABLE[irq];
 
 	if (!info.maskable) {
-		cpu.irq.next_priority = HIGHEST_PRIO;
-		cpu.irq.next_irq = irq;
+		fire(cpu, irq, HIGHEST_PRIO);
 	} else {
 		cpu.irq.active |= 1 << info.bit_group;
 		refresh_irqs(cpu);

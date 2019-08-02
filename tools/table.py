@@ -159,6 +159,7 @@ def format(cycles, op, *args):
         for i, (siz, mem, ind, nam) in enumerate(args):
             if ind:
                 print ("\tconst auto addr%i = calc_%s(cpu);" % (i, nam))
+                
                 if "Read" in directions[i]:
                     print ("\tuint%i_t data%i = cpu_read%s(cpu, addr%i);" % (size, i, size, i))
                 else:
