@@ -73,7 +73,7 @@ static inline uint32_t calc_indIIY(Machine::State& cpu) {
  * Instruction templates
  **/
 
-static inline void add8(Machine::State& cpu, uint8_t& t, uint8_t s, int carry) {
+static inline uint8_t add8(Machine::State& cpu, uint8_t t, uint8_t s, int carry) {
 	if (cpu.reg.flag.u) {
 		t <<= 4;
 		s <<= 4;
@@ -101,9 +101,11 @@ static inline void add8(Machine::State& cpu, uint8_t& t, uint8_t s, int carry) {
 
 	cpu.reg.flag.z = t == 0;
 	cpu.reg.flag.c = uo >= 0x100;
+
+	return t;
 }
 
-static inline void sub8(Machine::State& cpu, uint8_t& t, uint8_t s, int carry) {
+static inline uint8_t sub8(Machine::State& cpu, uint8_t t, uint8_t s, int carry) {
 	if (cpu.reg.flag.u) {
 		t <<= 4;
 		s <<= 4;
@@ -131,6 +133,8 @@ static inline void sub8(Machine::State& cpu, uint8_t& t, uint8_t s, int carry) {
 
 	cpu.reg.flag.c = uo >= 0x100;
 	cpu.reg.flag.z = t == 0;
+
+	return t;
 }
 
 /**
@@ -166,19 +170,19 @@ static inline void op_ex16(Machine::State& cpu, uint16_t& t, uint16_t& s) {
  **/
 
 static inline void op_add8(Machine::State& cpu, uint8_t& t, uint8_t s) {
-	add8(cpu, t, s, 0);
+	t = add8(cpu, t, s, 0);
 }
 
 static inline void op_adc8(Machine::State& cpu, uint8_t& t, uint8_t s) {
-	add8(cpu, t, s, cpu.reg.flag.c);
+	t = add8(cpu, t, s, cpu.reg.flag.c);
 }
 
 static inline void op_sub8(Machine::State& cpu, uint8_t& t, uint8_t s) {
-	sub8(cpu, t, s, 0);
+	t = sub8(cpu, t, s, 0);
 }
 
 static inline void op_sbc8(Machine::State& cpu, uint8_t& t, uint8_t s) {
-	sub8(cpu, t, s, cpu.reg.flag.c);
+	t = sub8(cpu, t, s, cpu.reg.flag.c);
 }
 
 static inline void op_and8(Machine::State& cpu, uint8_t& t, uint8_t s) {
@@ -229,9 +233,7 @@ static inline void op_cpl8(Machine::State& cpu, uint8_t& t) {
 }
 
 static inline void op_neg8(Machine::State& cpu, uint8_t& t) {
-	uint8_t temp = 0;
-	op_sub8(cpu, temp, t);
-	t = temp;
+	t = sub8(cpu, 0, t, 0);
 }
 
 static void inst_mul(Machine::State& cpu) {
