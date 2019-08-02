@@ -500,13 +500,10 @@ static void inst_ret(Machine::State& cpu) {
 	cpu.reg.nb = cpu.reg.cb = cpu_pop8(cpu);
 }
 
-static void inst_rete(Machine::State& cpu) {
+static inline void op_rete8(Machine::State& cpu) {
 	cpu.reg.sc = cpu_pop8(cpu);
 	cpu.reg.pc = cpu_pop16(cpu);
 	cpu.reg.nb = cpu.reg.cb = cpu_pop8(cpu);
-	
-	// Interrupts disabled after SC is loaded
-	inst_advance(cpu);
 }
 
 static void inst_rets(Machine::State& cpu) {

@@ -122,6 +122,7 @@ OPERATIONS = {
     'JP': (8, 'Read'),
     'INT': (8, 'Read'),
 
+    'RETE': (8,),
     'PUSH': (-1, 'Read'),
     'POP': (-1, 'Write'),
     'EX': (-1, 'ReadWrite', 'ReadWrite'),
@@ -142,7 +143,7 @@ def format(cycles, op, *args):
 
     cycles, skipped = [int(c) for c in cycles.split(",") * 2][:2]
 
-    if args[0] in CONDITIONS:
+    if len(args) > 0 and args[0] in CONDITIONS:
         condition, args = args[0], args[1:]
     
     try:
@@ -151,7 +152,10 @@ def format(cycles, op, *args):
 
         default_size, directions = ops[0], ops[1:]
 
-        size = max(default_size, *[s for s, i, m, n in args])
+        if len(args) >= 1:
+            size = max(default_size, *[s for s, i, m, n in args])
+        else:
+            size = default_size
         name = get_name(op, condition, *[n for s, i, m, n in args])
 
         print ("int %s(Machine::State& cpu) {" % name)
@@ -167,14 +171,13 @@ def format(cycles, op, *args):
             elif mem:
                 print ("\tconst uint%i_t data%i = cpu_imm%i(cpu);" % (size, i, siz))
 
-
         if condition:
             print ("\tif (!(%s)) {" % CONDITIONS[condition])
             print ("\t\tcpu.reg.cb = cpu.reg.nb;")
             print ("\t\treturn %i;" % skipped)
             print ("\t}")
 
-        print ("\top_%s%i(cpu, %s);" % (op.lower(), size, ', '.join([format_arg(i, *a) for i, a in enumerate(args)])));
+        print ("\top_%s%i(%s);" % (op.lower(), size, ', '.join(['cpu']+[format_arg(i, *a) for i, a in enumerate(args)])));
 
         block = False
         for i, (siz, mem, ind, nam) in enumerate(args):
@@ -183,7 +186,7 @@ def format(cycles, op, *args):
             if nam in ['sc', 'nb'] and "Write" in directions[i]:
                 block = True
 
-        if block:
+        if block or op == 'RETE':
             print ("\treturn %i + inst_advance(cpu); // Block IRQs" % cycles)
         else:
             print ("\treturn %i;" % cycles)

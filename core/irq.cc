@@ -120,11 +120,9 @@ static inline void fire(Machine::State& cpu, Vector irq, int priority) {
 }
 
 void IRQ::manage(Machine::State& cpu) {
-	if (cpu.reg.flag.i >= cpu.irq.next_priority) {
-		return ;
+	if (cpu.reg.flag.i < cpu.irq.next_priority) {
+		fire(cpu, cpu.irq.next_irq, cpu.irq.next_priority);
 	}
-
-	fire(cpu, cpu.irq.next_irq, cpu.irq.next_priority);
 }
 
 void IRQ::trigger(Machine::State& cpu, Vector irq) {
