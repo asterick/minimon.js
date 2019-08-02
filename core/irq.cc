@@ -19,6 +19,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <stdint.h>
 
 #include "machine.h"
+#include "debug.h"
 
 using namespace IRQ;
 
@@ -102,6 +103,24 @@ void IRQ::reset(Machine::State& cpu) {
 	cpu.irq.priority = 0;
 	cpu.irq.enable = 0;
 	cpu.irq.active = 0;
+
+	refresh_irqs(cpu);
+}
+
+void IRQ::manage(Machine::State& cpu) {
+	if (cpu.reg.flag.i >= cpu.irq.next_priority) {
+		return ;
+	}
+
+	cpu.halted = false;
+
+	cpu_push8(cpu, cpu.reg.cb);
+	cpu_push16(cpu, cpu.reg.pc);
+	cpu_push8(cpu, cpu.reg.sc);
+
+	cpu_clock(cpu, 7);
+	cpu.reg.pc = cpu_read16(cpu, 2 * (int) cpu.irq.next_irq);
+	cpu.reg.flag.i = cpu.irq.next_priority;
 
 	refresh_irqs(cpu);
 }

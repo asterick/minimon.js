@@ -29,8 +29,8 @@ dasm: $(TARGET)
 $(TARGET): include/table.h $(OBJECTS)
 	$(LD) $(LDFLAGS) $(OBJECTS) -o $@
 
-include/table.h: ../data/table.py ../data/s1c88.csv
-	python3 ../data/table.py > include/table.h
+include/table.h: ../tools/table.py ../tools/s1c88.csv
+	python3 ../tools/table.py > include/table.h
 
 %.o: %.c include/table.h include/*.h
 	$(CC) $(CFLAGS) $< -c -o $@

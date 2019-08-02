@@ -71,15 +71,15 @@ export class Minimon {
 
 		this.cartridge = new Uint8Array(0x200000);
 
-		this._inputState = 0b1100000000; // No cartridge inserted, no IRQ
+		this._inputState = 0b1111111111; // No cartridge inserted, no IRQ
 
 		document.body.addEventListener('keydown', (e) => {
-			this._inputState |= KEYBOARD_CODES[e.keyCode];
+			this._inputState &= ~KEYBOARD_CODES[e.keyCode];
 			this._updateinput();
 		});
 
 		document.body.addEventListener('keyup', (e) => {
-			this._inputState &= ~KEYBOARD_CODES[e.keyCode];
+			this._inputState |= KEYBOARD_CODES[e.keyCode];
 			this._updateinput();
 		});
 

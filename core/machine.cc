@@ -95,17 +95,7 @@ void cpu_clock(Machine::State& cpu, int cycles) {
 
 extern "C" void cpu_step(Machine::State& cpu) {
 	// We have an IRQ Scheduled
-	if (cpu.reg.flag.i < cpu.irq.next_priority) {
-		cpu.halted = false;
-
-		cpu_push8(cpu, cpu.reg.cb);
-		cpu_push16(cpu, cpu.reg.pc);
-		cpu_push8(cpu, cpu.reg.sc);
-
-		cpu_clock(cpu, 7);
-		cpu.reg.pc = cpu_read16(cpu, 2 * (int) cpu.irq.next_irq);
-		cpu.reg.flag.i = cpu.irq.next_priority;
-	}
+	IRQ::manage(cpu);
 
 	// CPU Core steps
 	if (!cpu.sleeping && !cpu.halted) {

@@ -82,6 +82,7 @@ namespace IRQ {
 	static const int FIRST_MASKABLE = 3;
 
 	void reset(Machine::State& cpu);
+	void manage(Machine::State& cpu);
 	uint8_t read(Machine::State& cpu, uint32_t address);
 	void write(Machine::State& cpu, uint8_t data, uint32_t address);
 	void trigger(Machine::State& cpu, IRQ::Vector irq);
