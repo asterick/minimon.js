@@ -100,7 +100,7 @@ export class Minimon {
 			if (!this._running) return ;
 
 			let now = Date.now();
-			let delta = Math.min(50, now - time);
+			let delta = Math.min(200, now - time);
 
 			if (this._exports.cpu_advance(this._cpu_state, delta)) {
 				this.repaint(this._machineBytes, this._exports.lcd_render(this._cpu_state));
