@@ -116,9 +116,9 @@ OPERATIONS = {
 
     'CALL': (16, 'Read'),
     'CARS': (8, 'Read'),
-    'CARL': (8, 'Read'),
+    'CARL': (16, 'Read'),
     'JRS': (8, 'Read'),
-    'JRL': (8, 'Read'),
+    'JRL': (16, 'Read'),
     'JP': (8, 'Read'),
     'INT': (8, 'Read'),
 
@@ -132,10 +132,8 @@ def get_name(*args):
     return "inst_%s" % '_'.join([arg.lower() for arg in args if arg])
 
 def format_arg(i, siz, mem, ind, nam):
-    if ind:
+    if mem:
         return "data%i" % i
-    elif mem:
-        return "cpu_imm%i(cpu)" % siz
     else:
         return "cpu.reg.%s" % nam
 
@@ -160,11 +158,14 @@ def format(cycles, op, *args):
 
         for i, (siz, mem, ind, nam) in enumerate(args):
             if ind:
-                print ("\tauto addr%i = calc_%s(cpu);" % (i, nam))
+                print ("\tconst auto addr%i = calc_%s(cpu);" % (i, nam))
                 if "Read" in directions[i]:
                     print ("\tuint%i_t data%i = cpu_read%s(cpu, addr%i);" % (size, i, size, i))
                 else:
                     print ("\tuint%i_t data%i;" % (size, i))
+            elif mem:
+                print ("\tconst uint%i_t data%i = cpu_imm%i(cpu);" % (size, i, siz))
+
 
         if condition:
             print ("\tif (!(%s)) {" % CONDITIONS[condition])
@@ -190,6 +191,7 @@ def format(cycles, op, *args):
     except:
         name = get_name(op, condition, *args)
 
+
         print ("int clock_%s(Machine::State& cpu) {" % name)
         print ("\t%s(cpu);" % name)
         print ("\treturn %i;" % cycles)
@@ -206,7 +208,7 @@ with open(CSV_LOCATION, 'r') as csvfile:
         code, cycles0, op0, arg0_1, arg0_2, cycles1, op1, arg1_1, arg1_2, cycles2, op2, arg2_1, arg2_2 = row
         code = int(code, 16)
 
-        if not op0 in ['[EXPANSION]', 'undefined']:
+        if op0 != 'undefined':
         	op0s[code] = format(cycles0, op0, arg0_1, arg0_2)
         if op1 != 'undefined':
         	op1s[code] = format(cycles1, op1, arg1_1, arg1_2)

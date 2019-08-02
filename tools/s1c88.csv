@@ -205,8 +205,8 @@ CA,3,EX,BA,IY,2,LD,A,XP,0,undefined,,
 CB,3,EX,BA,SP,2,LD,A,YP,0,undefined,,
 CC,2,EX,A,B,3,LD,NB,A,0,undefined,,
 CD,3,EX,A,[HL],2,LD,EP,A,0,undefined,,
-CE,0,[EXPANSION],,,2,LD,XP,A,0,undefined,,
-CF,0,[EXPANSION],,,2,LD,YP,A,0,undefined,,
+CE,0,undefined,,,2,LD,XP,A,0,undefined,,
+CF,0,undefined,,,2,LD,YP,A,0,undefined,,
 D0,3,SUB,BA,#mmnn,5,LD,A,[hhll],5,LD,BA,[IX]
 D1,3,SUB,HL,#mmnn,5,LD,B,[hhll],5,LD,HL,[IX]
 D2,3,SUB,IX,#mmnn,5,LD,L,[hhll],5,LD,IX,[IX]
