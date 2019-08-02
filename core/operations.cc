@@ -447,22 +447,22 @@ static void inst_pop_ale(Machine::State& cpu) {
  * S1C88 Branch instructions
  **/
 
-static inline void op_jrs8(Machine::State& cpu, uint8_t& t) {
+static inline void op_jrs8(Machine::State& cpu, uint8_t t) {
 	cpu.reg.cb = cpu.reg.nb;
 	cpu.reg.pc += (int8_t)t - 1;
 }
 
-static inline void op_jrl16(Machine::State& cpu, uint16_t& t) {
+static inline void op_jrl16(Machine::State& cpu, uint16_t t) {
 	cpu.reg.cb = cpu.reg.nb;
 	cpu.reg.pc += t - 1;
 }
 
-static inline void op_jp16(Machine::State& cpu, uint16_t& t) {
+static inline void op_jp16(Machine::State& cpu, uint16_t t) {
 	cpu.reg.cb = cpu.reg.nb;
 	cpu.reg.pc = t;
 }
 
-static inline void op_cars8(Machine::State& cpu, uint8_t& t) {
+static inline void op_cars8(Machine::State& cpu, uint8_t t) {
 	cpu_push8(cpu, cpu.reg.cb);
 	cpu_push16(cpu, cpu.reg.pc);
 
@@ -470,7 +470,7 @@ static inline void op_cars8(Machine::State& cpu, uint8_t& t) {
 	cpu.reg.cb = cpu.reg.nb;
 }
 
-static inline void op_carl16(Machine::State& cpu, uint16_t& t) {
+static inline void op_carl16(Machine::State& cpu, uint16_t t) {
 	cpu_push8(cpu, cpu.reg.cb);
 	cpu_push16(cpu, cpu.reg.pc);
 
@@ -478,7 +478,7 @@ static inline void op_carl16(Machine::State& cpu, uint16_t& t) {
 	cpu.reg.cb = cpu.reg.nb;
 }
 
-static inline void op_call16(Machine::State& cpu, uint16_t& t) {
+static inline void op_call16(Machine::State& cpu, uint16_t t) {
 	cpu_push8(cpu, cpu.reg.cb);
 	cpu_push16(cpu, cpu.reg.pc);
 
@@ -486,7 +486,7 @@ static inline void op_call16(Machine::State& cpu, uint16_t& t) {
 	cpu.reg.cb = cpu.reg.nb;
 }
 
-static inline void op_int16(Machine::State& cpu, uint16_t& t) {
+static inline void op_int16(Machine::State& cpu, uint16_t t) {
 	cpu_push8(cpu, cpu.reg.cb);
 	cpu_push16(cpu, cpu.reg.pc);
 	cpu_push8(cpu, cpu.reg.sc);

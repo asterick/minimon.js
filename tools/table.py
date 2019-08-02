@@ -132,8 +132,10 @@ def get_name(*args):
     return "inst_%s" % '_'.join([arg.lower() for arg in args if arg])
 
 def format_arg(i, siz, mem, ind, nam):
-    if mem:
+    if ind:
         return "data%i" % i
+    elif mem:
+        return "cpu_imm%i(cpu)" % siz
     else:
         return "cpu.reg.%s" % nam
 
@@ -163,13 +165,10 @@ def format(cycles, op, *args):
                     print ("\tuint%i_t data%i = cpu_read%s(cpu, addr%i);" % (size, i, size, i))
                 else:
                     print ("\tuint%i_t data%i;" % (size, i))
-            elif mem:
-                print ("\tuint%i_t data%i = cpu_imm%i(cpu);" % (size, i, siz))
-
 
         if condition:
             print ("\tif (!(%s)) {" % CONDITIONS[condition])
-            print ("\t\tcpu.reg.nb = cpu.reg.cb;")
+            print ("\t\tcpu.reg.cb = cpu.reg.nb;")
             print ("\t\treturn %i;" % skipped)
             print ("\t}")
 
