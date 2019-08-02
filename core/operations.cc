@@ -186,21 +186,24 @@ static inline void op_sbc8(Machine::State& cpu, uint8_t& t, uint8_t s) {
 }
 
 static inline void op_and8(Machine::State& cpu, uint8_t& t, uint8_t s) {
-	t &= s;
-	cpu.reg.flag.z = (t == 0);
-	cpu.reg.flag.n = (t & 0x80) != 0;
+	uint8_t out = t & s;
+	cpu.reg.flag.z = (out == 0);
+	cpu.reg.flag.n = (out & 0x80) != 0;
+	t = out;
 }
 
 static inline void op_or8(Machine::State& cpu, uint8_t& t, uint8_t s) {
-	t |= s;
-	cpu.reg.flag.z = (t == 0);
-	cpu.reg.flag.n = (t & 0x80) != 0;
+	uint8_t out = t | s;
+	cpu.reg.flag.z = (out == 0);
+	cpu.reg.flag.n = (out & 0x80) != 0;
+	t = out;
 }
 
 static inline void op_xor8(Machine::State& cpu, uint8_t& t, uint8_t s) {
-	t ^= s;
-	cpu.reg.flag.z = (t == 0);
-	cpu.reg.flag.n = (t & 0x80) != 0;
+	uint8_t out = t ^ s;
+	cpu.reg.flag.z = (out == 0);
+	cpu.reg.flag.n = (out & 0x80) != 0;
+	t = out;
 }
 
 static inline void op_cp8(Machine::State& cpu, uint8_t t, uint8_t s) {
@@ -236,8 +239,8 @@ static inline void op_neg8(Machine::State& cpu, uint8_t& t) {
 	t = sub8(cpu, 0, t, 0);
 }
 
-static void inst_mul(Machine::State& cpu) {
-	cpu.reg.hl = (int)cpu.reg.l * (int)cpu.reg.a;
+static void inst_mlt(Machine::State& cpu) {
+	cpu.reg.hl = (unsigned int)cpu.reg.l * (unsigned int)cpu.reg.a;
 
 	cpu.reg.flag.z = cpu.reg.hl == 0;
 	cpu.reg.flag.c = 0;
@@ -253,7 +256,6 @@ static void inst_div(Machine::State& cpu) {
 
 	int div = cpu.reg.hl / cpu.reg.a;
 
-	// NOTE: sure if these are set when result overflows
 	cpu.reg.flag.c = 0;
 	cpu.reg.flag.z = (div & 0xFF) == 0;
 	cpu.reg.flag.n = (div & 0x80) != 0;

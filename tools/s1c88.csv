@@ -215,7 +215,7 @@ D4,3,CP,BA,#mmnn,5,LD,[hhll],A,5,LD,[IX],BA
 D5,3,CP,HL,#mmnn,5,LD,[hhll],B,5,LD,[IX],HL
 D6,3,CP,IX,#mmnn,5,LD,[hhll],L,5,LD,[IX],IX
 D7,3,CP,IY,#mmnn,5,LD,[hhll],H,5,LD,[IX],IY
-D8,5,AND,[BR:ll],#nn,12,MUL,,,5,LD,BA,[IY]
+D8,5,AND,[BR:ll],#nn,12,MLT,,,5,LD,BA,[IY]
 D9,5,OR,[BR:ll],#nn,13,DIV,,,5,LD,HL,[IY]
 DA,5,XOR,[BR:ll],#nn,0,undefined,,,5,LD,IX,[IY]
 DB,4,CP,[BR:ll],#nn,0,undefined,,,5,LD,IY,[IY]
