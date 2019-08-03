@@ -276,7 +276,7 @@ static void inst_div(Machine::State& cpu) {
 static inline void op_add16(Machine::State& cpu, uint16_t& t, uint16_t s) {
 	unsigned int uo = t + s;
 
-	cpu.reg.flag.v = ((t ^ ~s) & (t ^ uo) & 0x80) != 0;
+	cpu.reg.flag.v = ((t ^ ~s) & (t ^ uo) & 0x8000) != 0;
 	t = (uint16_t)uo;
 	cpu.reg.flag.z = t == 0;
 	cpu.reg.flag.c = uo >= 0x10000;
