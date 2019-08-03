@@ -90,7 +90,7 @@ static inline uint8_t add8(Machine::State& cpu, uint8_t t, uint8_t s, int carry)
 		cpu.reg.flag.n = 0;
 		cpu.reg.flag.v = 0;
 	} else {
-		cpu.reg.flag.v = ((t ^ s) & (t ^ ~uo) & 0x80) != 0;
+		cpu.reg.flag.v = ((t ^ ~s) & (t ^ ~uo) & 0x80) != 0;
 		cpu.reg.flag.n = (uo & 0x80) != 0;
 	}
 
@@ -122,7 +122,7 @@ static inline uint8_t sub8(Machine::State& cpu, uint8_t t, uint8_t s, int carry)
 		cpu.reg.flag.n = 0;
 		cpu.reg.flag.v = 0;
 	} else {
-		cpu.reg.flag.v = ((t ^ ~s) & (t ^ ~uo) & 0x80) != 0;
+		cpu.reg.flag.v = ((t ^ s) & (t ^ ~uo) & 0x80) != 0;
 		cpu.reg.flag.n = (t & 0x80) != 0;
 	}
 
