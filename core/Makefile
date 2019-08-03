@@ -1,9 +1,9 @@
 OBJECTS=irq.o lcd.o blitter.o operations.o machine.o debug.o tim256.o rtc.o control.o timers.o input.o eeprom.o gpio.o
 TARGET=../public/libminimon.wasm
 
-LD=wasm-ld
-CC=clang
-CPP=clang++
+LD=wasm-ld-8
+CC=clang-8
+CPP=clang++-8
 
 EXPORTS = \
 	--export get_machine \
