@@ -90,7 +90,7 @@ static inline uint8_t add8(Machine::State& cpu, uint8_t t, uint8_t s, int carry)
 		cpu.reg.flag.n = 0;
 		cpu.reg.flag.v = 0;
 	} else {
-		cpu.reg.flag.v = ((t ^ ~s) & (t ^ ~uo) & 0x80) != 0;
+		cpu.reg.flag.v = ((t ^ ~s) & (t ^ uo) & 0x80) != 0;
 		cpu.reg.flag.n = (uo & 0x80) != 0;
 	}
 
@@ -122,7 +122,7 @@ static inline uint8_t sub8(Machine::State& cpu, uint8_t t, uint8_t s, int carry)
 		cpu.reg.flag.n = 0;
 		cpu.reg.flag.v = 0;
 	} else {
-		cpu.reg.flag.v = ((t ^ s) & (t ^ ~uo) & 0x80) != 0;
+		cpu.reg.flag.v = ((t ^ s) & (t ^ uo) & 0x80) != 0;
 		cpu.reg.flag.n = (t & 0x80) != 0;
 	}
 
@@ -209,7 +209,7 @@ static inline void op_xor8(Machine::State& cpu, uint8_t& t, uint8_t s) {
 static inline void op_cp8(Machine::State& cpu, uint8_t t, uint8_t s) {
 	unsigned int uo = t - s;
 
-	cpu.reg.flag.v = ((t ^ ~s) & (t ^ ~uo) & 0x80) != 0;
+	cpu.reg.flag.v = ((t ^ ~s) & (t ^ uo) & 0x80) != 0;
 	cpu.reg.flag.z = (uo & 0xFF) == 0;
 	cpu.reg.flag.c = uo >= 0x100;
 	cpu.reg.flag.n = (t & 0x80) != 0;
@@ -296,7 +296,7 @@ static inline void op_adc16(Machine::State& cpu, uint16_t& t, uint16_t s) {
 static inline void op_sub16(Machine::State& cpu, uint16_t& t, uint16_t s) {
 	unsigned int uo = t - s;
 
-	cpu.reg.flag.v = ((t ^ s) & (t ^ ~uo) & 0x8000) != 0;
+	cpu.reg.flag.v = ((t ^ s) & (t ^ uo) & 0x8000) != 0;
 	t = (uint16_t)uo;
 	cpu.reg.flag.z = t == 0;
 	cpu.reg.flag.c = uo >= 0x10000;
@@ -306,7 +306,7 @@ static inline void op_sub16(Machine::State& cpu, uint16_t& t, uint16_t s) {
 static inline void op_sbc16(Machine::State& cpu, uint16_t& t, uint16_t s) {
 	unsigned int uo = t - s - cpu.reg.flag.c;
 
-	cpu.reg.flag.v = ((t ^ s) & (t ^ ~uo) & 0x8000) != 0;
+	cpu.reg.flag.v = ((t ^ s) & (t ^ uo) & 0x8000) != 0;
 	t = (uint16_t)uo;
 	cpu.reg.flag.z = t == 0;
 	cpu.reg.flag.c = uo >= 0x10000;
@@ -316,7 +316,7 @@ static inline void op_sbc16(Machine::State& cpu, uint16_t& t, uint16_t s) {
 static inline void op_cp16(Machine::State& cpu, uint16_t t, uint16_t s) {
 	unsigned int uo = t - s;
 
-	cpu.reg.flag.v = ((t ^ s) & (t ^ ~uo) & 0x8000) != 0;
+	cpu.reg.flag.v = ((t ^ s) & (t ^ uo) & 0x8000) != 0;
 	t = (uint16_t)uo;
 	cpu.reg.flag.z = t == 0;
 	cpu.reg.flag.c = uo >= 0x10000;
