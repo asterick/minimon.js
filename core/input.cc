@@ -36,6 +36,7 @@ static const IRQ::Vector vectors[] = {
 
 void Input::reset(Input::State& inputs) {
 	memset(&inputs, 0, sizeof(inputs));
+	inputs.input_state = 0b1111111111;
 }
 
 void Input::update(Machine::State& cpu, uint16_t value) {
