@@ -234,12 +234,12 @@ uint8_t Blitter::read(Machine::State& cpu, uint32_t address) {
 			return cpu.blitter.sprite_bytes[2];
 		case 0x208A:
 			return cpu.blitter.counter / TICKS_PER_COUNT;
+
+		// 8B~8F, F0~F8 (These are probably related to Blitter / LCD)
+		default:
+			return 0;
 	}
-
-	return 0;
 }
-
-#include "debug.h"
 
 void Blitter::write(Machine::State& cpu, uint8_t data, uint32_t address) {
 	data &= BIT_MASK[address & 0xF];

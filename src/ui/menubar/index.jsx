@@ -34,6 +34,7 @@ class MenuItem extends Component {
 
 			if (fired) {
 				this.props.onClick();
+				e.preventDefault();
 			}
 		}
 	}

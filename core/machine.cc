@@ -133,7 +133,8 @@ static inline uint8_t cpu_read_reg(Machine::State& cpu, uint32_t address) {
 		return GPIO::read(cpu.gpio, address);
 	case 0x20FE ... 0x20FF:
 		return LCD::read(cpu, address);
-	case 0x2080 ... 0x208A:
+	case 0x2080 ... 0x208F:
+	case 0x20F0 ... 0x20F8:
 		return Blitter::read(cpu, address);
 	case 0x2018 ... 0x201D:
 	case 0x2030 ... 0x203F:
