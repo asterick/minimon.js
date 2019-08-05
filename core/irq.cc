@@ -44,8 +44,10 @@ static void refresh_irqs(Machine::State& cpu) {
 	for (int irq = FIRST_MASKABLE; irq < TOTAL_HARDWARE_IRQS; irq++) {
 		if (!cpu.irq.enable[irq] || !cpu.irq.active[irq]) continue ;
 
-		if (cpu.irq.next_priority < irq_group[irq]) {
-			cpu.irq.next_priority = irq_group[irq];
+		uint8_t priority = cpu.irq.priority[irq_group[irq]];
+
+		if (cpu.irq.next_priority < priority) {
+			cpu.irq.next_priority = priority;
 			cpu.irq.next_irq = (Vector) irq;
 		}
 	}
