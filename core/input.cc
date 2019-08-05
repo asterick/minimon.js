@@ -40,8 +40,6 @@ void Input::reset(Input::State& inputs) {
 }
 
 void Input::update(Machine::State& cpu, uint16_t value) {
-	value &= 0b1111111111;
-
 	uint16_t trigger = (value ^ cpu.input.input_state) & (value ^ cpu.input.interrupt_direction);
 
 	cpu.input.input_state = value;

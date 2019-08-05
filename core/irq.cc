@@ -198,12 +198,14 @@ void IRQ::write(Machine::State& cpu, uint8_t data, uint32_t address) {
 			cpu.irq.priority[2] = (data >> 2) & 3;
 			cpu.irq.priority[3] = (data >> 0) & 3;
 			break ;
+
 		case 0x2021:
 			cpu.irq.priority[4] = (data >> 6) & 3;
 			cpu.irq.priority[5] = (data >> 4) & 3;
 			cpu.irq.priority[6] = (data >> 2) & 3;
 			cpu.irq.priority[7] = (data >> 0) & 3;
 			break ;
+
 		case 0x2022:
 			cpu.irq.priority[8] = (data >> 0) & 3;
 			break ;
@@ -217,7 +219,7 @@ void IRQ::write(Machine::State& cpu, uint8_t data, uint32_t address) {
 			cpu.irq.enable[0x08] = data & 0b00000100;
 			cpu.irq.enable[0x09] = data & 0b00000010;
 			cpu.irq.enable[0x0A] = data & 0b00000001;
-			break;
+			break ;
 
 		case 0x2024: 
 			cpu.irq.enable[0x0B] = data & 0b00100000;
@@ -226,7 +228,7 @@ void IRQ::write(Machine::State& cpu, uint8_t data, uint32_t address) {
 			cpu.irq.enable[0x0E] = data & 0b00000100;
 			cpu.irq.enable[0x13] = data & 0b00000010;
 			cpu.irq.enable[0x14] = data & 0b00000001;
-			break;
+			break ;
 
 		case 0x2025: 
 			cpu.irq.enable[0x15] = data & 0b10000000;
@@ -237,7 +239,7 @@ void IRQ::write(Machine::State& cpu, uint8_t data, uint32_t address) {
 			cpu.irq.enable[0x1A] = data & 0b00000100;
 			cpu.irq.enable[0x1B] = data & 0b00000010;
 			cpu.irq.enable[0x1C] = data & 0b00000001;
-			break;
+			break ;
 
 		case 0x2026:
 			cpu.irq.enable[0x0F] = data & 0b10000000;
@@ -247,6 +249,7 @@ void IRQ::write(Machine::State& cpu, uint8_t data, uint32_t address) {
 			cpu.irq.enable[0x1D] = data & 0b00000100;
 			cpu.irq.enable[0x1E] = data & 0b00000010;
 			cpu.irq.enable[0x1F] = data & 0b00000001;
+			break ;
 
 		case 0x2027: 
 			if (data & 0b10000000) cpu.irq.active[0x03] = false;
@@ -257,7 +260,7 @@ void IRQ::write(Machine::State& cpu, uint8_t data, uint32_t address) {
 			if (data & 0b00000100) cpu.irq.active[0x08] = false;
 			if (data & 0b00000010) cpu.irq.active[0x09] = false;
 			if (data & 0b00000001) cpu.irq.active[0x0A] = false;
-			break;
+			break ;
 
 		case 0x2028: 
 			if (data & 0b00100000) cpu.irq.active[0x0B] = false;
@@ -266,7 +269,7 @@ void IRQ::write(Machine::State& cpu, uint8_t data, uint32_t address) {
 			if (data & 0b00000100) cpu.irq.active[0x0E] = false;
 			if (data & 0b00000010) cpu.irq.active[0x13] = false;
 			if (data & 0b00000001) cpu.irq.active[0x14] = false;
-			break;
+			break ;
 
 		case 0x2029: 
 			if (data & 0b10000000) cpu.irq.active[0x15] = false;
@@ -277,7 +280,7 @@ void IRQ::write(Machine::State& cpu, uint8_t data, uint32_t address) {
 			if (data & 0b00000100) cpu.irq.active[0x1A] = false;
 			if (data & 0b00000010) cpu.irq.active[0x1B] = false;
 			if (data & 0b00000001) cpu.irq.active[0x1C] = false;
-			break;
+			break ;
 
 		case 0x202A:
 			if (data & 0b10000000) cpu.irq.active[0x0F] = false;
@@ -287,6 +290,7 @@ void IRQ::write(Machine::State& cpu, uint8_t data, uint32_t address) {
 			if (data & 0b00000100) cpu.irq.active[0x1D] = false;
 			if (data & 0b00000010) cpu.irq.active[0x1E] = false;
 			if (data & 0b00000001) cpu.irq.active[0x1F] = false;
+			break ;
 	}
 
 	refresh_irqs(cpu);

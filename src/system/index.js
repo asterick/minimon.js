@@ -65,6 +65,7 @@ export class Minimon {
 		});
 
 		// Reset our CPU
+		this._inputState = 0b1111111111; // No cartridge inserted, no IRQ
 		this.reset();
 	}
 
@@ -156,7 +157,6 @@ export class Minimon {
 		this._exports.cpu_reset(this._cpu_state);
 		this.update();
 
-		this._inputState = 0b1111111111; // No cartridge inserted, no IRQ
 		this.running = true;
 	}
 
