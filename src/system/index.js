@@ -16,23 +16,7 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-const { struct, union, sizeOf } = require("@thi.ng/unionstruct");
-
-const registerHeader = [
-	["ba", "u16"],
-	["hl", "u16"],
-	["ix", "u16"],
-	["iy", "u16"],
-	["pc", "u16"],
-	["sp", "u16"],
-	["br", "u8"],
-	["ep", "u8"],
-	["xp", "u8"],
-	["yp", "u8"],
-	["cb", "u8"],
-	["nb", "u8"],
-	["sc", "u8"]
-];
+import State from "./state";
 
 const KEYBOARD_CODES = {
 	90: 0b00000001,
@@ -67,8 +51,7 @@ export class Minimon {
 		this._cpu_state = this._exports.get_machine();
 		this._machineBytes = new Uint8Array(this._exports.memory.buffer);
 
-		this.registers = struct(registerHeader, this._exports.memory.buffer, this._cpu_state, false, true);
-
+		this.state = new State(this._exports.memory.buffer, this._cpu_state);
 		this.cartridge = new Uint8Array(0x200000);
 
 		this._inputState = 0b1111111111; // No cartridge inserted, no IRQ
@@ -175,7 +158,7 @@ export class Minimon {
 		this._exports.cpu_reset(this._cpu_state);
 		this.update();
 
-		this.running = true;
+		this.running = false;
 	}
 
 	read(address) {
@@ -187,6 +170,6 @@ export class Minimon {
 	}
 
 	translate(address) {
-		return (address & 0x7FFF) | ((address & 0x8000) && (this.registers.cb << 15));
+		return (address & 0x7FFF) | ((address & 0x8000) && (this.state.cpu.registers.cb << 15));
 	}
 }

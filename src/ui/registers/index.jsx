@@ -32,18 +32,19 @@ export default class Registers extends Component {
 
 	render() {
 		const system = this.context;
-		const sc = system.registers.sc;
+		const sc = system.state.cpu.registers.sc;
+		const regs = system.state.cpu.registers;
 
 		return (
 			<div className={classes.registers}>
 				<table>
 					<tbody>
-						<tr><td>BA</td><td>{toHex(system.registers.ba, 4)}</td><td>BR</td><td>{toHex(system.registers.br, 2)}</td></tr>
-						<tr><td>HL</td><td>{toHex(system.registers.hl, 4)}</td><td>EP</td><td>{toHex(system.registers.ep, 2)}</td></tr>
-						<tr><td>IX</td><td>{toHex(system.registers.ix, 4)}</td><td>XP</td><td>{toHex(system.registers.xp, 2)}</td></tr>
-						<tr><td>IY</td><td>{toHex(system.registers.iy, 4)}</td><td>YP</td><td>{toHex(system.registers.yp, 2)}</td></tr>
-						<tr><td>PC</td><td>{toHex(system.registers.pc, 4)}</td><td>CB</td><td>{toHex(system.registers.cb, 2)}</td></tr>
-						<tr><td>SP</td><td>{toHex(system.registers.sp, 4)}</td><td>NB</td><td>{toHex(system.registers.nb, 2)}</td></tr>
+						<tr><td>BA</td><td>{toHex(regs.ba, 4)}</td><td>BR</td><td>{toHex(regs.br, 2)}</td></tr>
+						<tr><td>HL</td><td>{toHex(regs.hl, 4)}</td><td>EP</td><td>{toHex(regs.ep, 2)}</td></tr>
+						<tr><td>IX</td><td>{toHex(regs.ix, 4)}</td><td>XP</td><td>{toHex(regs.xp, 2)}</td></tr>
+						<tr><td>IY</td><td>{toHex(regs.iy, 4)}</td><td>YP</td><td>{toHex(regs.yp, 2)}</td></tr>
+						<tr><td>PC</td><td>{toHex(regs.pc, 4)}</td><td>CB</td><td>{toHex(regs.cb, 2)}</td></tr>
+						<tr><td>SP</td><td>{toHex(regs.sp, 4)}</td><td>NB</td><td>{toHex(regs.nb, 2)}</td></tr>
 					</tbody>
 				</table>
 				<div className={classes.flags}>
