@@ -157,7 +157,7 @@ export class Minimon {
 		this.update();
 
 		this._inputState = 0b1111111111; // No cartridge inserted, no IRQ
-		this.running = false;
+		this.running = true;
 	}
 
 	read(address) {

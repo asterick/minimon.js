@@ -32,8 +32,8 @@ export default class Registers extends Component {
 
 	render() {
 		const system = this.context;
-		const sc = system.state.cpu.registers.sc;
 		const regs = system.state.cpu.registers;
+		const flags = system.state.cpu.flags;
 
 		return (
 			<div className={classes.registers}>
@@ -50,35 +50,35 @@ export default class Registers extends Component {
 				<div className={classes.flags}>
 					<div className={classes.register}>
 						<span className={classes.name}>SC</span>
-						<span className={classes.value}>{toHex(sc, 2)}</span>
+						<span className={classes.value}>{toHex(regs.sc, 2)}</span>
 					</div>
 					<div className={classes.register}>
 						<span className={classes.name}>I</span>
-						<span className={classes.value}>{sc >> 6}</span>
+						<span className={classes.value}>{flags.i}</span>
 					</div>
 					<div className={classes.register}>
 						<span className={classes.name}>U</span>
-						<div className={(sc & 0x20) ? classes.checked : classes.unchecked} />
+						<div className={flags.u ? classes.checked : classes.unchecked} />
 					</div>
 					<div className={classes.register}>
 						<span className={classes.name}>D</span>
-						<div className={(sc & 0x10) ? classes.checked : classes.unchecked} />
+						<div className={flags.d ? classes.checked : classes.unchecked} />
 					</div>
 					<div className={classes.register}>
-						<span className={classes.name}>B</span>
-						<div className={(sc & 0x08) ? classes.checked : classes.unchecked} />
+						<span className={classes.name}>N</span>
+						<div className={flags.n ? classes.checked : classes.unchecked} />
 					</div>
 					<div className={classes.register}>
 						<span className={classes.name}>V</span>
-						<div className={(sc & 0x04) ? classes.checked : classes.unchecked} />
+						<div className={flags.v ? classes.checked : classes.unchecked} />
 					</div>
 					<div className={classes.register}>
 						<span className={classes.name}>C</span>
-						<div className={(sc & 0x02) ? classes.checked : classes.unchecked} />
+						<div className={flags.c ? classes.checked : classes.unchecked} />
 					</div>
 					<div className={classes.register}>
 						<span className={classes.name}>Z</span>
-						<div className={(sc & 0x01) ? classes.checked : classes.unchecked} />
+						<div className={flags.z ? classes.checked : classes.unchecked} />
 					</div>
 				</div>
 			</div>
