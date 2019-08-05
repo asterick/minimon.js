@@ -42,28 +42,6 @@ namespace CPU {
 	struct __attribute__((packed)) State {
 		union {
 			struct {
-				uint8_t sc;
-				uint8_t cc;
-			};
-
-			struct {
-				unsigned int z:1;
-				unsigned int c:1;
-				unsigned int v:1;
-				unsigned int n:1;
-				unsigned int d:1;
-				unsigned int u:1;
-				unsigned int i:2;
-
-				unsigned int f0:1;
-				unsigned int f1:1;
-				unsigned int f2:1;
-				unsigned int f3:1;
-			} flag;
-		};
-
-		union {
-			struct {
 				uint8_t a;
 				uint8_t b;
 				uint8_t l;
@@ -88,6 +66,28 @@ namespace CPU {
 
 		uint8_t cb;
 		uint8_t nb;
+
+		union {
+			struct {
+				uint8_t sc;
+				uint8_t cc;
+			};
+
+			struct {
+				unsigned int z:1;
+				unsigned int c:1;
+				unsigned int v:1;
+				unsigned int n:1;
+				unsigned int d:1;
+				unsigned int u:1;
+				unsigned int i:2;
+
+				unsigned int f0:1;
+				unsigned int f1:1;
+				unsigned int f2:1;
+				unsigned int f3:1;
+			} flag;
+		};
 	};
 };
 

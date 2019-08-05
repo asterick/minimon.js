@@ -169,6 +169,10 @@ export class Minimon {
 	}
 
 	translate(address) {
-		return (address & 0x7FFF) | ((address & 0x8000) && (this.state.cpu.registers.cb << 15));
+		if (address & 0x8000) {
+			return (address & 0x7FFF) | (this.state.cpu.registers.cb << 15);
+		} else {
+			return address;
+		}
 	}
 }

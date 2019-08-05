@@ -33,7 +33,6 @@ export default class Registers extends Component {
 	render() {
 		const system = this.context;
 		const regs = system.state.cpu.registers;
-		const flags = system.state.cpu.flags;
 
 		return (
 			<div className={classes.registers}>
@@ -54,31 +53,31 @@ export default class Registers extends Component {
 					</div>
 					<div className={classes.register}>
 						<span className={classes.name}>I</span>
-						<span className={classes.value}>{flags.i}</span>
+						<span className={classes.value}>{regs.sc >> 6}</span>
 					</div>
 					<div className={classes.register}>
 						<span className={classes.name}>U</span>
-						<div className={flags.u ? classes.checked : classes.unchecked} />
+						<div className={(regs.sc & 0b100000) ? classes.checked : classes.unchecked} />
 					</div>
 					<div className={classes.register}>
 						<span className={classes.name}>D</span>
-						<div className={flags.d ? classes.checked : classes.unchecked} />
+						<div className={(regs.sc & 0b010000) ? classes.checked : classes.unchecked} />
 					</div>
 					<div className={classes.register}>
 						<span className={classes.name}>N</span>
-						<div className={flags.n ? classes.checked : classes.unchecked} />
+						<div className={(regs.sc & 0b001000) ? classes.checked : classes.unchecked} />
 					</div>
 					<div className={classes.register}>
 						<span className={classes.name}>V</span>
-						<div className={flags.v ? classes.checked : classes.unchecked} />
+						<div className={(regs.sc & 0b000100) ? classes.checked : classes.unchecked} />
 					</div>
 					<div className={classes.register}>
 						<span className={classes.name}>C</span>
-						<div className={flags.c ? classes.checked : classes.unchecked} />
+						<div className={(regs.sc & 0b000010) ? classes.checked : classes.unchecked} />
 					</div>
 					<div className={classes.register}>
 						<span className={classes.name}>Z</span>
-						<div className={flags.z ? classes.checked : classes.unchecked} />
+						<div className={(regs.sc & 0b000001) ? classes.checked : classes.unchecked} />
 					</div>
 				</div>
 			</div>
