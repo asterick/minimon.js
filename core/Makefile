@@ -22,7 +22,7 @@ LDFLAGS = --no-entry --allow-undefined $(EXPORTS) -L ./wasi-libc/sysroot/lib/was
 all: $(DEPDIR) $(TARGET)
 
 clean:
-	rm -Rf $(TARGET) $(OBJECTS)
+	rm -Rf $(TARGET) $(OBJECTS) include/table.h
 
 dasm: $(TARGET)
 	wasm-dis $<

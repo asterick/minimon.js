@@ -4,7 +4,7 @@
   "description": "My personal webpage",
   "main": "server/index.js",
   "scripts": {
-    "core": "cd data; cd ../core; make",
+    "core": "cd core; make",
     "start": "webpack-dev-server --open --mode development",
     "build": "webpack --mode production",
     "test": "npm run core; webpack --config webpack.test.config.js; node test/bios.js"
@@ -35,7 +35,7 @@
     "@babel/core": "^7.5.5",
     "@babel/plugin-proposal-class-properties": "^7.5.5",
     "@babel/preset-react": "^7.0.0",
-    "@thi.ng/unionstruct": "^1.1.1",
+    "@thi.ng/unionstruct": "^1.1.2",
     "babel-loader": "^8.0.6",
     "css-loader": "^3.1.0",
     "node-sass": "^4.12.0",
@@ -46,11 +46,11 @@
     "react-virtualized": "^9.21.1",
     "sass-loader": "^7.1.0",
     "style-loader": "^0.23.1",
-    "webpack": "^4.36.1"
+    "webpack": "^4.39.1"
   },
   "devDependencies": {
+    "test": "^0.6.0",
     "webpack-cli": "^3.3.6",
-    "webpack-dev-server": "^3.7.2",
-    "test": "^0.6.0"
+    "webpack-dev-server": "^3.7.2"
   }
 }
