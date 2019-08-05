@@ -1,9 +1,9 @@
 OBJECTS=irq.o lcd.o blitter.o operations.o machine.o debug.o tim256.o rtc.o control.o timers.o input.o eeprom.o gpio.o
 TARGET=../public/libminimon.wasm
 
-LD=wasm-ld-8
+LD=$(shell which wasm-ld-8)
+LD := $(if $(LD), $(LD), "wasm-ld")
 CC=clang-8
-CPP=clang++-8
 
 EXPORTS = \
 	--export get_machine \
@@ -15,6 +15,7 @@ EXPORTS = \
 	--export cpu_read \
 	--export cpu_write
 
+CFLAGS = --target=wasm32-wasm -O2 -Iinclude -std=c99 --sysroot=./wasi-libc/sysroot
 CPPFLAGS = --target=wasm32-wasm -O2 -Iinclude -std=c++17 --sysroot=./wasi-libc/sysroot
 LDFLAGS = --no-entry --allow-undefined $(EXPORTS) -L ./wasi-libc/sysroot/lib/wasm32-wasi -lc
 
@@ -27,6 +28,7 @@ dasm: $(TARGET)
 	wasm-dis $<
 
 $(TARGET): include/table.h $(OBJECTS)
+	echo $(LD)
 	$(LD) $(LDFLAGS) $(OBJECTS) -o $@
 
 include/table.h: ../tools/table.py ../tools/s1c88.csv
@@ -36,7 +38,7 @@ include/table.h: ../tools/table.py ../tools/s1c88.csv
 	$(CC) $(CFLAGS) $< -c -o $@
 
 %.o: %.cc include/table.h include/*.h
-	$(CPP) $(CPPFLAGS) $< -c -o $@
+	$(CC) $(CPPFLAGS) $< -c -o $@
 
 $(DEPDIR):
 	mkdir -p $(DEPDIR)
