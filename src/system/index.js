@@ -129,7 +129,7 @@ export class Minimon {
 		this._updateinput();
 
 		setTimeout(() => {
-			this._inputState &= INPUT_CART_N;
+			this._inputState &= ~INPUT_CART_N;
 			this._updateinput();
 		}, 100);
 	}
