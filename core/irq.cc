@@ -16,6 +16,7 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
+#include <string.h>
 #include <stdint.h>
 
 #include "machine.h"
@@ -23,91 +24,38 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 using namespace IRQ;
 
-struct VectorTable {
-	bool maskable;
-	int priority_group;
-	int bit_group;
-};
+int irq_group[] = {
+	0, 0, 0,				// NMI
 
-
-static const VectorTable IRQ_TABLE[TOTAL_HARDWARE_IRQS] = {
-	{ false },			// 0x00 IRQ_RESET
-	{ false },			// 0x01 IRQ_DIV_ZERO
-	{ false },			// 0x02 IRQ_WATCHDOG
-	{ true, 006, 007 },	// 0x03 IRQ_BLT_COPY
-	{ true, 006, 006 },	// 0x04 IRQ_BLT_OVERFLOW
-	{ true, 004, 005 },	// 0x05 IRQ_TIM3
-	{ true, 004, 004 },	// 0x06 IRQ_TIM2
-	{ true, 002, 003 },	// 0x07 IRQ_TIM1
-	{ true, 002, 002 },	// 0x08 IRQ_TIM0
-	{ true, 000, 001 },	// 0x09 IRQ_TIM5
-	{ true, 000, 000 },	// 0x0A IRQ_TIM5_CMP
-	{ true, 016, 015 },	// 0x0B IRQ_32HZ
-	{ true, 016, 014 },	// 0x0C IRQ_8HZ
-	{ true, 016, 013 },	// 0x0D IRQ_2HZ
-	{ true, 016, 012 },	// 0x0E IRQ_1HZ
-	{ true, 020, 037 },	// 0x0F IRQ_IR_RCV
-	{ true, 020, 036 },	// 0x10 IRQ_SHOCK
-	{ true, 000, 035 },	// 0x11 IRQ_UNKNOWN1
-	{ true, 000, 034 },	// 0x12 IRQ_UNKNOWN2
-	{ true, 014, 011 },	// 0x13 IRQ_K09
-	{ true, 014, 010 },	// 0x14 IRQ_K08
-	{ true, 012, 027 },	// 0x15 IRQ_K07
-	{ true, 012, 026 },	// 0x16 IRQ_K06
-	{ true, 012, 025 },	// 0x17 IRQ_K05
-	{ true, 012, 024 },	// 0x18 IRQ_K04
-	{ true, 012, 023 },	// 0x19 IRQ_K03
-	{ true, 012, 022 },	// 0x1A IRQ_K02
-	{ true, 012, 021 },	// 0x1B IRQ_K01
-	{ true, 012, 020 },	// 0x1C IRQ_K00
-	{ true, 010, 032 },	// 0x1D IRQ_UNKNOWN3
-	{ true, 010, 031 },	// 0x1E IRQ_UNKNOWN4
-	{ true, 010, 030 }	// 0x1F IRQ_UNKNOWN5
-};
-
-// These are the write masks for the data pins (no mapped d-latch)
-static const uint8_t BIT_MASK[] = {
-	0b11111111,
-	0b11111111,
-	0b00000011,
-
-	0b11111111,
-	0b00111111,
-	0b11111111,
-	0b11110111
+	0, 0,					// Blitter Group
+	1, 1,					// Tim3/2
+	2, 2,					// Tim1/0
+	3, 3,					// Tim5/4
+	4, 4, 4, 4,				// 256hz clock
+	8, 8, 8, 8,				// IR / Shock sensor
+	5, 5,					// K1x
+	6, 6, 6, 6, 6, 6, 6, 6, // K0x
+	7, 7, 7,				// Unknown ($1D ~ $1F?)
 };
 
 static void refresh_irqs(Machine::State& cpu) {
 	cpu.irq.next_priority = 0;
 
 	for (int irq = FIRST_MASKABLE; irq < TOTAL_HARDWARE_IRQS; irq++) {
-		const VectorTable& info = IRQ_TABLE[irq];
+		if (!cpu.irq.enable[irq] || !cpu.irq.active[irq]) continue ;
 
-		bool active = (1 << info.bit_group) & cpu.irq.active & cpu.irq.enable;
-
-		// Is IRQ active and enabled?
-		if (!active) {
-			continue ;
-		}
-
-		int priority = (cpu.irq.priority >> info.priority_group) & HIGHEST_PRIO;
-
-		if (cpu.irq.next_priority < priority) {
-			cpu.irq.next_priority = priority;
+		if (cpu.irq.next_priority < irq_group[irq]) {
+			cpu.irq.next_priority = irq_group[irq];
 			cpu.irq.next_irq = (Vector) irq;
 		}
 	}
 }
 
 void IRQ::reset(Machine::State& cpu) {
-	cpu.irq.priority = 0;
-	cpu.irq.enable = 0;
-	cpu.irq.active = 0;
-
-	refresh_irqs(cpu);
+	memset(&cpu.irq, 0, sizeof(cpu.irq));
 }
 
-static inline void fire(Machine::State& cpu, Vector irq, int priority) {
+static inline void fire(Machine::State& cpu, Vector irq, uint8_t priority) {
 	cpu.halted = false;
 
 	cpu_push8(cpu, cpu.reg.cb);
@@ -126,46 +74,217 @@ void IRQ::manage(Machine::State& cpu) {
 }
 
 void IRQ::trigger(Machine::State& cpu, Vector irq) {
-	const VectorTable& info = IRQ_TABLE[irq];
-
-	if (!info.maskable) {
+	if (irq < FIRST_MASKABLE) {
 		fire(cpu, irq, HIGHEST_PRIO);
 	} else {
-		cpu.irq.active |= 1 << info.bit_group;
+		cpu.irq.active[irq] = true;
 		refresh_irqs(cpu);
 	}
 }
 
 uint8_t IRQ::read(Machine::State& cpu, uint32_t address) {
 	switch (address) {
-		case 0x2020: return cpu.irq.priority_bytes[0];
-		case 0x2021: return cpu.irq.priority_bytes[1];
-		case 0x2022: return cpu.irq.priority_bytes[2];
-		case 0x2023: return cpu.irq.enable_bytes[0];
-		case 0x2024: return cpu.irq.enable_bytes[1];
-		case 0x2025: return cpu.irq.enable_bytes[2];
-		case 0x2026: return cpu.irq.enable_bytes[3];
-		case 0x2027: return cpu.irq.active_bytes[0];
-		case 0x2028: return cpu.irq.active_bytes[1];
-		case 0x2029: return cpu.irq.active_bytes[2];
-		case 0x202A: return cpu.irq.active_bytes[3];
+		case 0x2020: return 0
+			| (cpu.irq.priority[0] << 6)
+			| (cpu.irq.priority[1] << 4)
+			| (cpu.irq.priority[2] << 2)
+			| (cpu.irq.priority[3] << 0)
+			;
+
+		case 0x2021: return 0
+			| (cpu.irq.priority[4] << 6)
+			| (cpu.irq.priority[5] << 4)
+			| (cpu.irq.priority[6] << 2)
+			| (cpu.irq.priority[7] << 0)
+			;
+
+		case 0x2022: return 0
+			| (cpu.irq.priority[8] << 0)
+			;
+
+		case 0x2023: return 0
+			| (cpu.irq.enable[0x03] ? 0b10000000 : 0)
+			| (cpu.irq.enable[0x04] ? 0b01000000 : 0)
+			| (cpu.irq.enable[0x05] ? 0b00100000 : 0)
+			| (cpu.irq.enable[0x06] ? 0b00010000 : 0)
+			| (cpu.irq.enable[0x07] ? 0b00001000 : 0)
+			| (cpu.irq.enable[0x08] ? 0b00000100 : 0)
+			| (cpu.irq.enable[0x09] ? 0b00000010 : 0)
+			| (cpu.irq.enable[0x0A] ? 0b00000001 : 0)
+			;
+
+		case 0x2024: return 0
+			| (cpu.irq.enable[0x0B] ? 0b00100000 : 0)
+			| (cpu.irq.enable[0x0C] ? 0b00010000 : 0)
+			| (cpu.irq.enable[0x0D] ? 0b00001000 : 0)
+			| (cpu.irq.enable[0x0E] ? 0b00000100 : 0)
+			| (cpu.irq.enable[0x13] ? 0b00000010 : 0)
+			| (cpu.irq.enable[0x14] ? 0b00000001 : 0)
+			;
+
+		case 0x2025: return 0 
+			| (cpu.irq.enable[0x15] ? 0b10000000 : 0)
+			| (cpu.irq.enable[0x16] ? 0b01000000 : 0)
+			| (cpu.irq.enable[0x17] ? 0b00100000 : 0)
+			| (cpu.irq.enable[0x18] ? 0b00010000 : 0)
+			| (cpu.irq.enable[0x19] ? 0b00001000 : 0)
+			| (cpu.irq.enable[0x1A] ? 0b00000100 : 0)
+			| (cpu.irq.enable[0x1B] ? 0b00000010 : 0)
+			| (cpu.irq.enable[0x1C] ? 0b00000001 : 0)
+			;
+
+		case 0x2026: return 0
+			| (cpu.irq.enable[0x0F] ? 0b10000000 : 0)
+			| (cpu.irq.enable[0x10] ? 0b01000000 : 0)
+			| (cpu.irq.enable[0x11] ? 0b00100000 : 0)
+			| (cpu.irq.enable[0x12] ? 0b00010000 : 0)
+			| (cpu.irq.enable[0x1D] ? 0b00000100 : 0)
+			| (cpu.irq.enable[0x1E] ? 0b00000010 : 0)
+			| (cpu.irq.enable[0x1F] ? 0b00000001 : 0)
+			;
+
+		case 0x2027: return 0
+			| (cpu.irq.active[0x03] ? 0b10000000 : 0)
+			| (cpu.irq.active[0x04] ? 0b01000000 : 0)
+			| (cpu.irq.active[0x05] ? 0b00100000 : 0)
+			| (cpu.irq.active[0x06] ? 0b00010000 : 0)
+			| (cpu.irq.active[0x07] ? 0b00001000 : 0)
+			| (cpu.irq.active[0x08] ? 0b00000100 : 0)
+			| (cpu.irq.active[0x09] ? 0b00000010 : 0)
+			| (cpu.irq.active[0x0A] ? 0b00000001 : 0)
+			;
+
+		case 0x2028: return 0
+			| (cpu.irq.active[0x0B] ? 0b00100000 : 0)
+			| (cpu.irq.active[0x0C] ? 0b00010000 : 0)
+			| (cpu.irq.active[0x0D] ? 0b00001000 : 0)
+			| (cpu.irq.active[0x0E] ? 0b00000100 : 0)
+			| (cpu.irq.active[0x13] ? 0b00000010 : 0)
+			| (cpu.irq.active[0x14] ? 0b00000001 : 0)
+			;
+
+		case 0x2029: return 0 
+			| (cpu.irq.active[0x15] ? 0b10000000 : 0)
+			| (cpu.irq.active[0x16] ? 0b01000000 : 0)
+			| (cpu.irq.active[0x17] ? 0b00100000 : 0)
+			| (cpu.irq.active[0x18] ? 0b00010000 : 0)
+			| (cpu.irq.active[0x19] ? 0b00001000 : 0)
+			| (cpu.irq.active[0x1A] ? 0b00000100 : 0)
+			| (cpu.irq.active[0x1B] ? 0b00000010 : 0)
+			| (cpu.irq.active[0x1C] ? 0b00000001 : 0)
+			;
+
+		case 0x202A: return 0
+			| (cpu.irq.active[0x0F] ? 0b10000000 : 0)
+			| (cpu.irq.active[0x10] ? 0b01000000 : 0)
+			| (cpu.irq.active[0x11] ? 0b00100000 : 0)
+			| (cpu.irq.active[0x12] ? 0b00010000 : 0)
+			| (cpu.irq.active[0x1D] ? 0b00000100 : 0)
+			| (cpu.irq.active[0x1E] ? 0b00000010 : 0)
+			| (cpu.irq.active[0x1F] ? 0b00000001 : 0)
+			;
 	}
+
 	return 0xFF;
 }
 
 void IRQ::write(Machine::State& cpu, uint8_t data, uint32_t address) {
 	switch (address) {
-		case 0x2020: cpu.irq.priority_bytes[0] = data & BIT_MASK[0];
-		case 0x2021: cpu.irq.priority_bytes[1] = data & BIT_MASK[1];
-		case 0x2022: cpu.irq.priority_bytes[2] = data & BIT_MASK[2];
-		case 0x2023: cpu.irq.enable_bytes[0] = data & BIT_MASK[3];
-		case 0x2024: cpu.irq.enable_bytes[1] = data & BIT_MASK[4];
-		case 0x2025: cpu.irq.enable_bytes[2] = data & BIT_MASK[5];
-		case 0x2026: cpu.irq.enable_bytes[3] = data & BIT_MASK[6];
-		case 0x2027: cpu.irq.active_bytes[0] &= ~data;
-		case 0x2028: cpu.irq.active_bytes[1] &= ~data;
-		case 0x2029: cpu.irq.active_bytes[2] &= ~data;
-		case 0x202A: cpu.irq.active_bytes[3] &= ~data;
+		case 0x2020: 
+			cpu.irq.priority[0] = (data >> 6) & 3;
+			cpu.irq.priority[1] = (data >> 4) & 3;
+			cpu.irq.priority[2] = (data >> 2) & 3;
+			cpu.irq.priority[3] = (data >> 0) & 3;
+			break ;
+		case 0x2021:
+			cpu.irq.priority[4] = (data >> 6) & 3;
+			cpu.irq.priority[5] = (data >> 4) & 3;
+			cpu.irq.priority[6] = (data >> 2) & 3;
+			cpu.irq.priority[7] = (data >> 0) & 3;
+			break ;
+		case 0x2022:
+			cpu.irq.priority[8] = (data >> 0) & 3;
+			break ;
+
+		case 0x2023: 
+			cpu.irq.enable[0x03] = data & 0b10000000;
+			cpu.irq.enable[0x04] = data & 0b01000000;
+			cpu.irq.enable[0x05] = data & 0b00100000;
+			cpu.irq.enable[0x06] = data & 0b00010000;
+			cpu.irq.enable[0x07] = data & 0b00001000;
+			cpu.irq.enable[0x08] = data & 0b00000100;
+			cpu.irq.enable[0x09] = data & 0b00000010;
+			cpu.irq.enable[0x0A] = data & 0b00000001;
+			break;
+
+		case 0x2024: 
+			cpu.irq.enable[0x0B] = data & 0b00100000;
+			cpu.irq.enable[0x0C] = data & 0b00010000;
+			cpu.irq.enable[0x0D] = data & 0b00001000;
+			cpu.irq.enable[0x0E] = data & 0b00000100;
+			cpu.irq.enable[0x13] = data & 0b00000010;
+			cpu.irq.enable[0x14] = data & 0b00000001;
+			break;
+
+		case 0x2025: 
+			cpu.irq.enable[0x15] = data & 0b10000000;
+			cpu.irq.enable[0x16] = data & 0b01000000;
+			cpu.irq.enable[0x17] = data & 0b00100000;
+			cpu.irq.enable[0x18] = data & 0b00010000;
+			cpu.irq.enable[0x19] = data & 0b00001000;
+			cpu.irq.enable[0x1A] = data & 0b00000100;
+			cpu.irq.enable[0x1B] = data & 0b00000010;
+			cpu.irq.enable[0x1C] = data & 0b00000001;
+			break;
+
+		case 0x2026:
+			cpu.irq.enable[0x0F] = data & 0b10000000;
+			cpu.irq.enable[0x10] = data & 0b01000000;
+			cpu.irq.enable[0x11] = data & 0b00100000;
+			cpu.irq.enable[0x12] = data & 0b00010000;
+			cpu.irq.enable[0x1D] = data & 0b00000100;
+			cpu.irq.enable[0x1E] = data & 0b00000010;
+			cpu.irq.enable[0x1F] = data & 0b00000001;
+
+		case 0x2027: 
+			if (data & 0b10000000) cpu.irq.active[0x03] = false;
+			if (data & 0b01000000) cpu.irq.active[0x04] = false;
+			if (data & 0b00100000) cpu.irq.active[0x05] = false;
+			if (data & 0b00010000) cpu.irq.active[0x06] = false;
+			if (data & 0b00001000) cpu.irq.active[0x07] = false;
+			if (data & 0b00000100) cpu.irq.active[0x08] = false;
+			if (data & 0b00000010) cpu.irq.active[0x09] = false;
+			if (data & 0b00000001) cpu.irq.active[0x0A] = false;
+			break;
+
+		case 0x2028: 
+			if (data & 0b00100000) cpu.irq.active[0x0B] = false;
+			if (data & 0b00010000) cpu.irq.active[0x0C] = false;
+			if (data & 0b00001000) cpu.irq.active[0x0D] = false;
+			if (data & 0b00000100) cpu.irq.active[0x0E] = false;
+			if (data & 0b00000010) cpu.irq.active[0x13] = false;
+			if (data & 0b00000001) cpu.irq.active[0x14] = false;
+			break;
+
+		case 0x2029: 
+			if (data & 0b10000000) cpu.irq.active[0x15] = false;
+			if (data & 0b01000000) cpu.irq.active[0x16] = false;
+			if (data & 0b00100000) cpu.irq.active[0x17] = false;
+			if (data & 0b00010000) cpu.irq.active[0x18] = false;
+			if (data & 0b00001000) cpu.irq.active[0x19] = false;
+			if (data & 0b00000100) cpu.irq.active[0x1A] = false;
+			if (data & 0b00000010) cpu.irq.active[0x1B] = false;
+			if (data & 0b00000001) cpu.irq.active[0x1C] = false;
+			break;
+
+		case 0x202A:
+			if (data & 0b10000000) cpu.irq.active[0x0F] = false;
+			if (data & 0b01000000) cpu.irq.active[0x10] = false;
+			if (data & 0b00100000) cpu.irq.active[0x11] = false;
+			if (data & 0b00010000) cpu.irq.active[0x12] = false;
+			if (data & 0b00000100) cpu.irq.active[0x1D] = false;
+			if (data & 0b00000010) cpu.irq.active[0x1E] = false;
+			if (data & 0b00000001) cpu.irq.active[0x1F] = false;
 	}
 
 	refresh_irqs(cpu);

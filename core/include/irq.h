@@ -23,6 +23,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 namespace Machine { struct State; };
 
 namespace IRQ {
+	static const int TOTAL_PRIORITY_GROUPS = 9;
+
 	enum Vector : uint8_t {
 		IRQ_RESET,			// 0x00
 		IRQ_DIV_ZERO,		// 0x01
@@ -57,29 +59,20 @@ namespace IRQ {
 		IRQ_UNKNOWN4,		// 0x1E
 		IRQ_UNKNOWN5,		// 0x1F
 
-		TOTAL_HARDWARE_IRQS
+		TOTAL_HARDWARE_IRQS,
+		FIRST_MASKABLE = 3
 	};
 
 	struct State {
-		union {
-			uint32_t priority;
-			uint8_t priority_bytes[3];
-		};
-		union {
-			uint32_t enable;
-			uint8_t enable_bytes[4];
-		};
-		union {
-			uint32_t active;
-			uint8_t active_bytes[4];
-		};
+		bool enable[TOTAL_HARDWARE_IRQS];
+		bool active[TOTAL_HARDWARE_IRQS];
+		uint8_t priority[TOTAL_PRIORITY_GROUPS];
 
 		int next_priority;
 		IRQ::Vector next_irq;
 	};
 
-	static const int HIGHEST_PRIO = 3;
-	static const int FIRST_MASKABLE = 3;
+	static const uint8_t HIGHEST_PRIO = 3;
 
 	void reset(Machine::State& cpu);
 	void manage(Machine::State& cpu);
