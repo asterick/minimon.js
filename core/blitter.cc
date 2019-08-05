@@ -88,22 +88,13 @@ void Blitter::reset(Machine::State& cpu) {
 	memset(&cpu.blitter, 0, sizeof(cpu.blitter));
 }
 
-void Blitter::clock(Machine::State& cpu, int osc3) {
-	bool overflow = false;
-	cpu.blitter.counter += osc3;
-
-	while (cpu.blitter.counter >= TICK_OVERFLOW) {
-		// Framerate divider
-		if (++cpu.blitter.divider >= FRAME_DIVIDERS[cpu.blitter.frame_divider]) {
-			cpu.blitter.divider = 0;
-			overflow = true;
-		}
-
-		cpu.blitter.counter -= TICK_OVERFLOW;
-		cpu.blitter.updated = true;
+void Blitter::clock(Machine::State& cpu) {
+	// Framerate divider
+	if (++cpu.blitter.divider < FRAME_DIVIDERS[cpu.blitter.frame_divider]) {
+		return ;
 	}
 
-	if (!overflow) return ;
+	cpu.blitter.divider = 0;
 
 	// Rendering loop
 	FrameBuffer target;
@@ -198,11 +189,11 @@ void Blitter::clock(Machine::State& cpu, int osc3) {
 		IRQ::trigger(cpu, IRQ::IRQ_BLT_COPY);
 
 		for (int p = 0, a = 0; p < 8; p++) {
-			LCD::write(cpu, 0b10110000 | p, 0x20FE);
-			LCD::write(cpu, 0b00000000, 0x20FE);
-			LCD::write(cpu, 0b00010000, 0x20FE);
+			LCD::write(cpu.lcd, 0b10110000 | p, 0x20FE);
+			LCD::write(cpu.lcd, 0b00000000, 0x20FE);
+			LCD::write(cpu.lcd, 0b00010000, 0x20FE);
 			for (int x = 0; x < SCREEN_WIDTH; x++) {
-				LCD::write(cpu, cpu.ram[a++], 0x20FF);
+				LCD::write(cpu.lcd, cpu.ram[a++], 0x20FF);
 			}
 		}
 	}
@@ -233,7 +224,7 @@ uint8_t Blitter::read(Machine::State& cpu, uint32_t address) {
 		case 0x2089:
 			return cpu.blitter.sprite_bytes[2];
 		case 0x208A:
-			return cpu.blitter.counter / TICKS_PER_COUNT;
+			return LCD::get_scanline(cpu.lcd);
 
 		// 8B~8F, F0~F8 (These are probably related to Blitter / LCD)
 		default:

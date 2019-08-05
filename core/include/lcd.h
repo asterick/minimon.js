@@ -20,7 +20,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 #include <stdint.h>
 
-namespace Machine { struct State; };
+const auto LCD_SPEED	= 72 * 0x41;	// Line scan frequency
 
 namespace LCD {
 	struct State {
@@ -42,11 +42,18 @@ namespace LCD {
 		bool	lcd_bias;
 		uint8_t	resistor_ratio;
 		uint8_t	operating_mode;
+		uint8_t scanline;
+
+		uint8_t framebuffer[64][96];
+
+		int 	overflow;
+		bool	updated;
 	};
 
-	void reset(Machine::State& cpu);
+	void reset(LCD::State& lcd);
 
-	const void* render(Machine::State& cpu);
-	uint8_t read(Machine::State& cpu, uint32_t address);
-	void write(Machine::State& cpu, uint8_t data, uint32_t address);
+	uint8_t get_scanline(LCD::State& lcd);
+	void clock(Machine::State& cpu, int osc3);
+	uint8_t read(LCD::State& lcd, uint32_t address);
+	void write(LCD::State& lcd, uint8_t data, uint32_t address);
 }

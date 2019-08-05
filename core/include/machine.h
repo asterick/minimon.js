@@ -20,6 +20,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 #include <stdint.h>
 
+namespace Machine { struct State; };
+
 #include "lcd.h"
 #include "irq.h"
 #include "tim256.h"
@@ -30,6 +32,11 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "input.h"
 #include "eeprom.h"
 #include "gpio.h"
+
+const auto OSC1_SPEED	= 32768;
+const auto OSC3_SPEED	= 4000000;
+const auto TICK_SPEED	= 1000;
+const auto CPU_SPEED	= 1000000;
 
 namespace CPU {
 	struct __attribute__((packed)) State {

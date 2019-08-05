@@ -21,11 +21,6 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "machine.h"
 #include "debug.h"
 
-const auto OSC1_SPEED	= 32768;
-const auto OSC3_SPEED	= 4000000;
-const auto TICK_SPEED	= 1000;
-const auto CPU_SPEED	= 1000000;
-
 static const uint8_t bios[0x2000] = {
 	#include "bios.h"
 };
@@ -49,7 +44,7 @@ extern "C" void cpu_reset(Machine::State& cpu) {
 
 	Control::reset(cpu.ctrl);
 	IRQ::reset(cpu);
-	LCD::reset(cpu);
+	LCD::reset(cpu.lcd);
 	RTC::reset(cpu);
 	TIM256::reset(cpu);
 	Blitter::reset(cpu);
@@ -58,8 +53,8 @@ extern "C" void cpu_reset(Machine::State& cpu) {
 	GPIO::reset(cpu.gpio);
 }
 
-extern "C" const void* lcd_render(Machine::State& cpu) {
-	return LCD::render(cpu);
+extern "C" const void* get_frame(Machine::State& cpu) {
+	return cpu.lcd.framebuffer;
 }
 
 extern "C" const void update_inputs(Machine::State& cpu, uint16_t value) {
@@ -86,7 +81,7 @@ void cpu_clock(Machine::State& cpu, int cycles) {
  		osc3 = 0;
  	}
 
-	Blitter::clock(cpu, osc3);
+	LCD::clock(cpu, osc3);
 	Timers::clock(cpu, osc1, osc3);
 
  	// OSC3 = 4mhz oscillator, OSC1 = 32khz oscillator
@@ -112,8 +107,8 @@ extern "C" bool cpu_advance(Machine::State& cpu, int ticks) {
 		cpu_step(cpu);
 	}
 
-	bool updated = cpu.blitter.updated;
-	cpu.blitter.updated = false;
+	bool updated = cpu.lcd.updated;
+	cpu.lcd.updated = false;
 	return updated;
 }
 
@@ -132,7 +127,7 @@ static inline uint8_t cpu_read_reg(Machine::State& cpu, uint32_t address) {
 	case 0x2060 ... 0x2062:
 		return GPIO::read(cpu.gpio, address);
 	case 0x20FE ... 0x20FF:
-		return LCD::read(cpu, address);
+		return LCD::read(cpu.lcd, address);
 	case 0x2080 ... 0x208F:
 	case 0x20F0 ... 0x20F8:
 		return Blitter::read(cpu, address);
@@ -170,7 +165,7 @@ static inline void cpu_write_reg(Machine::State& cpu, uint8_t data, uint32_t add
 		Blitter::write(cpu, data, address);
 		break ;
 	case 0x20FE ... 0x20FF:
-		LCD::write(cpu, data, address);
+		LCD::write(cpu.lcd, data, address);
 		break ;
 	case 0x2018 ... 0x201D:
 	case 0x2030 ... 0x203F:

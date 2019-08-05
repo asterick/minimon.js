@@ -85,7 +85,7 @@ export class Minimon {
 			let delta = Math.min(200, now - time);
 
 			if (this._exports.cpu_advance(this._cpu_state, delta)) {
-				this.repaint(this._machineBytes, this._exports.lcd_render(this._cpu_state));
+				this.repaint(this._machineBytes, this._exports.get_frame(this._cpu_state));
 			}
 
 			time = now;
