@@ -69,10 +69,10 @@ namespace CPU {
 			};
 		};
 
-		uint16_t ix;
-		uint16_t iy;
 		uint16_t pc;
 		uint16_t sp;
+		uint16_t ix;
+		uint16_t iy;
 
 		uint8_t br;
 		uint8_t ep;

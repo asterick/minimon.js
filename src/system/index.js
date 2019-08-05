@@ -54,8 +54,6 @@ export class Minimon {
 		this.state = new State(this._exports.memory.buffer, this._cpu_state);
 		this.cartridge = new Uint8Array(0x200000);
 
-		this._inputState = 0b1111111111; // No cartridge inserted, no IRQ
-
 		document.body.addEventListener('keydown', (e) => {
 			this._inputState &= ~KEYBOARD_CODES[e.keyCode];
 			this._updateinput();
@@ -158,6 +156,7 @@ export class Minimon {
 		this._exports.cpu_reset(this._cpu_state);
 		this.update();
 
+		this._inputState = 0b1111111111; // No cartridge inserted, no IRQ
 		this.running = false;
 	}
 
