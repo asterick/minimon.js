@@ -173,7 +173,15 @@ export default class Registers extends Component {
 			if (width != this._ref.current.width || height != this._ref.current.height) {
 				this._ref.current.width = width;
 				this._ref.current.height = height;
-				gl.viewport(0, 0, width, height);
+
+				if (width * 3 / 4 > height) {
+					let fit_x = Math.floor(height * 4 / 3);
+					gl.viewport((width - fit_x) / 2, 0, fit_x, height);
+				} else {
+					let fit_y = width * 3 / 4;
+					gl.viewport(0, (height - fit_y) / 2, width, fit_y);
+				}
+				
 				gl.clear(gl.COLOR_BUFFER_BIT);
 			}
 
@@ -182,6 +190,7 @@ export default class Registers extends Component {
 			gl.activeTexture(gl.TEXTURE0);
 			gl.bindTexture(gl.TEXTURE_2D, this._vram);
 
+			gl.uniform1f(this._shader.uniforms.clock, now / 1000 % (24*60*60));
 			gl.uniform1f(this._shader.uniforms.time, delta);
 			gl.uniform1i(this._shader.uniforms.frame, this._frameIndex);
 			gl.uniform3f(this._shader.uniforms.color_light, 0xA8 / 255.0, 0xC6 / 255.0, 0x4E / 255.0);

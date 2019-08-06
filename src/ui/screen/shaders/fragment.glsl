@@ -4,6 +4,7 @@ precision mediump float;
 
 uniform mediump usampler2D vram;
 uniform float time;
+uniform float clock;
 uniform int frame;
 
 uniform vec3 color_light;
@@ -28,8 +29,10 @@ float fetch(ivec2 pixel) {
 	}
 }
 
-float lcd(vec2 pixel) {
-	return clamp(1.0 - length(vec2(0.5) - fract(1.0 - pixel)) * 0.75, 0.0, 1.0);
+float lcd(vec2 pixel, float intensity) {
+	vec2 grid = fract(pixel) - 0.5;
+	
+	return (length(grid) < 0.5) ? intensity : 0.0;
 }
 
 void main(void) {
@@ -38,7 +41,7 @@ void main(void) {
 
 	// Dot mask suport
 	if (dot_mask) {
-		intensity *= lcd(pixel);
+		intensity = 1.0 - lcd(pixel, 1.0 - intensity);
 	}
 
 	fragColor.rgb = mix(color_dark, color_light, vec3(intensity));
