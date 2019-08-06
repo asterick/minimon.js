@@ -53,6 +53,8 @@ function proxy(dv, type, offset, entries, ... rest) {
 
 	return new Proxy({}, {
 		get: function(_, index) {
+			if (index === 'length') return entries;
+
 			if (index < 0 || index >= entries) return null;
 
 			if (rest.length > 0) {

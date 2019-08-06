@@ -88,7 +88,7 @@ export default class MinimonDebugger extends Component {
 						<Screen />
 					</div>
 					<Registers />
-					<Memory memoryBottom={0x1000} memoryTop={0x20F7} />
+					<Memory baseAddress={0x1000} memory={system.state.ram} />
 				</div>
 				<div className={style.document}>
 					<div className={style.viewer}>

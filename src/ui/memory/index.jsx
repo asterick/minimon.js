@@ -30,30 +30,25 @@ function toHex(i, c) {
 	return v;
 }
 
-const MemoryCell = (props) =>
-	<span className={classes['byte-cell']}>{toHex(props.value, 2)}</span>;
-
 function rowRenderer ({ key, style, index, parent }) {
-	const { system, memoryBottom, memoryTop, bytesPerRow } = parent.props;
-	const addrLength = memoryTop.toString(16).length;
+	const { memory, baseAddress, bytesPerRow } = parent.props;
+	const addrLength = (baseAddress + memory.length - 1).toString(16).length;
 	const data = [];
 
-	let address = index * bytesPerRow + memoryBottom;
+	let address = index * bytesPerRow;
 
-	for (let i = 0, a = address; i < bytesPerRow && a <= memoryTop; i++, a++) 
-		data.push(<MemoryCell key={a} value={system.read(a)} />);
+	for (let i = 0, a = address; i < bytesPerRow && a < memory.length; i++, a++) 
+		data.push(<span key={a} className={classes['byte-cell']}>{toHex(memory[a], 2)}</span>);
 
 	return (
 		<div className={classes.dataRow} key={key} style={style}>
-			<span className={classes['address']}>{toHex(address, addrLength)}</span>
+			<span className={classes['address']}>{toHex(address + baseAddress, addrLength)}</span>
 			{ data }
 		</div>
 	)
 }
 
 class Memory extends Component {
-	static contextType = SystemContext;
-
 	constructor(props) {
 		super(props);
 
@@ -65,22 +60,20 @@ class Memory extends Component {
 	}
 
 	render() {
-		const system = this.context;
-
 		return <div className={classes['memory']}>
 			<AutoSizer>
 				{({ height, width }) => {
 					return (
 						<List
-							system={system}
 							bytesPerRow={this.props.bytesPerRow}
-							memoryTop={this.props.memoryTop}
-							memoryBottom={this.props.memoryBottom}
+							baseAddress={this.props.baseAddress}
+							memory={this.props.memory}
+
 							ref={this._list}
 
 							width={width}
 							height={height}
-							rowCount={Math.ceil((this.props.memoryTop - this.props.memoryBottom) / this.props.bytesPerRow)}
+							rowCount={Math.ceil(this.props.memory.length / this.props.bytesPerRow)}
 							rowHeight={20}
 							rowRenderer={rowRenderer}
 							/>
@@ -92,9 +85,7 @@ class Memory extends Component {
 }
 
 Memory.defaultProps = {
-	bytesPerRow: 0x8,
-	memoryBottom: 0,
-	memoryTop: TOP_OF_MEMORY
+	bytesPerRow: 0x8
 };
 
 export default Memory;

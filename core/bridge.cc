@@ -61,6 +61,18 @@ static const StructTable tim256_table[] = {
 	{ TYPE_END }
 };
 
+static const int IRQ_SIZES[] = { IRQ::TOTAL_HARDWARE_IRQS, - 1};
+
+static const StructTable irq_table[] = {
+	{ TYPE_BOOL, "enable", &machine_state.irq.enable, IRQ_SIZES },
+	{ TYPE_BOOL, "active", &machine_state.irq.active, IRQ_SIZES },
+	{ TYPE_UINT8, "priority", &machine_state.irq.priority, IRQ_SIZES },
+	{ TYPE_INT32, "next_priority", &machine_state.irq.next_priority },
+	{ TYPE_UINT8, "next_irq", &machine_state.irq.next_irq },
+
+	{ TYPE_END }
+};
+
 static const StructTable rtc_table[] = {
 	{ TYPE_BOOL, "running", &machine_state.rtc.running },
 	{ TYPE_UINT32, "value", &machine_state.rtc.value },
@@ -73,15 +85,15 @@ static const StructTable table[] = {
 	{ TYPE_STRUCT, "cpu", reg_table },
 	{ TYPE_STRUCT, "rtc", rtc_table },
 	{ TYPE_STRUCT, "tim256", tim256_table },
+	{ TYPE_STRUCT, "irq", irq_table },
 
 	/*
-	IRQ::State irq;
-	LCD::State lcd;
 	Control::State ctrl;
-	Blitter::State blitter;
 	Timers::State timers;
 	Input::State input;
 	GPIO::State gpio;
+	LCD::State lcd;
+	Blitter::State blitter;
 	*/
 
 	{ TYPE_UINT8, "bus_cap", &machine_state.bus_cap },
