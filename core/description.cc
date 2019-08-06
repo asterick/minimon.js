@@ -63,7 +63,7 @@ extern "C" const void* get_description(Machine::State& state) {
 		{ TYPE_END }
 	};
 
-	static const int RAM_SIZE[] = { 0x1000 };
+	static const int RAM_SIZE[] = { 0x1000, -1 };
 	StructTable table[] = {
 		{ TYPE_STRUCT, "cpu", reg_table },
 		{ TYPE_STRUCT, "rtc", rtc_table },
@@ -90,7 +90,6 @@ extern "C" const void* get_description(Machine::State& state) {
 		 	Blitter::Overlay overlay;
 		};
 		*/
-
 
 		{ TYPE_END }
 	};
