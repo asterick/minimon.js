@@ -58,10 +58,13 @@ extern "C" const void update_inputs(Machine::State& cpu, uint16_t value) {
 }
 
 void cpu_clock(Machine::State& cpu, int cycles) {
-	int osc3 = cycles * OSC3_SPEED / CPU_SPEED;	
+	const int osc3 = cycles * OSC3_SPEED / CPU_SPEED;	
 	int osc1 = 0;
 
 	cpu.osc1_overflow += osc3 * OSC1_SPEED;
+
+	LCD::clock(cpu, osc3);
+	Timers::clock(cpu, osc1, osc3);
 
 	if (cpu.osc1_overflow >= OSC3_SPEED) {
 		// Assume we are not going to get more than a couple ticks out of this thing
@@ -76,9 +79,6 @@ void cpu_clock(Machine::State& cpu, int cycles) {
  	} else {
  		osc1 = 0;
  	}
-
-	LCD::clock(cpu, osc3);
-	Timers::clock(cpu, osc1, osc3);
 
  	// OSC3 = 4mhz oscillator, OSC1 = 32khz oscillator
 	cpu.clocks -= osc3;
