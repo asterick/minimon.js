@@ -9,6 +9,11 @@ enum FieldType : uint32_t {
 	TYPE_STRUCT,
 	TYPE_UINT8,
 	TYPE_UINT16,
+	TYPE_UINT32,
+	TYPE_INT8,
+	TYPE_INT16,
+	TYPE_INT32,
+	TYPE_BOOL
 };
 
 struct StructTable {
@@ -44,8 +49,48 @@ extern "C" const void* get_description(Machine::State& state) {
 		{ TYPE_END }
 	};
 
+	StructTable tim256_table[] = {
+		{ TYPE_BOOL, "running", &state.tim256.running },
+		{ TYPE_UINT16, "value", &state.tim256.value },
+
+		{ TYPE_END }
+	};
+
+	StructTable rtc_table[] = {
+		{ TYPE_BOOL, "running", &state.rtc.running },
+		{ TYPE_UINT32, "value", &state.rtc.value },
+
+		{ TYPE_END }
+	};
+
+	static const int RAM_SIZE[] = { 0x1000 };
 	StructTable table[] = {
 		{ TYPE_STRUCT, "cpu", reg_table },
+		{ TYPE_STRUCT, "rtc", rtc_table },
+		{ TYPE_STRUCT, "tim256", tim256_table },
+
+		/*
+		IRQ::State irq;
+		LCD::State lcd;
+		Control::State ctrl;
+		Blitter::State blitter;
+		Timers::State timers;
+		Input::State input;
+		GPIO::State gpio;
+		*/
+
+		{ TYPE_UINT8, "bus_cap", &state.bus_cap },
+		{ TYPE_INT32, "clocks", &state.clocks },
+		{ TYPE_INT32, "osc1_overflow", &state.osc1_overflow },
+		{ TYPE_BOOL, "sleeping", &state.sleeping },
+		{ TYPE_BOOL, "halted", &state.sleeping },
+		{ TYPE_UINT8, "ram", &state.ram, RAM_SIZE },
+		/*
+		union {
+		 	Blitter::Overlay overlay;
+		};
+		*/
+
 
 		{ TYPE_END }
 	};

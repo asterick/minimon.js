@@ -26,6 +26,8 @@ export default function struct(buffer, offset) {
 	for (;; offset += 16) {
 		let type = dv.getUint32(offset, true);
 
+		console.log(type)
+
 		if (type == TYPE_END) break ;
 
 		let name = dv.getUint32(offset + 4, true);

@@ -23,7 +23,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 namespace Machine { struct State; };
 
 namespace Blitter {
-	struct __attribute__((packed)) Sprite {
+	struct Sprite {
 		unsigned x:7;
 		unsigned:1;
 
