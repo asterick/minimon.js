@@ -15,6 +15,7 @@ struct StructTable {
 	FieldType type;
 	const char* struct_name;
 	const void* field;
+	const int* sizes;
 };
 
 extern "C" const void* get_description(Machine::State& state) {
