@@ -32,7 +32,6 @@ function toHex(i, c) {
 
 function rowRenderer ({ key, style, index, parent }) {
 	const { memory, baseAddress, bytesPerRow } = parent.props;
-	const addrLength = (baseAddress + memory.length - 1).toString(16).length;
 	const data = [];
 
 	let address = index * bytesPerRow;
@@ -42,7 +41,7 @@ function rowRenderer ({ key, style, index, parent }) {
 
 	return (
 		<div className={classes.dataRow} key={key} style={style}>
-			<span className={classes['address']}>{toHex(address + baseAddress, addrLength)}</span>
+			<span className={classes['address']}>{toHex(address + baseAddress, 6)}</span>
 			{ data }
 		</div>
 	)
