@@ -120,7 +120,7 @@ export class Minimon {
 	// Cartridge I/O
 	load (ab) {
 		var bytes = new Uint8Array(ab);
-		var hasHeader = (bytes[0] != 0x4D || bytes[1] != 0x4E);
+		var hasHeader = (bytes[0] != 0x50 || bytes[1] != 0x4D);
 		var offset = hasHeader ? 0 : 0x2100;
 
 		for (let i = bytes.length - 1; i >= 0; i--) this.cartridge[(i+offset) & 0x1FFFFF] = bytes[i];
