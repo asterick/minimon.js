@@ -67,14 +67,14 @@ void cpu_clock(Machine::State& cpu, int cycles) {
 		// Assume we are not going to get more than a couple ticks out of this thing
 		do {
 			cpu.osc1_overflow -= OSC3_SPEED;
-			osc3++;
+			osc1++;
 		} while (cpu.osc1_overflow >= OSC3_SPEED);
 
 		// These are the devices that only advance with OSC3
 		TIM256::clock(cpu, osc1);
 		RTC::clock(cpu, osc1);
  	} else {
- 		osc3 = 0;
+ 		osc1 = 0;
  	}
 
 	LCD::clock(cpu, osc3);
