@@ -11,17 +11,17 @@ Emulation Status
 
 | System            | Completion | Notes                                 |
 | ----------------- | ---------- | ------------------------------------- |
-| S1C88 Core        | 100%       | Loop complete, instructions unverfied |
-| Control Registers | 100%       | Unverified                            |
-| IRQ System        | 100%       | Unverified                            |
-| RTC Timer         | 100%       | Unverified                            |
-| 256Hz Timer       | 100%       | Unverified                            |
-| LCD (SED1565)     | 80%        | Most commands implemented             |
+| S1C88 Core        | 100%       |                                       |
+| IRQ System        | 100%       |                                       |
+| RTC Timer         | 100%       |                                       |
+| 256Hz Timer       | 100%       |                                       |
 | Blitter           | 100%       | Unverified sprites and scrolling      |
-| General Timers    | 90%        | Comparison IRQs                       |
-| Input Ports       | 50%        | Debounce circuit not done             |
-| Output Ports      | 0%         |                                       |
-| GPIO Ports        | 25%        | EEPROM Wired                          |
-| Sound Emulation   | 0%         |                                       |
-| ADC Emulation     | 0%         | Only used for low battery detection   |
+| LCD (SED1565)     |  80%       | Most commands implemented             |
+| Control Registers |  80%       | Bus disable not emulated              |
+| General Timers    |  90%       | Comparison IRQs                       |
+| Input Ports       |  50%       | Debounce circuit not done             |
+| Output Ports      |   0%       |                                       |
+| GPIO Ports        |  25%       |                                       |
+| Sound Emulation   |   0%       |                                       |
+| ADC Emulation     |   0%       | Only used for low battery detection   |
 | EEPROM Emulation  | 100%       | Complete                              |
