@@ -37,6 +37,9 @@ export class Minimon {
 			env: {
 				cpu_read_cart: (cpu, address) => this.cpu_read_cart(address),
 				cpu_write_cart: (cpu, data, address) => this.cpu_write_cart(data, address),
+				flip_screen: (address) => {
+					this.repaint(this._machineBytes, address);
+				},
 				debug_print: (a) => {
 					const str = [];
 					let ch;
@@ -84,12 +87,9 @@ export class Minimon {
 			let now = Date.now();
 			let delta = Math.min(200, now - time);
 
-			if (this._exports.cpu_advance(this._cpu_state, delta)) {
-				this.repaint(this._machineBytes, this._exports.get_frame(this._cpu_state));
-			}
-
 			time = now;
 
+			this._exports.cpu_advance(this._cpu_state, delta);
 			this.update();
 		}
 

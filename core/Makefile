@@ -7,7 +7,6 @@ CC=clang-8
 
 EXPORTS = \
 	--export get_machine \
-	--export get_frame \
 	--export update_inputs \
 	--export cpu_reset \
 	--export cpu_advance \

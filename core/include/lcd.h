@@ -47,7 +47,6 @@ namespace LCD {
 		uint8_t framebuffer[64][96];
 
 		int 	overflow;
-		bool	updated;
 	};
 
 	void reset(LCD::State& lcd);

@@ -53,6 +53,8 @@ void LCD::reset(LCD::State& lcd) {
 	memset(&lcd, 0, sizeof(lcd));
 }
 
+extern "C" void flip_screen(void*);
+
 static void renderline(LCD::State& lcd, int com) {
 	const uint8_t off = levels[lcd.volume].off;
 	const uint8_t on = levels[lcd.volume].on;
@@ -82,7 +84,8 @@ void LCD::clock(Machine::State& cpu, int osc3) {
 
 	while (cpu.lcd.overflow >= OSC3_SPEED) {
 		if (cpu.lcd.scanline >= 0x40) {
-			cpu.lcd.updated = true;
+			flip_screen(cpu.lcd.framebuffer);
+
 			cpu.lcd.scanline = 0;
 			Blitter::clock(cpu);
 		} else {

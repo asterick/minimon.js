@@ -53,10 +53,6 @@ extern "C" void cpu_reset(Machine::State& cpu) {
 	GPIO::reset(cpu.gpio);
 }
 
-extern "C" const void* get_frame(Machine::State& cpu) {
-	return cpu.lcd.framebuffer;
-}
-
 extern "C" const void update_inputs(Machine::State& cpu, uint16_t value) {
 	Input::update(cpu, value);
 }
@@ -100,16 +96,12 @@ extern "C" void cpu_step(Machine::State& cpu) {
 	}
 }
 
-extern "C" bool cpu_advance(Machine::State& cpu, int ticks) {
+extern "C" void cpu_advance(Machine::State& cpu, int ticks) {
 	cpu.clocks += OSC3_SPEED / TICK_SPEED * ticks;
 
 	while (cpu.clocks > 0) {
 		cpu_step(cpu);
 	}
-
-	bool updated = cpu.lcd.updated;
-	cpu.lcd.updated = false;
-	return updated;
 }
 
 static inline uint8_t cpu_read_reg(Machine::State& cpu, uint32_t address) {

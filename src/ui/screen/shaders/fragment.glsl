@@ -16,14 +16,15 @@ uniform float analog;
 in vec2 position;
 out vec4 fragColor;
 
-vec2 fetch(vec2 pixel) {
-	float a = float(texelFetch(vram, ivec2(pixel), 0).r) / 255.0;
-	float b = float(texelFetch(vram, ivec2(pixel) + ivec2(0.0, 64.0), 0).r) / 255.0;
-
-	if (frame > 0) {
-		return vec2(a, b);
+float fetch(ivec2 pixel) {
+	if (!simulate_gray) {
+		return float(texelFetch(vram, ivec2(pixel) + ivec2(0, frame * 64), 0).r) / 255.0;
 	} else {
-		return vec2(b, a);
+		float o = 0.0;
+		for (int i = 0; i < 4; i++) {
+			o += float(texelFetch(vram, ivec2(pixel) + ivec2(0, i * 64), 0).r) / 255.0;
+		}
+		return o / 4.0;
 	}
 }
 
@@ -33,16 +34,7 @@ float lcd(vec2 pixel) {
 
 void main(void) {
 	vec2 pixel = vec2((position + 1.0) * vec2(96.0, 64.0) / 2.0);
-	vec2 colors = fetch(pixel);
-
-	float intensity;
-
-	// simulated gray
-	if (simulate_gray) {
-		intensity = (colors.r + colors.g) / 2.0;
-	} else {
-		intensity = colors.r;
-	}
+	float intensity = fetch(ivec2(pixel));
 
 	// Dot mask suport
 	if (dot_mask) {

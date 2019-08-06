@@ -130,7 +130,7 @@ extern "C" uint8_t cpu_read(Machine::State& cpu, uint32_t address);
 extern "C" void cpu_write(Machine::State& cpu, uint8_t data, uint32_t address);
 
 extern "C" void cpu_step(Machine::State& cpu);
-extern "C" bool cpu_advance(Machine::State& cpu, int ticks);
+extern "C" void cpu_advance(Machine::State& cpu, int ticks);
 
 // Clock management
 void cpu_clock(Machine::State& cpu, int cycles);

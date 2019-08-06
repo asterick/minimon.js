@@ -35,6 +35,7 @@ export default class Registers extends Component {
 		super(props);
 
 		this._ref = React.createRef();
+		this._frameIndex = 0;
 	}
 
 	componentDidMount() {
@@ -46,12 +47,12 @@ export default class Registers extends Component {
 
 			if (!gl) return ;
 
-			this._flip = !this._flip;
+			this._frameIndex = (this._frameIndex + 1) % 4;
 			gl.bindTexture(gl.TEXTURE_2D, this._vram);
 
 			gl.texSubImage2D(
 				gl.TEXTURE_2D, 0, 
-				0, this._flip ? VRAM_HEIGHT : 0, 
+				0, this._frameIndex * VRAM_HEIGHT,
 				VRAM_WIDTH, VRAM_HEIGHT, 
 				gl.RED_INTEGER, gl.UNSIGNED_BYTE, 
 				memory, address);
@@ -182,13 +183,13 @@ export default class Registers extends Component {
 			gl.bindTexture(gl.TEXTURE_2D, this._vram);
 
 			gl.uniform1f(this._shader.uniforms.time, delta);
-			gl.uniform1i(this._shader.uniforms.frame, this._flip ? VRAM_HEIGHT : 0);
+			gl.uniform1i(this._shader.uniforms.frame, this._frameIndex);
 			gl.uniform3f(this._shader.uniforms.color_light, 0xA8 / 255.0, 0xC6 / 255.0, 0x4E / 255.0);
 			gl.uniform3f(this._shader.uniforms.color_dark, 0x3C / 255.0, 0x41 / 255.0, 0x2C / 255.0);
 
-			gl.uniform1f(this._shader.uniforms.analog, 100);
+			gl.uniform1f(this._shader.uniforms.analog, 10);
 			gl.uniform1i(this._shader.uniforms.dot_mask, 0);
-			gl.uniform1i(this._shader.uniforms.simulate_gray, 0);
+			gl.uniform1i(this._shader.uniforms.simulate_gray, 1);
 
 			gl.enableVertexAttribArray(this._shader.attributes.vertex);
 			gl.bindBuffer(gl.ARRAY_BUFFER, this._copyBuffer);
