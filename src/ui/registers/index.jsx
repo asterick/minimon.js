@@ -32,7 +32,7 @@ export default class Registers extends Component {
 
 	render() {
 		const system = this.context;
-		const regs = system.state.cpu.registers;
+		const regs = system.state.cpu;
 
 		return (
 			<div className={classes.registers}>

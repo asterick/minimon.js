@@ -92,7 +92,7 @@ export default class MinimonDebugger extends Component {
 				</div>
 				<div className={style.document}>
 					<div className={style.viewer}>
-						<Disassembler target={system.translate(system.state.cpu.registers.pc)} />
+						<Disassembler target={system.translate(system.state.cpu.pc)} />
 					</div>
 					<div className={style.viewer}>
 

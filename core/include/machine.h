@@ -39,7 +39,7 @@ const auto TICK_SPEED	= 1000;
 const auto CPU_SPEED	= 1000000;
 
 namespace CPU {
-	struct __attribute__((packed)) State {
+	struct State {
 		union {
 			struct {
 				uint8_t sc;
@@ -92,7 +92,7 @@ namespace CPU {
 };
 
 namespace Machine {
-	struct __attribute__((packed)) State {
+	struct State {
 		CPU::State reg;
 		IRQ::State irq;
 		LCD::State lcd;

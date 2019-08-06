@@ -54,7 +54,7 @@ export class Minimon {
 		this._cpu_state = this._exports.get_machine();
 		this._machineBytes = new Uint8Array(this._exports.memory.buffer);
 
-		this.state = new State(this._exports.memory.buffer, this._cpu_state);
+		this.state = new State(this._exports.memory.buffer, this._exports.get_description(this._cpu_state));
 		this.cartridge = new Uint8Array(0x200000);
 
 		document.body.addEventListener('keydown', (e) => {
@@ -70,6 +70,8 @@ export class Minimon {
 		// Reset our CPU
 		this._inputState = 0b1111111111; // No cartridge inserted, no IRQ
 		this.reset();
+
+		this.running = true;
 	}
 
 	get running() {
@@ -156,8 +158,6 @@ export class Minimon {
 	reset() {
 		this._exports.cpu_reset(this._cpu_state);
 		this.update();
-
-		this.running = true;
 	}
 
 	read(address) {
@@ -170,7 +170,7 @@ export class Minimon {
 
 	translate(address) {
 		if (address & 0x8000) {
-			return (address & 0x7FFF) | (this.state.cpu.registers.cb << 15);
+			return (address & 0x7FFF) | (this.state.cpu.cb << 15);
 		} else {
 			return address;
 		}

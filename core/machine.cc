@@ -26,8 +26,8 @@ static const uint8_t bios[0x2000] = {
 };
 
 extern "C" Machine::State* const get_machine() {
-	static Machine::State state;
-	return &state;
+	static Machine::State machine_state;
+	return &machine_state;
 }
 
 extern "C" void cpu_reset(Machine::State& cpu) {

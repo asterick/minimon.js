@@ -79,9 +79,9 @@ export default class MenuBar extends Component {
 	render() {
 		return <div className={style.menubar}>
 			<DropDown title="System">
-				<MenuItem title={this.context.running ? "stop" : "run"} onClick={() => (this.context.running = !this.context.running)} />
+				<MenuItem title={"run"} keybind={{code: "KeyS", ctrlKey: true}} checked={this.context.running} onClick={() => (this.context.running = !this.context.running)} />
 				<Seperator />
-				<MenuItem title="step" onClick={() => this.step()} />
+				<MenuItem title="step" keybind={{code:"Space"}} onClick={() => this.step()} />
 				<MenuItem title="reset" keybind={{code: "KeyR", ctrlKey: true}} onClick={() => this.reset()} />
 			</DropDown>
 		</div>
