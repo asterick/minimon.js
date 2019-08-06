@@ -25,11 +25,6 @@ static const uint8_t bios[0x2000] = {
 	#include "bios.h"
 };
 
-extern "C" Machine::State* const get_machine() {
-	static Machine::State machine_state;
-	return &machine_state;
-}
-
 extern "C" void cpu_reset(Machine::State& cpu) {
 	cpu.reg.pc = cpu_read16(cpu, 0x0000);
 	cpu.reg.sc = 0xC0;

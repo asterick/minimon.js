@@ -54,7 +54,7 @@ export class Minimon {
 		this._cpu_state = this._exports.get_machine();
 		this._machineBytes = new Uint8Array(this._exports.memory.buffer);
 
-		this.state = new State(this._exports.memory.buffer, this._exports.get_description(this._cpu_state));
+		this.state = new State(this._exports.memory.buffer, this._exports.get_description());
 		this.cartridge = new Uint8Array(0x200000);
 
 		document.body.addEventListener('keydown', (e) => {
