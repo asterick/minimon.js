@@ -24,9 +24,9 @@ namespace Machine { struct State; };
 
 namespace EEPROM {
 	enum PinState {
-		PIN_FLOAT,
 		PIN_RESET,
-		PIN_SET
+		PIN_SET,
+		PIN_FLOAT
 	};
 
 	enum I2C_MODE {

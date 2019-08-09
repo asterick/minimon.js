@@ -30,17 +30,15 @@ void EEPROM::reset(EEPROM::State& state) {
 }
 
 void EEPROM::setClockPin(EEPROM::State& state, PinState clock) {
-	bool data = getDataPin(state);
 	bool clock_then = getClockPin(state);
-
 	state.clock_in = clock;
-
 	bool clock_now = getClockPin(state);
-
 
 	if (clock_then == clock_now) {
 		return ;
 	}
+
+	bool data = getDataPin(state);
 
 	if (clock_now) {
 		state.shift = (state.shift << 1) | data;
@@ -59,6 +57,7 @@ void EEPROM::setClockPin(EEPROM::State& state, PinState clock) {
 				state.data_out = PIN_FLOAT;
 				break ;
 			case SYSTEM_SELECT:
+				dprintf("SELECT: %x", state.shift);
 				if (state.shift == 0xA0) {
 					state.mode = SYSTEM_ADDRESS_H;
 					state.data_out = PIN_RESET;
@@ -79,10 +78,12 @@ void EEPROM::setClockPin(EEPROM::State& state, PinState clock) {
 				state.address |= state.shift;
 				state.data_out = PIN_RESET;
 				state.mode = SYSTEM_WRITE;
+				dprintf("ADDRESS: %x", state.address);
 				break ;
 			case SYSTEM_WRITE:
 				state.data[state.address++] = state.shift;
 				state.data_out = PIN_RESET;
+				dprintf("WRITE: %x", state.shift);
 				break ;
 			case SYSTEM_READ:
 				state.mode = SYSTEM_STOP;
@@ -99,9 +100,7 @@ void EEPROM::setClockPin(EEPROM::State& state, PinState clock) {
 void EEPROM::setDataPin(EEPROM::State& state, PinState data) {
 	bool clock = getClockPin(state);
 	bool data_then = getDataPin(state);
-
 	state.data_in = data;
-
 	bool data_now = getDataPin(state);
 
 	if (!clock || data_then == data_now) {
@@ -109,9 +108,11 @@ void EEPROM::setDataPin(EEPROM::State& state, PinState data) {
 	}
 
 	if (data_now) {
+		dprintf("STOP");
 		state.mode = SYSTEM_STOP;
 		state.data_out = PIN_FLOAT;
 	} else {
+		dprintf("START");
 		state.mode = SYSTEM_SELECT;
 		state.bit = -1;
 	}

@@ -49,6 +49,7 @@ class MenuItem extends Component {
 
 	render() {
 		const { title } = this.props;
+		
 		return <span className={style.menuitem} {... this.props}>{title}</span>
 	}
 }
@@ -64,25 +65,13 @@ const Seperator = () => <div className={style.seperator}></div>
 export default class MenuBar extends Component {
 	static contextType = SystemContext;
 
-	step() {
-		const system = this.context;
-
-		system.step();
-	}
-
-	reset() {
-		const system = this.context;
-
-		system.reset();
-	}
-
 	render() {
 		return <div className={style.menubar}>
 			<DropDown title="System">
-				<MenuItem title={"run"} keybind={{code: "KeyS", ctrlKey: true}} checked={this.context.running} onClick={() => (this.context.running = !this.context.running)} />
+				<MenuItem title="run" keybind={{code: "KeyS", ctrlKey: true}} ischecked={this.context.running.toString()} onClick={() => (this.context.running = !this.context.running)} />
 				<Seperator />
-				<MenuItem title="step" keybind={{code:"Space"}} onClick={() => this.step()} />
-				<MenuItem title="reset" keybind={{code: "KeyR", ctrlKey: true}} onClick={() => this.reset()} />
+				<MenuItem title="step" keybind={{code:"Space"}} onClick={() => this.context.step()} />
+				<MenuItem title="reset" keybind={{code: "KeyR", ctrlKey: true}} onClick={() => this.context.reset()} />
 			</DropDown>
 		</div>
 	}

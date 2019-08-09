@@ -8,36 +8,37 @@ void GPIO::reset(GPIO::State& gpio) {
 }
 
 static uint8_t getBusState(GPIO::State& gpio) {
-	uint8_t inputs = 0b01000000 & ~gpio.direction;
-	uint8_t outputs = gpio.output & gpio.direction;
+	uint8_t inputs = 0b01000000
+		| (EEPROM::getClockPin(gpio.eeprom) ? 0b1000 : 0)
+		| (EEPROM::getDataPin(gpio.eeprom) ? 0b0100 : 0);
 
-	return inputs | outputs
-		| (EEPROM::getDataPin(gpio.eeprom) ? 0b0100 : 0)
-		| (EEPROM::getClockPin(gpio.eeprom) ? 0b1000 : 0);
+	return (inputs & ~gpio.direction) | (gpio.output & gpio.direction);
 }
 
 uint8_t GPIO::read(GPIO::State& gpio, uint32_t address) {
 	switch (address) {
-	case 0x2070:
+	case 0x2060:
 		return gpio.direction;
-	case 0x2071:
+	case 0x2061:
 		return getBusState(gpio);
-	case 0x2072:
+	case 0x2062:
 		return gpio.unknown;
 	default:
 		return 0;
 	}
 }
 
+#include "debug.h"
+
 void GPIO::write(GPIO::State& gpio, uint8_t data, uint32_t address) {
 	switch (address) {
-	case 0x2070:
+	case 0x2060:
 		gpio.direction = data;
 		break ;
-	case 0x2071:
+	case 0x2061:
 		gpio.output = data;
 		break ;
-	case 0x2072:
+	case 0x2062:
 		gpio.unknown = data & 0xF0;
 		break ;
 	default:
@@ -45,18 +46,14 @@ void GPIO::write(GPIO::State& gpio, uint8_t data, uint32_t address) {
 	}
 
 	if (gpio.direction & 0b0100) {
-		EEPROM::setDataPin(gpio.eeprom, EEPROM::PIN_FLOAT);
-	} else if (gpio.output & 0b0100) {
-		EEPROM::setDataPin(gpio.eeprom, EEPROM::PIN_SET);
+		EEPROM::setDataPin(gpio.eeprom, (gpio.output & 0b0100) ? EEPROM::PIN_SET :  EEPROM::PIN_RESET);
 	} else {
-		EEPROM::setDataPin(gpio.eeprom, EEPROM::PIN_RESET);
+		EEPROM::setDataPin(gpio.eeprom, EEPROM::PIN_FLOAT);
 	}
 
 	if (gpio.direction & 0b1000) {
-		EEPROM::setClockPin(gpio.eeprom, EEPROM::PIN_FLOAT);
-	} else if (gpio.output & 0b1000) {
-		EEPROM::setClockPin(gpio.eeprom, EEPROM::PIN_SET);
+		EEPROM::setClockPin(gpio.eeprom, (gpio.output & 0b1000) ? EEPROM::PIN_SET :  EEPROM::PIN_RESET);
 	} else {
-		EEPROM::setClockPin(gpio.eeprom, EEPROM::PIN_RESET);
+		EEPROM::setClockPin(gpio.eeprom, EEPROM::PIN_FLOAT);
 	}
 }
