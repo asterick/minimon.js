@@ -28,8 +28,6 @@ uint8_t GPIO::read(GPIO::State& gpio, uint32_t address) {
 	}
 }
 
-#include "debug.h"
-
 void GPIO::write(GPIO::State& gpio, uint8_t data, uint32_t address) {
 	switch (address) {
 	case 0x2060:

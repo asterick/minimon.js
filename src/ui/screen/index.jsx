@@ -174,13 +174,14 @@ export default class Registers extends Component {
 				this._ref.current.width = width;
 				this._ref.current.height = height;
 
-				if (width * 3 / 4 > height) {
-					let fit_x = Math.floor(height * 4 / 3);
+				if (width * 2 / 3 > height) {
+					let fit_x = Math.floor(height * 3 / 2);
 					gl.viewport((width - fit_x) / 2, 0, fit_x, height);
 				} else {
-					let fit_y = width * 3 / 4;
+					let fit_y = width * 2 / 3;
 					gl.viewport(0, (height - fit_y) / 2, width, fit_y);
 				}
+
 				
 				gl.clear(gl.COLOR_BUFFER_BIT);
 			}
