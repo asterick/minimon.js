@@ -77,15 +77,16 @@ static inline uint8_t add8(Machine::State& cpu, uint8_t t, uint8_t s, int carry)
 	if (cpu.reg.flag.u) {
 		t <<= 4;
 		s <<= 4;
+		carry <<= 4;
 	}
 
-	unsigned int uo = t + s + carry;
+	int uo = t + s + carry;
 
 	if (cpu.reg.flag.d) {
-		unsigned int h = (t & 0xF) + (s & 0xF) + carry;
+		int h = (t & 0xF) + (s & 0xF) + carry;
 
-		if (h >= 0x0A) uo += 0x6;
-		if (uo >= 0xA0) uo += 0x60;
+		if (h > 0x09) uo += 0x6;
+		if (uo > 0x90) uo += 0x60;
 
 		cpu.reg.flag.n = 0;
 		cpu.reg.flag.v = 0;
@@ -109,15 +110,16 @@ static inline uint8_t sub8(Machine::State& cpu, uint8_t t, uint8_t s, int carry)
 	if (cpu.reg.flag.u) {
 		t <<= 4;
 		s <<= 4;
+		carry <<= 4;
 	}
 
-	unsigned int uo = t - s - carry;
+	int uo = t - s - carry;
 
 	if (cpu.reg.flag.d) {
-		unsigned int h = (t & 0xF) - (s & 0xF) - carry;
+		int h = (t & 0xF) - (s & 0xF) - carry;
 
-		if (h >= 0x10) uo -= 0x6;
-		if (uo >= 0xA0) uo -= 0x60;
+		if (h < 0) uo -= 0x6;
+		if (uo < 0) uo -= 0x60;
 
 		cpu.reg.flag.n = 0;
 		cpu.reg.flag.v = 0;
@@ -131,7 +133,7 @@ static inline uint8_t sub8(Machine::State& cpu, uint8_t t, uint8_t s, int carry)
 		t >>= 4;
 	}
 
-	cpu.reg.flag.c = uo >= 0x100;
+	cpu.reg.flag.c = uo < 0;
 	cpu.reg.flag.z = t == 0;
 
 	return t;
@@ -207,11 +209,11 @@ static inline void op_xor8(Machine::State& cpu, uint8_t& t, uint8_t s) {
 }
 
 static inline void op_cp8(Machine::State& cpu, uint8_t t, uint8_t s) {
-	unsigned int uo = t - s;
+	int uo = t - s;
 
 	cpu.reg.flag.v = ((t ^ ~s) & (t ^ uo) & 0x80) != 0;
 	cpu.reg.flag.z = (uo & 0xFF) == 0;
-	cpu.reg.flag.c = uo >= 0x100;
+	cpu.reg.flag.c = uo < 0;
 	cpu.reg.flag.n = (t & 0x80) != 0;
 }
 
@@ -258,13 +260,14 @@ static void inst_div(Machine::State& cpu) {
 
 	cpu.reg.flag.c = 0;
 	cpu.reg.flag.z = (div & 0xFF) == 0;
-	cpu.reg.flag.n = (div & 0x80) != 0;
 
 	if (div < 0x100) {
 		cpu.reg.h = cpu.reg.hl % cpu.reg.a;
 		cpu.reg.l = (uint8_t)div;
+		cpu.reg.flag.n = (div & 0x80) != 0;
 		cpu.reg.flag.v = 0;
 	} else {
+		cpu.reg.flag.n = 1;
 		cpu.reg.flag.v = 1;
 	}
 }
@@ -277,9 +280,9 @@ static inline void op_add16(Machine::State& cpu, uint16_t& t, uint16_t s) {
 	unsigned int uo = t + s;
 
 	cpu.reg.flag.v = ((t ^ ~s) & (t ^ uo) & 0x8000) != 0;
+	cpu.reg.flag.c = uo >= 0x10000;
 	t = (uint16_t)uo;
 	cpu.reg.flag.z = t == 0;
-	cpu.reg.flag.c = uo >= 0x10000;
 	cpu.reg.flag.n = (t & 0x8000) != 0;
 }
 
@@ -287,39 +290,39 @@ static inline void op_adc16(Machine::State& cpu, uint16_t& t, uint16_t s) {
 	unsigned int uo = t + s + cpu.reg.flag.c;
 
 	cpu.reg.flag.v = ((t ^ ~s) & (t ^ uo) & 0x8000) != 0;
+	cpu.reg.flag.c = uo >= 0x10000;
 	t = (uint16_t)uo;
 	cpu.reg.flag.z = t == 0;
-	cpu.reg.flag.c = uo >= 0x10000;
 	cpu.reg.flag.n = (t & 0x8000) != 0;
 }
 
 static inline void op_sub16(Machine::State& cpu, uint16_t& t, uint16_t s) {
-	unsigned int uo = t - s;
+	int uo = t - s;
 
 	cpu.reg.flag.v = ((t ^ s) & (t ^ uo) & 0x8000) != 0;
+	cpu.reg.flag.c = uo < 0;
 	t = (uint16_t)uo;
 	cpu.reg.flag.z = t == 0;
-	cpu.reg.flag.c = uo >= 0x10000;
 	cpu.reg.flag.n = (t & 0x8000) != 0;
 }
 
 static inline void op_sbc16(Machine::State& cpu, uint16_t& t, uint16_t s) {
-	unsigned int uo = t - s - cpu.reg.flag.c;
+	int uo = t - s - cpu.reg.flag.c;
 
 	cpu.reg.flag.v = ((t ^ s) & (t ^ uo) & 0x8000) != 0;
+	cpu.reg.flag.c = uo < 0;
 	t = (uint16_t)uo;
 	cpu.reg.flag.z = t == 0;
-	cpu.reg.flag.c = uo >= 0x10000;
 	cpu.reg.flag.n = (t & 0x8000) != 0;
 }
 
 static inline void op_cp16(Machine::State& cpu, uint16_t t, uint16_t s) {
-	unsigned int uo = t - s;
+	int uo = t - s;
 
 	cpu.reg.flag.v = ((t ^ s) & (t ^ uo) & 0x8000) != 0;
+	cpu.reg.flag.c = uo < 0;
 	t = (uint16_t)uo;
 	cpu.reg.flag.z = t == 0;
-	cpu.reg.flag.c = uo >= 0x10000;
 	cpu.reg.flag.n = (t & 0x8000) != 0;
 }
 
@@ -336,7 +339,7 @@ static inline void op_dec16(Machine::State& cpu, uint16_t& t) {
  **/
 
 static void inst_pack(Machine::State& cpu) {
-	cpu.reg.a = ((cpu.reg.b & 0xF) << 4) | (cpu.reg.a & 0xF);
+	cpu.reg.a = (cpu.reg.b << 4) | (cpu.reg.a & 0xF);
 }
 
 static void inst_upck(Machine::State& cpu) {
