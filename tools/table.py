@@ -23,10 +23,6 @@ import csv
 CSV_LOCATION = os.path.join(os.path.abspath(os.path.dirname(__file__)), 's1c88.csv')
 
 op0s, op1s, op2s = [None] * 0x100, [None] * 0x100, [None] * 0x100
-op0s[0xCE] = "inst_extended_ce"
-op0s[0xCF] = "inst_extended_cf"
-
-print ("typedef int (*InstructionCall)(Machine::State& cpu);")
 
 CONDITIONS = {
     'C': 'cpu.reg.flag.c',
@@ -219,8 +215,26 @@ with open(CSV_LOCATION, 'r') as csvfile:
         if op2 != 'undefined':
         	op2s[code] = format(cycles2, op2, arg2_1, arg2_2)
 
-for i, t in enumerate([op0s, op1s, op2s]):
-    print ("static InstructionCall inst_table%i[] = {" % i)
-    for inst in t:
-        print ("\t%s," % (inst or "inst_undefined"))
-    print ("};")
+# Generate switch table
+def dump_table(instructions, indent):
+    for i, t in enumerate(instructions):
+        if not t:
+            continue
+        print ("%scase 0x%02X: return %s(cpu);" % (indent, i, t))
+        #print (i, t)
+    print ("%sdefault: return inst_undefined(cpu);" % indent)
+
+
+print ("int inst_advance(Machine::State& cpu) {")
+print("\tswitch (cpu_imm8(cpu)) {")
+dump_table(op0s, '\t')
+print("\tcase 0xCE:")
+print("\t\tswitch (cpu_imm8(cpu)) {")
+dump_table(op1s, '\t\t')
+print("\t\t}")
+print("\tcase 0xCF:")
+print("\t\tswitch (cpu_imm8(cpu)) {")
+dump_table(op2s, '\t\t')
+print("\t\t}")
+print("\t}")
+print("}")

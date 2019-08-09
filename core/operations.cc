@@ -578,15 +578,3 @@ static int inst_extended_cf(Machine::State& cpu);
 
 // Generated compound instructions and tables
 #include "table.h"
-
-static int inst_extended_ce(Machine::State& cpu) {
-	return inst_table1[cpu_imm8(cpu)](cpu);
-}
-
-static int inst_extended_cf(Machine::State& cpu) {
-	return inst_table2[cpu_imm8(cpu)](cpu);
-}
-
-int inst_advance(Machine::State& cpu) {
-	return inst_table0[cpu_imm8(cpu)](cpu);
-}
