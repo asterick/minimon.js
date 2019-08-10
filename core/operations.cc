@@ -224,11 +224,11 @@ static inline void op_bit8(Machine::State& cpu, uint8_t t, uint8_t s) {
 }
 
 static inline void op_inc8(Machine::State& cpu, uint8_t& t) {
-	cpu.reg.flag.z = ++t == 0;
+	cpu.reg.flag.z = (0 == ++t);
 }
 
 static inline void op_dec8(Machine::State& cpu, uint8_t& t) {
-	cpu.reg.flag.z = --t == 0;
+	cpu.reg.flag.z = (0 == --t);
 }
 
 static inline void op_cpl8(Machine::State& cpu, uint8_t& t) {
@@ -241,7 +241,7 @@ static inline void op_neg8(Machine::State& cpu, uint8_t& t) {
 	t = sub8(cpu, 0, t, 0);
 }
 
-static void inst_mlt(Machine::State& cpu) {
+static inline void inst_mlt(Machine::State& cpu) {
 	cpu.reg.hl = (unsigned int)cpu.reg.l * (unsigned int)cpu.reg.a;
 
 	cpu.reg.flag.z = cpu.reg.hl == 0;
@@ -250,7 +250,7 @@ static void inst_mlt(Machine::State& cpu) {
 	cpu.reg.flag.n = (cpu.reg.hl & 0x8000) != 0;
 }
 
-static void inst_div(Machine::State& cpu) {
+static inline void inst_div(Machine::State& cpu) {
 	if (cpu.reg.a == 0) {
 		IRQ::trigger(cpu, IRQ::IRQ_DIV_ZERO);
 		return ;
@@ -327,27 +327,27 @@ static inline void op_cp16(Machine::State& cpu, uint16_t t, uint16_t s) {
 }
 
 static inline void op_inc16(Machine::State& cpu, uint16_t& t) {
-	cpu.reg.flag.z = ++t == 0;
+	cpu.reg.flag.z = (0 == ++t);
 }
 
 static inline void op_dec16(Machine::State& cpu, uint16_t& t) {
-	cpu.reg.flag.z = --t == 0;
+	cpu.reg.flag.z = (0 == --t);
 }
 
 /**
  * S1C88 Auxiliary Operation Instructions
  **/
 
-static void inst_pack(Machine::State& cpu) {
+static inline void inst_pack(Machine::State& cpu) {
 	cpu.reg.a = (cpu.reg.b << 4) | (cpu.reg.a & 0xF);
 }
 
-static void inst_upck(Machine::State& cpu) {
+static inline void inst_upck(Machine::State& cpu) {
 	cpu.reg.b = cpu.reg.a >> 4;
 	cpu.reg.a = cpu.reg.a & 0xF;
 }
 
-static void inst_sep(Machine::State& cpu) {
+static inline void inst_sep(Machine::State& cpu) {
 	cpu.reg.b = (cpu.reg.a & 0x80) ? 0xFF : 0x00;
 }
 
@@ -440,7 +440,7 @@ static inline void inst_push_all(Machine::State& cpu) {
 	cpu_push8(cpu, cpu.reg.br);
 }
 
-static void inst_push_ale(Machine::State& cpu) {
+static inline void inst_push_ale(Machine::State& cpu) {
 	inst_push_all(cpu);
 	op_push8(cpu, cpu.reg.ep);
 	inst_push_ip(cpu);
@@ -467,7 +467,7 @@ static inline void inst_pop_all(Machine::State& cpu) {
 	cpu.reg.ba = cpu_pop16(cpu);
 }
 
-static void inst_pop_ale(Machine::State& cpu) {
+static inline void inst_pop_ale(Machine::State& cpu) {
 	inst_pop_ip(cpu);
 	cpu.reg.ep = cpu_pop8(cpu);
 	inst_pop_all(cpu);
@@ -487,7 +487,7 @@ static inline void op_jrl16(Machine::State& cpu, uint16_t t) {
 	cpu.reg.pc += t - 1;
 }
 
-static void inst_djr_nz_rr(Machine::State& cpu) {
+static inline void inst_djr_nz_rr(Machine::State& cpu) {
 	int8_t off = cpu_imm8(cpu);
 
 	cpu.reg.flag.z = --cpu.reg.b == 0;
@@ -535,7 +535,7 @@ static inline void op_int16(Machine::State& cpu, uint16_t t) {
 	cpu.reg.cb = cpu.reg.nb;
 }
 
-static void inst_ret(Machine::State& cpu) {
+static inline void inst_ret(Machine::State& cpu) {
 	cpu.reg.pc = cpu_pop16(cpu);
 	cpu.reg.nb = cpu.reg.cb = cpu_pop8(cpu);
 }
@@ -546,7 +546,7 @@ static inline void op_rete8(Machine::State& cpu) {
 	cpu.reg.nb = cpu.reg.cb = cpu_pop8(cpu);
 }
 
-static void inst_rets(Machine::State& cpu) {
+static inline void inst_rets(Machine::State& cpu) {
 	cpu.reg.pc = cpu_pop16(cpu);
 	cpu.reg.nb = cpu.reg.cb = cpu_pop8(cpu);
 	cpu.reg.pc += 2;

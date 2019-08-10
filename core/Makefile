@@ -28,7 +28,6 @@ dasm: $(TARGET)
 	wasm-dis $<
 
 $(TARGET): include/table.h $(OBJECTS)
-	echo $(LD)
 	$(LD) $(LDFLAGS) $(OBJECTS) -o $@
 
 include/table.h: ../tools/table.py ../tools/s1c88.csv
