@@ -154,7 +154,7 @@ def format(cycles, op, *args):
             size = default_size
         name = get_name(op, condition, *[n for s, i, m, n in args])
 
-        print ("static inline int %s(Machine::State& cpu) {" % name)
+        print ("static int %s(Machine::State& cpu) {" % name)
 
         for i, (siz, mem, ind, nam) in enumerate(args):
             if ind:
