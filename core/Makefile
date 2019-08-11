@@ -1,5 +1,5 @@
 OBJECTS=bridge.o irq.o lcd.o blitter.o operations.o machine.o debug.o tim256.o rtc.o control.o timers.o input.o eeprom.o gpio.o
-TARGET=../public/libminimon.wasm
+TARGET=libminimon.wasm
 
 LD=$(shell which wasm-ld-8)
 LD := $(if $(LD), $(LD), "wasm-ld")
@@ -20,6 +20,7 @@ CPPFLAGS = --target=wasm32-wasm -O2 -Iinclude -std=c++17 --sysroot=./wasi-libc/s
 LDFLAGS = --no-entry --allow-undefined $(EXPORTS) -L ./wasi-libc/sysroot/lib/wasm32-wasi -lc
 
 all: $(DEPDIR) $(TARGET)
+	cp libminimon* ../public
 
 clean:
 	rm -Rf $(TARGET) $(OBJECTS) include/table.h
