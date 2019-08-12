@@ -127,13 +127,12 @@ export class Minimon {
 
 		for (let i = bytes.length - 1; i >= 0; i--) this.cartridge[(i+offset) & 0x1FFFFF] = bytes[i];
 
-		this._inputState |= INPUT_CART_N;
-		this._updateinput();
-
 		setTimeout(() => {
 			this._inputState &= ~INPUT_CART_N;
 			this._updateinput();
 		}, 100);
+
+		this.eject();
 	}
 
 	eject() {
@@ -166,13 +165,5 @@ export class Minimon {
 
 	write(data, address) {
 		return this._exports.cpu_write(this._cpu_state, data, address);
-	}
-
-	translate(address) {
-		if (address & 0x8000) {
-			return (address & 0x7FFF) | (this.state.cpu.cb << 15);
-		} else {
-			return address;
-		}
 	}
 }

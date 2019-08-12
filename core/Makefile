@@ -5,6 +5,10 @@ LD=$(shell which wasm-ld-8)
 LD := $(if $(LD), $(LD), "wasm-ld")
 CC=clang-8
 
+DUMP=$(shell which llvm-dwarfdump-8)
+DUMP := $(if $(DUMP), $(DUMP), "llvm-dwarfdump")
+CC=clang-8
+
 EXPORTS = \
 	--export get_machine \
 	--export update_inputs \
@@ -35,7 +39,7 @@ include/table.h: ../tools/table.py ../tools/s1c88.csv
 	$(EMSCRIPTEN_ROOT)/tools/wasm-sourcemap.py $< -w $@ -p $(CURDIR) -s -u "http://localhost:9000/libminimon.wasm.map" -o $(@:.wasm=.wasm.map) --dwarfdump-output=$(@:.wasm=.wasm.dwarf)
 
 %.wasm.dwarf: %.wasm.full
-	llvm-dwarfdump-8 --all $< > $@
+	$(DUMP) --all $< > $@
 
 $(TARGET).full: include/table.h $(OBJECTS)
 	$(LD) $(LDFLAGS) $(OBJECTS) -o $@
