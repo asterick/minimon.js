@@ -70,7 +70,7 @@ static inline uint32_t calc_indIIY(Machine::State& cpu) {
 
 
 /**
- * Instruction templates
+ * Instruction templates (Unverified)
  **/
 
 static inline uint8_t add8(Machine::State& cpu, uint8_t t, uint8_t s, int carry) {
@@ -208,8 +208,6 @@ static inline void op_xor8(Machine::State& cpu, uint8_t& t, uint8_t s) {
 	t = out;
 }
 
-#include "debug.h"
-
 static inline void op_cp8(Machine::State& cpu, uint8_t t, uint8_t s) {
 	int uo = t - s;
 
@@ -261,12 +259,12 @@ static inline void inst_div(Machine::State& cpu) {
 	int div = cpu.reg.hl / cpu.reg.a;
 
 	cpu.reg.flag.c = 0;
-	cpu.reg.flag.z = (div & 0xFF) == 0;
 
 	if (div < 0x100) {
 		cpu.reg.h = cpu.reg.hl % cpu.reg.a;
 		cpu.reg.l = (uint8_t)div;
 		cpu.reg.flag.n = (div & 0x80) != 0;
+		cpu.reg.flag.z = cpu.reg.l == 0;	// Not sure when this is calculated
 		cpu.reg.flag.v = 0;
 	} else {
 		cpu.reg.flag.n = 1;
@@ -279,23 +277,23 @@ static inline void inst_div(Machine::State& cpu) {
  **/
 
 static inline void op_add16(Machine::State& cpu, uint16_t& t, uint16_t s) {
-	unsigned int uo = t + s;
+	int uo = t + s;
 
 	cpu.reg.flag.v = ((t ^ ~s) & (t ^ uo) & 0x8000) != 0;
 	cpu.reg.flag.c = uo >= 0x10000;
+	cpu.reg.flag.n = (uo & 0x8000) != 0;
 	t = (uint16_t)uo;
 	cpu.reg.flag.z = t == 0;
-	cpu.reg.flag.n = (t & 0x8000) != 0;
 }
 
 static inline void op_adc16(Machine::State& cpu, uint16_t& t, uint16_t s) {
-	unsigned int uo = t + s + cpu.reg.flag.c;
+	int uo = t + s + cpu.reg.flag.c;
 
 	cpu.reg.flag.v = ((t ^ ~s) & (t ^ uo) & 0x8000) != 0;
 	cpu.reg.flag.c = uo >= 0x10000;
+	cpu.reg.flag.n = (uo & 0x8000) != 0;
 	t = (uint16_t)uo;
 	cpu.reg.flag.z = t == 0;
-	cpu.reg.flag.n = (t & 0x8000) != 0;
 }
 
 static inline void op_sub16(Machine::State& cpu, uint16_t& t, uint16_t s) {
@@ -303,9 +301,9 @@ static inline void op_sub16(Machine::State& cpu, uint16_t& t, uint16_t s) {
 
 	cpu.reg.flag.v = ((t ^ s) & (t ^ uo) & 0x8000) != 0;
 	cpu.reg.flag.c = uo < 0;
+	cpu.reg.flag.n = (uo & 0x8000) != 0;
 	t = (uint16_t)uo;
 	cpu.reg.flag.z = t == 0;
-	cpu.reg.flag.n = (t & 0x8000) != 0;
 }
 
 static inline void op_sbc16(Machine::State& cpu, uint16_t& t, uint16_t s) {
@@ -313,9 +311,9 @@ static inline void op_sbc16(Machine::State& cpu, uint16_t& t, uint16_t s) {
 
 	cpu.reg.flag.v = ((t ^ s) & (t ^ uo) & 0x8000) != 0;
 	cpu.reg.flag.c = uo < 0;
+	cpu.reg.flag.n = (uo & 0x8000) != 0;
 	t = (uint16_t)uo;
 	cpu.reg.flag.z = t == 0;
-	cpu.reg.flag.n = (t & 0x8000) != 0;
 }
 
 static inline void op_cp16(Machine::State& cpu, uint16_t t, uint16_t s) {
@@ -323,9 +321,9 @@ static inline void op_cp16(Machine::State& cpu, uint16_t t, uint16_t s) {
 
 	cpu.reg.flag.v = ((t ^ s) & (t ^ uo) & 0x8000) != 0;
 	cpu.reg.flag.c = uo < 0;
+	cpu.reg.flag.n = (uo & 0x8000) != 0;
 	t = (uint16_t)uo;
 	cpu.reg.flag.z = t == 0;
-	cpu.reg.flag.n = (t & 0x8000) != 0;
 }
 
 static inline void op_inc16(Machine::State& cpu, uint16_t& t) {
@@ -354,7 +352,7 @@ static inline void inst_sep(Machine::State& cpu) {
 }
 
 /**
- * S1C88 Rotate and shift instructions
+ * S1C88 Rotate and shift instructions (unverified)
  **/
 
 static inline void op_rl8(Machine::State& cpu, uint8_t& t) {
@@ -492,7 +490,7 @@ static inline void op_jrl16(Machine::State& cpu, uint16_t t) {
 static inline void inst_djr_nz_rr(Machine::State& cpu) {
 	int8_t off = cpu_imm8(cpu);
 
-	cpu.reg.flag.z = --cpu.reg.b == 0;
+	cpu.reg.flag.z = 0 == --cpu.reg.b;
 	if (!cpu.reg.flag.z) {
 		cpu.reg.cb = cpu.reg.nb;
 		cpu.reg.pc += off - 1;
@@ -500,8 +498,8 @@ static inline void inst_djr_nz_rr(Machine::State& cpu) {
 }
 
 static inline void op_jp16(Machine::State& cpu, uint16_t t) {
-	cpu.reg.cb = cpu.reg.nb;
 	cpu.reg.pc = t;
+	cpu.reg.cb = cpu.reg.nb;
 }
 
 static inline void op_cars8(Machine::State& cpu, uint8_t t) {

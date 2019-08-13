@@ -72,7 +72,7 @@ export class Minimon {
 		this.reset();
 
 		this.breakpoints = [];
-		this.running = false;
+		this.running = true;
 	}
 
 	get running() {
