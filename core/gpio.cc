@@ -8,7 +8,7 @@ void GPIO::reset(GPIO::State& gpio) {
 }
 
 static uint8_t getBusState(GPIO::State& gpio) {
-	uint8_t inputs = 0b01000000
+	uint8_t inputs = 0b11110011
 		| (EEPROM::getClockPin(gpio.eeprom) ? 0b1000 : 0)
 		| (EEPROM::getDataPin(gpio.eeprom) ? 0b0100 : 0);
 

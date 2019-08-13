@@ -350,7 +350,7 @@ static inline void inst_sep(Machine::State& cpu) {
 }
 
 /**
- * S1C88 Rotate and shift instructions (unverified)
+ * S1C88 Rotate and shift instructions
  **/
 
 static inline void op_rl8(Machine::State& cpu, uint8_t& t) {
@@ -371,22 +371,23 @@ static inline void op_rlc8(Machine::State& cpu, uint8_t& t) {
 static inline void op_rr8(Machine::State& cpu, uint8_t& t) {
 	auto old = t;
 	t = (t >> 1) | (cpu.reg.flag.c << 7);
-	cpu.reg.flag.c = old & 1;
+	cpu.reg.flag.c = (old & 1) != 0;
 	cpu.reg.flag.z = (t == 0);
 	cpu.reg.flag.n = (t & 0x80) != 0;
 }
 
 static inline void op_rrc8(Machine::State& cpu, uint8_t& t) {
-	cpu.reg.flag.c = (t & 1);
+	cpu.reg.flag.c = (t & 1) != 0;
 	t = (t >> 1) | (t << 7);
 	cpu.reg.flag.z = (t == 0);
 	cpu.reg.flag.n = (t & 0x80) != 0;
 }
 
 static inline void op_sla8(Machine::State& cpu, uint8_t& t) {
-	cpu.reg.flag.c = (t & 0x80) != 0;
-	cpu.reg.flag.v = ((t ^ (t << 1)) & 0x80) != 0;
+	auto old = t;
 	t = t << 1;
+	cpu.reg.flag.c = (old & 0x80) != 0;
+	cpu.reg.flag.v = ((t ^ old) & 0x80) != 0;
 	cpu.reg.flag.z = (t == 0);
 	cpu.reg.flag.n = (t & 0x80) != 0;
 }
@@ -399,7 +400,7 @@ static inline void op_sll8(Machine::State& cpu, uint8_t& t) {
 }
 
 static inline void op_sra8(Machine::State& cpu, uint8_t& t) {
-	cpu.reg.flag.c = t & 1;
+	cpu.reg.flag.c = (t & 1) != 0;
 	t = (t >> 1) | (t & 0x80);
 	cpu.reg.flag.v = 0;
 	cpu.reg.flag.z = (t == 0);
@@ -407,7 +408,7 @@ static inline void op_sra8(Machine::State& cpu, uint8_t& t) {
 }
 
 static inline void op_srl8(Machine::State& cpu, uint8_t& t) {
-	cpu.reg.flag.c = t & 1;
+	cpu.reg.flag.c = (t & 1) != 0;
 	t = t >> 1;
 	cpu.reg.flag.z = (t == 0);
 	cpu.reg.flag.n = 0;

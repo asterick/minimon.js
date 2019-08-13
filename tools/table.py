@@ -33,6 +33,7 @@ CONDITIONS = {
     'NV': '!cpu.reg.flag.v',
     'M': 'cpu.reg.flag.n',
     'P': '!cpu.reg.flag.n',
+
     'LT': 'cpu.reg.flag.n != cpu.reg.flag.v',
     'LE': '(cpu.reg.flag.n != cpu.reg.flag.v) || cpu.reg.flag.z',
     'GT': '(cpu.reg.flag.n == cpu.reg.flag.v) && !cpu.reg.flag.z',
