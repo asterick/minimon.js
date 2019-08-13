@@ -29,16 +29,8 @@ export class Disassembler {
 		this._system = system;
 	}
 
-	_translate(address) {
-		if (address & 0x8000) {
-			return (address & 0x7FFF) | (this._system.state.cpu.cb << 15);
-		} else {
-			return address;
-		}
-	}
-
 	_read8() {
-		const data = this._system.read(this._translate(this._address++), true);
+		const data = this._system.read(this._system.translate(this._address++), true);
 		this._data.push(data);
 		return data;
 	}
@@ -57,7 +49,7 @@ export class Disassembler {
 	}
 
 	_pcRelative(p) {
-		return this._translate(p + this._address - 1);
+		return this._system.translate(p + this._address - 1);
 	}
 
 	_processArg(arg) {
@@ -188,7 +180,7 @@ export class Disassembler {
 	}
 
 	next() {
-		const address = this._translate(this._address);
+		const address = this._system.translate(this._address);
 
 		this._data = [];
 

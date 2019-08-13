@@ -31,10 +31,20 @@ tr.active {
 
 .disasm td:nth-child(3) {
 	min-width: 6ch;
+	position: relative;
 }
 
 .disasm td:nth-child(4) {
 	min-width: 20ch;
+}
+
+.breakpoint:before {
+	content: '\25CF';
+	color: $magenta;
+	display: inline;
+	position: absolute;
+	padding-right: 2px;
+	transform: translateX(-100%);
 }
 
 .disasm td:nth-child(4) span:not(:first-child):before {

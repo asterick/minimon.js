@@ -69,6 +69,16 @@ class Disassembly extends Component {
 		}
 	}
 
+	onClick(address) {
+		const system = this.context;
+
+		if (system.breakpoints.indexOf(address) >= 0) {
+			system.breakpoints = system.breakpoints.filter((v) => v != address);
+		} else {
+			system.breakpoints.push(address);
+		}
+	}
+
 	render() {
 		const { target } = this.props;
 
@@ -85,10 +95,10 @@ class Disassembly extends Component {
 						<tbody>
 							{
 							lines.map(line =>
-								<tr key={line.address} className={(target == line.address) ? classes['active'] : ''}>
+								<tr onClick={() => this.onClick(line.address)} key={line.address} className={(target == line.address) ? classes['active'] : ''}>
 									<td className={classes["address"]}>{toHex(line.address, 6)}</td>
 									<td>{line.data.map((v, i) => <span className={classes['byte-cell']} key={i}>{toHex(v, 2)}</span>)}</td>
-									<td>{line.op}</td>
+									<td className={system.breakpoints && system.breakpoints.indexOf(line.address) >= 0 ? classes['breakpoint'] : ''}>{line.op}</td>
 									<td>{line.args.map((s, i) => <span key={i}>{s}</span>)}</td>
 									<td>{line.comment}</td>
 								</tr>)

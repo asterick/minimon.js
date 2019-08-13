@@ -71,6 +71,8 @@ export class Minimon {
 		this._inputState = 0b1111111111; // No cartridge inserted, no IRQ
 		this.reset();
 
+		this.breakpoints = [0x2102];
+
 		this.running = true;
 	}
 
@@ -91,7 +93,20 @@ export class Minimon {
 
 			time = now;
 
-			this._exports.cpu_advance(this._cpu_state, delta);
+			if (this.breakpoints) {
+				this.state.clocks += (delta * 4000000 / 1000) | 0;	// advance our clock
+
+				while (this.state.clocks > 0) {
+					if (this.breakpoints.indexOf(this.translate(this.state.cpu.pc)) >= 0) {
+						this.running = false;
+						break ;
+					}
+
+					this._exports.cpu_step(this._cpu_state);
+				}
+			} else {
+				this._exports.cpu_advance(this._cpu_state, delta);
+			}
 			this.update();
 		}
 
@@ -149,6 +164,14 @@ export class Minimon {
 	}
 
 	// WASM shim functions
+	translate(address) {
+		if (address & 0x8000) {
+			return (address & 0x7FFF) | (this.state.cpu.cb << 15);
+		} else {
+			return address;
+		}
+	}
+
 	step() {
 		this._exports.cpu_step(this._cpu_state);
 		this.update();

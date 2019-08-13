@@ -101,6 +101,9 @@ static const StructTable table[] = {
 	GPIO::State gpio;
 	LCD::State lcd;
 	Blitter::State blitter;
+	union {
+	 	Blitter::Overlay overlay;
+	};
 	*/
 
 	{ TYPE_UINT8, "bus_cap", &machine_state.bus_cap },
@@ -109,11 +112,6 @@ static const StructTable table[] = {
 	{ TYPE_BOOL, "sleeping", &machine_state.sleeping },
 	{ TYPE_BOOL, "halted", &machine_state.sleeping },
 	{ TYPE_UINT8, "ram", &machine_state.ram, RAM_SIZE },
-	/*
-	union {
-	 	Blitter::Overlay overlay;
-	};
-	*/
 
 	{ TYPE_END }
 };
