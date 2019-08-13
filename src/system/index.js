@@ -71,9 +71,8 @@ export class Minimon {
 		this._inputState = 0b1111111111; // No cartridge inserted, no IRQ
 		this.reset();
 
-		this.breakpoints = [0x2102];
-
-		this.running = true;
+		this.breakpoints = [];
+		this.running = false;
 	}
 
 	get running() {

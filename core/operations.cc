@@ -208,13 +208,15 @@ static inline void op_xor8(Machine::State& cpu, uint8_t& t, uint8_t s) {
 	t = out;
 }
 
+#include "debug.h"
+
 static inline void op_cp8(Machine::State& cpu, uint8_t t, uint8_t s) {
 	int uo = t - s;
 
-	cpu.reg.flag.v = ((t ^ ~s) & (t ^ uo) & 0x80) != 0;
+	cpu.reg.flag.v = ((t ^ s) & (t ^ uo) & 0x80) != 0;
 	cpu.reg.flag.z = (uo & 0xFF) == 0;
 	cpu.reg.flag.c = uo < 0;
-	cpu.reg.flag.n = (t & 0x80) != 0;
+	cpu.reg.flag.n = (uo & 0x80) != 0;
 }
 
 static inline void op_bit8(Machine::State& cpu, uint8_t t, uint8_t s) {

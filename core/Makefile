@@ -19,7 +19,6 @@ EXPORTS = \
 	--export cpu_write \
 	--export get_description
 
-CFLAGS = --target=wasm32-wasm -O2 -Iinclude -std=c99 --sysroot=./wasi-libc/sysroot -g
 CPPFLAGS = --target=wasm32-wasm -O2 -Iinclude -std=c++17 --sysroot=./wasi-libc/sysroot -g
 LDFLAGS = --no-entry --allow-undefined $(EXPORTS) -L ./wasi-libc/sysroot/lib/wasm32-wasi -lc
 
@@ -35,17 +34,14 @@ dasm: $(TARGET)
 include/table.h: ../tools/table.py ../tools/s1c88.csv
 	python3 ../tools/table.py > include/table.h
 
-%.wasm: %.wasm.full %.wasm.dwarf
-	$(EMSCRIPTEN_ROOT)/tools/wasm-sourcemap.py $< -w $@ -p $(CURDIR) -s -u "http://localhost:9000/libminimon.wasm.map" -o $(@:.wasm=.wasm.map) --dwarfdump-output=$(@:.wasm=.wasm.dwarf)
+#%.wasm: %.wasm.full %.wasm.dwarf
+#	$(EMSCRIPTEN_ROOT)/tools/wasm-sourcemap.py $< -w $@ -p $(CURDIR) -s -u "http://localhost:9000/libminimon.wasm.map" -o $(@:.wasm=.wasm.map) --dwarfdump-output=$(@:.wasm=.wasm.dwarf)
 
-%.wasm.dwarf: %.wasm.full
-	$(DUMP) --all $< > $@
+#%.wasm.dwarf: %.wasm.full
+#	$(DUMP) --all $< > $@
 
-$(TARGET).full: include/table.h $(OBJECTS)
+$(TARGET): include/table.h $(OBJECTS)
 	$(LD) $(LDFLAGS) $(OBJECTS) -o $@
-
-%.o: %.c include/table.h include/*.h
-	$(CC) $(CFLAGS) $< -c -o $@
 
 %.o: %.cc include/table.h include/*.h
 	$(CC) $(CPPFLAGS) $< -c -o $@
