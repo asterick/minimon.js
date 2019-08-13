@@ -70,7 +70,7 @@ static inline uint32_t calc_indIIY(Machine::State& cpu) {
 
 
 /**
- * Instruction templates (Unverified)
+ * Instruction templates
  **/
 
 static inline uint8_t add8(Machine::State& cpu, uint8_t t, uint8_t s, int carry) {
@@ -80,30 +80,29 @@ static inline uint8_t add8(Machine::State& cpu, uint8_t t, uint8_t s, int carry)
 		carry <<= 4;
 	}
 
-	int uo = t + s + carry;
+	int o = t + s + carry;
 
 	if (cpu.reg.flag.d) {
 		int h = (t & 0xF) + (s & 0xF) + carry;
 
-		if (h > 0x09) uo += 0x6;
-		if (uo > 0x90) uo += 0x60;
+		if (h > 0x09) o += 0x6;
+		if (o > 0x90) o += 0x60;
 
-		cpu.reg.flag.n = 0;
 		cpu.reg.flag.v = 0;
+		cpu.reg.flag.n = 0;
 	} else {
-		cpu.reg.flag.v = ((t ^ ~s) & (t ^ uo) & 0x80) != 0;
-		cpu.reg.flag.n = (uo & 0x80) != 0;
+		cpu.reg.flag.v = ((t ^ ~s) & (t ^ o) & 0x80) != 0;
+		cpu.reg.flag.n = (o & 0x80) != 0;
 	}
 
-	t = (uint8_t)uo;
+	cpu.reg.flag.c = o >= 0x100;
+	cpu.reg.flag.z = (o & 0xFF) == 0;
+
 	if (cpu.reg.flag.u) {
-		t >>= 4;
+		return (o & 0xF0) >> 4;
+	} else {
+		return o & 0xFF;
 	}
-
-	cpu.reg.flag.z = t == 0;
-	cpu.reg.flag.c = uo >= 0x100;
-
-	return t;
 }
 
 static inline uint8_t sub8(Machine::State& cpu, uint8_t t, uint8_t s, int carry) {
@@ -113,30 +112,29 @@ static inline uint8_t sub8(Machine::State& cpu, uint8_t t, uint8_t s, int carry)
 		carry <<= 4;
 	}
 
-	int uo = t - s - carry;
+	int o = t - s - carry;
 
 	if (cpu.reg.flag.d) {
 		int h = (t & 0xF) - (s & 0xF) - carry;
 
-		if (h < 0) uo -= 0x6;
-		if (uo < 0) uo -= 0x60;
+		if (h < 0) o -= 0x6;
+		if (o < 0) o -= 0x60;
 
-		cpu.reg.flag.n = 0;
 		cpu.reg.flag.v = 0;
+		cpu.reg.flag.n = 0;
 	} else {
-		cpu.reg.flag.v = ((t ^ s) & (t ^ uo) & 0x80) != 0;
+		cpu.reg.flag.v = ((t ^ s) & (t ^ o) & 0x80) != 0;
 		cpu.reg.flag.n = (t & 0x80) != 0;
 	}
 
-	t = (uint8_t) uo;
+	cpu.reg.flag.c = o < 0;
+	cpu.reg.flag.z = (o & 0xFF) == 0;
+
 	if (cpu.reg.flag.u) {
-		t >>= 4;
+		return (o & 0xF0) >> 4;
+	} else {
+		return o & 0xFF;
 	}
-
-	cpu.reg.flag.c = uo < 0;
-	cpu.reg.flag.z = t == 0;
-
-	return t;
 }
 
 /**
