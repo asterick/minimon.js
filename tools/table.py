@@ -191,13 +191,12 @@ def format(cycles, op, *args):
     except:
         name = get_name(op, condition, *args)
 
-
         print ("int clock_%s(Machine::State& cpu) {" % name)
         print ("\t%s(cpu);" % name)
         print ("\treturn %i;" % cycles)
         print ("}\n")
-        return "clock_%s" % name
 
+        return "clock_%s" % name
 
 with open(CSV_LOCATION, 'r') as csvfile:
     spamreader = csv.reader(csvfile)
@@ -224,17 +223,16 @@ def dump_table(instructions, indent):
         #print (i, t)
     print ("%sdefault: return inst_undefined(cpu);" % indent)
 
-
 print ("int inst_advance(Machine::State& cpu) {")
-print("\tswitch (cpu_imm8(cpu)) {")
+print ("\tswitch (cpu_imm8(cpu)) {")
 dump_table(op0s, '\t')
-print("\tcase 0xCE:")
-print("\t\tswitch (cpu_imm8(cpu)) {")
+print ("\tcase 0xCE:")
+print ("\t\tswitch (cpu_imm8(cpu)) {")
 dump_table(op1s, '\t\t')
-print("\t\t}")
-print("\tcase 0xCF:")
-print("\t\tswitch (cpu_imm8(cpu)) {")
+print ("\t\t}")
+print ("\tcase 0xCF:")
+print ("\t\tswitch (cpu_imm8(cpu)) {")
 dump_table(op2s, '\t\t')
-print("\t\t}")
-print("\t}")
-print("}")
+print ("\t\t}")
+print ("\t}")
+print ("}")

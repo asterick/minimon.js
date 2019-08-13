@@ -80,6 +80,13 @@ static const StructTable rtc_table[] = {
 	{ TYPE_END }
 };
 
+static const int CTRL_SIZES[] = { 3, - 1};
+
+static const StructTable ctrl_table[] = {
+	{ TYPE_UINT8, "data", &machine_state.ctrl.data, CTRL_SIZES },
+	{ TYPE_END }
+};
+
 static const int RAM_SIZE[] = { 0x1000, -1 };
 static const StructTable table[] = {
 	{ TYPE_STRUCT, "cpu", reg_table },
@@ -87,8 +94,8 @@ static const StructTable table[] = {
 	{ TYPE_STRUCT, "tim256", tim256_table },
 	{ TYPE_STRUCT, "irq", irq_table },
 
+	{ TYPE_STRUCT, "ctrl", ctrl_table },
 	/*
-	Control::State ctrl;
 	Timers::State timers;
 	Input::State input;
 	GPIO::State gpio;
