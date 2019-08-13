@@ -571,12 +571,10 @@ static void inst_slp(Machine::State& cpu) {
 }
 
 static int inst_undefined(Machine::State& cpu) {
+	// This is not strictly correct, but we want to treat this like it's a bad thing
 	cpu.status = Machine::STATUS_CRASHED;
 	return 0;
 }
-
-static int inst_extended_ce(Machine::State& cpu);
-static int inst_extended_cf(Machine::State& cpu);
 
 // Generated compound instructions and tables
 #include "table.h"

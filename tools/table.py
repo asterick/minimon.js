@@ -160,8 +160,10 @@ def format(cycles, op, *args):
             if ind:
                 print ("\tconst auto addr%i = calc_%s(cpu);" % (i, nam))
                 
+                safety = "" if "Write" in directions[i] else "const "
+
                 if "Read" in directions[i]:
-                    print ("\tuint%i_t data%i = cpu_read%s(cpu, addr%i);" % (size, i, size, i))
+                    print ("\t%suint%i_t data%i = cpu_read%s(cpu, addr%i);" % (safety, size, i, size, i))
                 else:
                     print ("\tuint%i_t data%i;" % (size, i))
             elif mem:
@@ -198,6 +200,15 @@ def format(cycles, op, *args):
 
         return "clock_%s" % name
 
+# Generate switch table
+def dump_table(instructions, indent):
+    for i, t in enumerate(instructions):
+        if not t:
+            continue
+        print ("%scase 0x%02X: return %s(cpu);" % (indent, i, t))
+        #print (i, t)
+    print ("%sdefault: return inst_undefined(cpu);" % indent)
+
 with open(CSV_LOCATION, 'r') as csvfile:
     spamreader = csv.reader(csvfile)
 
@@ -213,15 +224,6 @@ with open(CSV_LOCATION, 'r') as csvfile:
         	op1s[code] = format(cycles1, op1, arg1_1, arg1_2)
         if op2 != 'undefined':
         	op2s[code] = format(cycles2, op2, arg2_1, arg2_2)
-
-# Generate switch table
-def dump_table(instructions, indent):
-    for i, t in enumerate(instructions):
-        if not t:
-            continue
-        print ("%scase 0x%02X: return %s(cpu);" % (indent, i, t))
-        #print (i, t)
-    print ("%sdefault: return inst_undefined(cpu);" % indent)
 
 print ("int inst_advance(Machine::State& cpu) {")
 print ("\tswitch (cpu_imm8(cpu)) {")
