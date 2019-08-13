@@ -77,6 +77,8 @@ class Disassembly extends Component {
 		} else {
 			system.breakpoints.push(address);
 		}
+
+		this.setState({})
 	}
 
 	render() {
