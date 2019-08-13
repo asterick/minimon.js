@@ -109,8 +109,7 @@ static const StructTable table[] = {
 	{ TYPE_UINT8, "bus_cap", &machine_state.bus_cap },
 	{ TYPE_INT32, "clocks", &machine_state.clocks },
 	{ TYPE_INT32, "osc1_overflow", &machine_state.osc1_overflow },
-	{ TYPE_BOOL, "sleeping", &machine_state.sleeping },
-	{ TYPE_BOOL, "halted", &machine_state.sleeping },
+	{ TYPE_UINT8, "status", &machine_state.status },
 	{ TYPE_UINT8, "ram", &machine_state.ram, RAM_SIZE },
 
 	{ TYPE_END }

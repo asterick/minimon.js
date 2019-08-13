@@ -33,8 +33,7 @@ extern "C" void cpu_reset(Machine::State& cpu) {
 	cpu.reg.yp = 0x00;
 	cpu.reg.nb = 0x01;
 
-	cpu.sleeping = false;
-	cpu.halted = false;
+	cpu.status = Machine::STATUS_NORMAL;
 	cpu.osc1_overflow = 0;
 
 	Control::reset(cpu.ctrl);
@@ -58,22 +57,24 @@ void cpu_clock(Machine::State& cpu, int cycles) {
 
 	cpu.osc1_overflow += osc3 * OSC1_SPEED;
 
-	LCD::clock(cpu, osc3);
-	Timers::clock(cpu, osc1, osc3);
+	if (cpu.status <= Machine::STATUS_HALTED) {
+		LCD::clock(cpu, osc3);
+		Timers::clock(cpu, osc1, osc3);
 
-	if (cpu.osc1_overflow >= OSC3_SPEED) {
-		// Assume we are not going to get more than a couple ticks out of this thing
-		do {
-			cpu.osc1_overflow -= OSC3_SPEED;
-			osc1++;
-		} while (cpu.osc1_overflow >= OSC3_SPEED);
+		if (cpu.osc1_overflow >= OSC3_SPEED) {
+			// Assume we are not going to get more than a couple ticks out of this thing
+			do {
+				cpu.osc1_overflow -= OSC3_SPEED;
+				osc1++;
+			} while (cpu.osc1_overflow >= OSC3_SPEED);
 
-		// These are the devices that only advance with OSC3
-		TIM256::clock(cpu, osc1);
-		RTC::clock(cpu, osc1);
- 	} else {
- 		osc1 = 0;
- 	}
+			// These are the devices that only advance with OSC3
+			TIM256::clock(cpu, osc1);
+			RTC::clock(cpu, osc1);
+	 	} else {
+	 		osc1 = 0;
+	 	}
+	}
 
  	// OSC3 = 4mhz oscillator, OSC1 = 32khz oscillator
 	cpu.clocks -= osc3;
@@ -84,7 +85,7 @@ extern "C" void cpu_step(Machine::State& cpu) {
 	IRQ::manage(cpu);
 
 	// CPU Core steps
-	if (!cpu.sleeping && !cpu.halted) {
+	if (cpu.status == Machine::STATUS_NORMAL) {
 		cpu_clock(cpu, inst_advance(cpu));
 	} else {
 		cpu_clock(cpu, 1); // This is lazy

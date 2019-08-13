@@ -92,6 +92,13 @@ namespace CPU {
 };
 
 namespace Machine {
+	enum Status {
+		STATUS_NORMAL,
+		STATUS_HALTED,
+		STATUS_SLEEPING,
+		STATUS_CRASHED
+	};
+
 	struct State {
 		CPU::State reg;
 		IRQ::State irq;
@@ -107,8 +114,7 @@ namespace Machine {
 		uint8_t bus_cap;
 		int clocks;
 		int osc1_overflow;
-		bool sleeping;
-		bool halted;
+		Status status;
 
 		union {
 			uint8_t ram[0x1000];

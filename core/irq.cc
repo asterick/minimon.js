@@ -58,7 +58,7 @@ void IRQ::reset(Machine::State& cpu) {
 }
 
 static inline void fire(Machine::State& cpu, Vector irq, uint8_t priority) {
-	cpu.halted = false;
+	cpu.status = Machine::STATUS_NORMAL;
 
 	cpu_push8(cpu, cpu.reg.cb);
 	cpu_push16(cpu, cpu.reg.pc);

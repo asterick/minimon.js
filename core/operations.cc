@@ -563,15 +563,15 @@ static void inst_nop(Machine::State& cpu) {
 }
 
 static void inst_halt(Machine::State& cpu) {
-	cpu.halted = true;
+	cpu.status = Machine::STATUS_HALTED;
 }
 
 static void inst_slp(Machine::State& cpu) {
-	cpu.sleeping = true;
+	cpu.status = Machine::STATUS_SLEEPING;
 }
 
 static int inst_undefined(Machine::State& cpu) {
-	cpu.sleeping = true;
+	cpu.status = Machine::STATUS_CRASHED;
 	return 0;
 }
 
