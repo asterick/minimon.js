@@ -1,4 +1,4 @@
-OBJECTS=bridge.o irq.o lcd.o blitter.o operations.o machine.o debug.o tim256.o rtc.o control.o timers.o input.o eeprom.o gpio.o
+OBJECTS=bridge.o irq.o lcd.o blitter.o operations.o machine.o debug.o tim256.o rtc.o control.o timers.o input.o eeprom.o gpio.o audio.o
 TARGET=libminimon.wasm
 
 LD=$(shell which wasm-ld-8)

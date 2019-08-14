@@ -32,6 +32,7 @@ namespace Machine { struct State; };
 #include "input.h"
 #include "eeprom.h"
 #include "gpio.h"
+#include "audio.h"
 
 const auto OSC1_SPEED	= 32768;
 const auto OSC3_SPEED	= 4000000;
@@ -110,6 +111,7 @@ namespace Machine {
 		Timers::State timers;
 		Input::State input;
 		GPIO::State gpio;
+		Audio::State audio;
 
 		uint8_t bus_cap;
 		int clocks;

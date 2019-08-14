@@ -45,6 +45,7 @@ extern "C" void cpu_reset(Machine::State& cpu) {
 	Timers::reset(cpu);
 	Input::reset(cpu.input);
 	GPIO::reset(cpu.gpio);
+	Audio::reset(cpu.audio);
 }
 
 extern "C" const void update_inputs(Machine::State& cpu, uint16_t value) {
@@ -60,6 +61,7 @@ void cpu_clock(Machine::State& cpu, int cycles) {
 	if (cpu.status <= Machine::STATUS_HALTED) {
 		LCD::clock(cpu, osc3);
 		Timers::clock(cpu, osc1, osc3);
+		Audio::clock(cpu, osc3);
 
 		if (cpu.osc1_overflow >= OSC3_SPEED) {
 			// Assume we are not going to get more than a couple ticks out of this thing
@@ -114,6 +116,11 @@ static inline uint8_t cpu_read_reg(Machine::State& cpu, uint32_t address) {
 		return Input::read(cpu.input, address);
 	case 0x2060 ... 0x2062:
 		return GPIO::read(cpu.gpio, address);
+	case 0x2070 ... 0x2071:
+		return Audio::read(cpu.audio, address);
+	case 0x2010:
+		// This should be handled properly
+		return 0b010000;
 	case 0x20FE ... 0x20FF:
 		if (cpu.ctrl.lcd_enabled) {
 			return LCD::read(cpu.lcd, address);
@@ -153,6 +160,9 @@ static inline void cpu_write_reg(Machine::State& cpu, uint8_t data, uint32_t add
 		break ;
 	case 0x2060 ... 0x2062:
 		GPIO::write(cpu.gpio, data, address);
+		break ;
+	case 0x2070 ... 0x2071:
+		Audio::write(cpu.audio, data, address);
 		break ;
 	case 0x2080 ... 0x208A:
 		Blitter::write(cpu, data, address);
