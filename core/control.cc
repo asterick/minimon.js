@@ -17,13 +17,12 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
 #include <stdint.h>
+#include <string.h>
 
 #include "control.h"
 
 void Control::reset(Control::State& ctrl) {
-	ctrl.data[0] = 0;
-	ctrl.data[1] = 0;
-	ctrl.data[2] = 0;
+	memset(&ctrl, 0, sizeof(ctrl));
 }
 
 uint8_t Control::read(Control::State& ctrl, uint32_t address) {

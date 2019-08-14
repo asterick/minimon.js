@@ -123,7 +123,7 @@ void LCD::write(LCD::State& lcd, uint8_t data, uint32_t address) {
 	if (lcd.setting_volume) {
 		lcd.volume = data & 0x3F;
 		lcd.setting_volume = false;
-		return;
+		return ;
 	}
 
 	if (address == 0x20FE) {

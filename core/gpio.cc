@@ -1,6 +1,9 @@
 #include <string.h>
 #include "machine.h"
 
+static const uint8_t EEPROM_CLOCK = 0b1000;
+static const uint8_t EEPROM_DATA = 0b0100;
+
 void GPIO::reset(GPIO::State& gpio) {
 	memset(&gpio, 0, sizeof(gpio));
 
@@ -8,9 +11,9 @@ void GPIO::reset(GPIO::State& gpio) {
 }
 
 static uint8_t getBusState(GPIO::State& gpio) {
-	uint8_t inputs = 0b11110011
-		| (EEPROM::getClockPin(gpio.eeprom) ? 0b1000 : 0)
-		| (EEPROM::getDataPin(gpio.eeprom) ? 0b0100 : 0);
+	uint8_t inputs = 0
+		| (EEPROM::getClockPin(gpio.eeprom) ? EEPROM_CLOCK : 0)
+		| (EEPROM::getDataPin(gpio.eeprom)  ? EEPROM_DATA : 0);
 
 	return (inputs & ~gpio.direction) | (gpio.output & gpio.direction);
 }
@@ -43,14 +46,14 @@ void GPIO::write(GPIO::State& gpio, uint8_t data, uint32_t address) {
 		break ;
 	}
 
-	if (gpio.direction & 0b0100) {
-		EEPROM::setDataPin(gpio.eeprom, (gpio.output & 0b0100) ? EEPROM::PIN_SET :  EEPROM::PIN_RESET);
+	if (gpio.direction & EEPROM_DATA) {
+		EEPROM::setDataPin(gpio.eeprom, (gpio.output & EEPROM_DATA) ? EEPROM::PIN_SET :  EEPROM::PIN_RESET);
 	} else {
 		EEPROM::setDataPin(gpio.eeprom, EEPROM::PIN_FLOAT);
 	}
 
-	if (gpio.direction & 0b1000) {
-		EEPROM::setClockPin(gpio.eeprom, (gpio.output & 0b1000) ? EEPROM::PIN_SET :  EEPROM::PIN_RESET);
+	if (gpio.direction & EEPROM_CLOCK) {
+		EEPROM::setClockPin(gpio.eeprom, (gpio.output & EEPROM_CLOCK) ? EEPROM::PIN_SET :  EEPROM::PIN_RESET);
 	} else {
 		EEPROM::setClockPin(gpio.eeprom, EEPROM::PIN_FLOAT);
 	}

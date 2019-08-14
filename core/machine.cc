@@ -115,7 +115,12 @@ static inline uint8_t cpu_read_reg(Machine::State& cpu, uint32_t address) {
 	case 0x2060 ... 0x2062:
 		return GPIO::read(cpu.gpio, address);
 	case 0x20FE ... 0x20FF:
-		return LCD::read(cpu.lcd, address);
+		if (cpu.ctrl.lcd_enabled) {
+			return LCD::read(cpu.lcd, address);
+		} else {
+			return cpu.bus_cap;
+		}
+		break ;
 	case 0x2080 ... 0x208F:
 	case 0x20F0 ... 0x20F8:
 		return Blitter::read(cpu, address);
@@ -153,7 +158,9 @@ static inline void cpu_write_reg(Machine::State& cpu, uint8_t data, uint32_t add
 		Blitter::write(cpu, data, address);
 		break ;
 	case 0x20FE ... 0x20FF:
-		LCD::write(cpu.lcd, data, address);
+		if (cpu.ctrl.lcd_enabled) {
+			LCD::write(cpu.lcd, data, address);
+		}
 		break ;
 	case 0x2018 ... 0x201D:
 	case 0x2030 ... 0x203F:
