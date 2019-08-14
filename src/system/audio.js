@@ -16,33 +16,25 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-#pragma once
+const BUFFER_LENGTH = 4096 / 2; // This is the size of an audio clip push
 
-#include <stdint.h>
+export default class Audio {
+	constructor() {
+		this.context = new AudioContext();
+        this.sampleRate = this.context.sampleRate;
 
-namespace Machine { struct State; };
+        this.node = this.context.createScriptProcessor(BUFFER_LENGTH, 1, 1);
+        this.node.onaudioprocess = this.process.bind(this);
 
-static const int AUDIO_BUFFER_LENGTH = 4096;
+		this.node.connect(this.context.destination);
+	}
 
-namespace Audio {
-	union State {
-		uint8_t volume;
-		uint8_t enable;
+    process(e) {
+        var audio = e.outputBuffer.getChannelData(0),
+            length = audio.length;
 
-		float output[AUDIO_BUFFER_LENGTH];
-		int write_index;
-	
-		int sampleRate;
-		int sampleAccumulator;
-		int sampleCount;
-		int sampleError;
-	};
-
-	void setSampleRate(State&, int sampleRate);
-	float* getSampleBuffer(Audio::State& audio);
-
-	void reset(State&);
-	void clock(Machine::State&, int osc3);
-	uint8_t read(State&, uint32_t address);
-	void write(State&, uint8_t data, uint32_t address);
-};
+        for(let i = 0; i < length; i++) {
+            audio[i] = 0.0;
+        }
+    }
+}

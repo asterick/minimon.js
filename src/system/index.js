@@ -17,6 +17,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
 import State from "./state";
+import Audio from "./audio";
 
 const KEYBOARD_CODES = {
 	67: 0b00000001,
@@ -53,6 +54,7 @@ export class Minimon {
 		this._exports = this._module.instance.exports;
 		this._cpu_state = this._exports.get_machine();
 		this._machineBytes = new Uint8Array(this._exports.memory.buffer);
+		this._audio = new Audio();
 
 		this.state = new State(this._exports.memory.buffer, this._exports.get_description());
 		this.cartridge = new Uint8Array(0x200000);

@@ -35,7 +35,7 @@ export default class MinimonDebugger extends Component {
 		super(props);
 
 		this.state = {
-			fullscreen: false
+			fullscreen: true
 		};
 	}
 
