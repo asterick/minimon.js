@@ -37,9 +37,6 @@ void Audio::clock(Machine::State& state, int osc3) {
 	audio.sampleError += osc3 * audio.sampleRate;
 
 	while (audio.sampleError > OSC3_SPEED) {
-		// TODO: GET TOUT FROM TIM4/5 HERE
-		audio.output[audio.write_index] = 0.0; // WRITE TOUT
-		audio.write_index = (audio.write_index + 1) % AUDIO_BUFFER_LENGTH;
 		audio.sampleError -= OSC3_SPEED;
 	}
 }
