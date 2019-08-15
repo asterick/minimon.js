@@ -50,7 +50,12 @@ class MenuItem extends Component {
 	render() {
 		const { title } = this.props;
 		
-		return <span className={style.menuitem} {... this.props}>{title}</span>
+		const keycode = this.props.keybind ? Object.keys(this.props.keybind).map((v) => {
+			if (v == 'code') v = this.props.keybind[v];
+			return v.replace(/Key/g, "")
+		}).join("+").toLowerCase() : null;
+
+		return <span className={style.menuitem} hotkey={keycode} {... this.props}>{title}</span>
 	}
 }
 

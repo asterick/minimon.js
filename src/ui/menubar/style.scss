@@ -16,11 +16,31 @@ $menu-bar-border: 2px solid $grey-dark;
 	border: 1px solid $grey-dark;
 }
 
+.menuitem[ischecked=true]:before {
+	content: '\2713';
+	color: $green;
+	position: absolute;
+	width: 2ch;
+	text-align: center;
+	left: 0;
+}
+
+.menuitem[hotkey]:after {
+	content: attr(hotkey);
+	position: absolute;
+	text-align: center;
+	right: 0;
+	padding-right: 0.5ch;
+}
+
 .menuitem {
 	color: $yellow;
 	display: block;
 	padding: 4px 1ch;
 	cursor: pointer;
+	position: relative;
+	padding-left: 2ch;
+	padding-right: 10ch;
 }
 
 .menuitem:hover, .dropdown:hover {
