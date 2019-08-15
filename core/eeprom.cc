@@ -22,11 +22,10 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "debug.h"
 
 void EEPROM::reset(EEPROM::State& state) {
-	memset(&state.data, 0, sizeof(state.data));
-
 	state.data_in = PIN_FLOAT;
 	state.data_out = PIN_FLOAT;
 	state.clock_in = PIN_FLOAT;
+	state.mode = SYSTEM_STOP;
 }
 
 void EEPROM::setClockPin(EEPROM::State& state, PinState clock) {

@@ -87,6 +87,29 @@ static const StructTable ctrl_table[] = {
 	{ TYPE_END }
 };
 
+static const int EEPROM_SIZE[] = { 0x2000, -1 };
+static const StructTable eeprom_table[] = {
+	{ TYPE_UINT8, "data", &machine_state.gpio.eeprom.data, EEPROM_SIZE },
+	/*
+	I2C_MODE mode;
+	uint8_t shift;
+	int bit;
+	unsigned address:13;
+
+	PinState data_in;
+	PinState data_out;
+	PinState clock_in;
+	*/
+	{ TYPE_END }
+};
+
+static const StructTable gpio_table[] = {
+	{ TYPE_UINT8, "output", &machine_state.gpio.output, CTRL_SIZES },
+	{ TYPE_UINT8, "direction", &machine_state.gpio.direction, CTRL_SIZES },
+	{ TYPE_STRUCT, "eeprom", eeprom_table },
+	{ TYPE_END }
+};
+
 static const int RAM_SIZE[] = { 0x1000, -1 };
 static const StructTable table[] = {
 	{ TYPE_STRUCT, "cpu", reg_table },
@@ -95,6 +118,7 @@ static const StructTable table[] = {
 	{ TYPE_STRUCT, "irq", irq_table },
 
 	{ TYPE_STRUCT, "ctrl", ctrl_table },
+	{ TYPE_STRUCT, "gpio", gpio_table },
 	/*
 	Timers::State timers;
 	Input::State input;

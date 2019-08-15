@@ -6,8 +6,9 @@
   "scripts": {
     "core": "cd core; make",
     "start": "webpack-dev-server --open --mode development",
-    "build": "webpack --mode production",
-    "test": "npm run core; webpack --config webpack.test.config.js; node test/bios.js"
+    "build": "npm run core; webpack --mode production",
+    "test": "npm run core; webpack --config webpack.test.config.js; node test/bios.js",
+    "deploy": "npm run build; scp -r public node@scyl.us:~/minimon"
   },
   "keywords": [],
   "author": "Bryon Vandiver",

@@ -35,7 +35,7 @@ export default class MinimonDebugger extends Component {
 		super(props);
 
 		this.state = {
-			fullscreen: true
+			fullscreen: false
 		};
 	}
 
@@ -95,7 +95,7 @@ export default class MinimonDebugger extends Component {
 						<Disassembler target={system.state.cpu.pc} />
 					</div>
 					<div className={style.viewer}>
-
+						<Memory baseAddress={0} memory={system.state.gpio.eeprom.data} />
 					</div>
 				</div>
 			</div>;
