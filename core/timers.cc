@@ -19,6 +19,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <string.h>
 #include "machine.h"
 
+using namespace Timers;
+
 struct TimerIRQ {
 	int lo_underflow;
 	int hi_underflow;
@@ -70,53 +72,73 @@ static inline int ticks(Timers::State& timers, bool clock_source, bool clock_ctr
 	}
 }
 
+static inline void compare(Machine::State& cpu, int vec, int ticks, int compare, int preset, int count) {
+	if (vec < 0) return ;
+
+	if (compare > preset) return ;
+
+	int compare_ticks = count - compare;
+
+	if (compare_ticks < 0) compare_ticks += preset + 1;
+		
+	if (compare_ticks < ticks) irq(cpu, vec);
+}
+
+static inline void process_timer(Machine::State& cpu, int osc1, int osc3, Timer& timer, const TimerIRQ& vects) {
+	if (timer.mode16) {
+		if (!timer.lo_running) return ;
+
+		int adv = ticks(cpu.timers, timer.lo_clock_source, timer.lo_clock_ctrl, timer.lo_clock_ratio, osc1, osc3);
+		int count = timer.count - adv;
+		
+		if (count < 0) {
+			irq(cpu, vects.hi_underflow);
+			do {
+				count += timer.preset + 1;	
+			} while (count < 0);
+		}
+
+		compare(cpu, vects.lo_compare, adv, timer.compare, timer.preset, timer.count);
+
+		timer.count = count;
+	} else {
+		if (timer.lo_running) {
+			int adv = ticks(cpu.timers, timer.lo_clock_source, timer.lo_clock_ctrl, timer.lo_clock_ratio, osc1, osc3);
+			int count = timer.count_bytes[0] - adv;
+
+			if (count < 0) {
+				irq(cpu, vects.lo_underflow);
+				do {
+					count += timer.preset_bytes[0] + 1;
+				} while (count < 0);
+			}
+
+			compare(cpu, vects.lo_compare, adv, timer.compare_bytes[0], timer.preset_bytes[0], timer.count_bytes[0]);
+
+			timer.count_bytes[0] = count;
+		}
+
+		if (timer.hi_running) {
+			int count = timer.count_bytes[1] - ticks(cpu.timers, timer.hi_clock_source, timer.hi_clock_ctrl, timer.hi_clock_ratio, osc1, osc3);
+
+			if (count < 0) {
+				irq(cpu, vects.hi_underflow);
+				do {
+					count += timer.preset_bytes[1] + 1;	
+				} while (count < 0);
+			}
+			timer.count_bytes[1] = count;
+		}
+	}
+}
+
 void Timers::clock(Machine::State& cpu, int osc1, int osc3) {
 	if (!cpu.timers.osc1_enable) osc1 = 0;
 	if (!cpu.timers.osc3_enable) osc3 = 0;
 
-	for (int i = 0; i < 3; i++) {
-		Timer& timer = cpu.timers.timer[i];
-		const TimerIRQ& vects = irqs[i];
-
-		if (timer.mode16) {
-			if (!timer.lo_running) continue ;
-
-			int count = timer.count - ticks(cpu.timers, timer.lo_clock_source, timer.lo_clock_ctrl, timer.lo_clock_ratio, osc1, osc3);
-			
-			if (count < 0) {
-				irq(cpu, vects.hi_underflow);
-				do {
-					count += timer.preset + 1;	
-				} while (count < 0);
-			}
-
-			timer.count = count;
-		} else {
-			if (timer.lo_running) {
-				int count = timer.count_bytes[0] - ticks(cpu.timers, timer.lo_clock_source, timer.lo_clock_ctrl, timer.lo_clock_ratio, osc1, osc3);
-
-				if (count < 0) {
-					irq(cpu, vects.lo_underflow);
-					do {
-						count += timer.preset_bytes[0] + 1;
-					} while (count < 0);
-				}
-				timer.count_bytes[0] = count;
-			}
-
-			if (timer.hi_running) {
-				int count = timer.count_bytes[1] - ticks(cpu.timers, timer.hi_clock_source, timer.hi_clock_ctrl, timer.hi_clock_ratio, osc1, osc3);
-
-				if (count < 0) {
-					irq(cpu, vects.hi_underflow);
-					do {
-						count += timer.preset_bytes[1] + 1;	
-					} while (count < 0);
-				}
-				timer.count_bytes[1] = count;
-			}
-		}
-	}
+	process_timer(cpu, osc1, osc3, cpu.timers.timer[0], irqs[0]);
+	process_timer(cpu, osc1, osc3, cpu.timers.timer[1], irqs[1]);
+	process_timer(cpu, osc1, osc3, cpu.timers.timer[2], irqs[2]);
 
 	cpu.timers.osc1_prescale += osc1;
 	cpu.timers.osc3_prescale += osc3;

@@ -18,7 +18,7 @@ Emulation Status
 | Blitter           | 100%       |                                       |
 | LCD (SED1565)     |  80%       | Most commands implemented             |
 | Control Registers |  80%       | Bus disable not emulated              |
-| General Timers    |  90%       | Comparison IRQs                       |
+| General Timers    |  90%       | Audio accumulator                     |
 | Input Ports       |  50%       | Debounce circuit not done             |
 | Output Ports      |   0%       |                                       |
 | GPIO Ports        |  25%       |                                       |
