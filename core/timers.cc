@@ -81,7 +81,9 @@ static inline void compare(Machine::State& cpu, int vec, int ticks, int compare,
 
 	if (compare_ticks < 0) compare_ticks += preset + 1;
 		
-	if (compare_ticks < ticks) irq(cpu, vec);
+	if (compare_ticks < ticks) {
+		IRQ::trigger(cpu, (IRQ::Vector) vec);
+	}
 }
 
 static inline void process_timer(Machine::State& cpu, int osc1, int osc3, Timer& timer, const TimerIRQ& vects) {
