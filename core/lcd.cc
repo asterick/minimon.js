@@ -31,30 +31,42 @@ void LCD::reset(LCD::State& lcd) {
 
 extern "C" void flip_screen(void*);
 
+static const uint32_t OFF_COLOR = 0xB7CAB7;
+static const uint32_t ON_COLOR = 0x041604;
+
+static inline uint8_t blend(uint8_t a, uint8_t b, float rt) {
+	return (uint8_t)(a * (1.0f - rt) + b * rt);
+}
+
+static inline uint32_t lerp(uint32_t a, uint32_t b, float rt) {
+	uint8_t ra = a & 0xFF;
+	uint8_t ga = (a >> 8) & 0xFF;
+	uint8_t ba = (a >> 16) & 0xFF;
+	uint8_t rb = b & 0xFF;
+	uint8_t gb = (b >> 8) & 0xFF;
+	uint8_t bb = (b >> 16) & 0xFF;
+
+	return 0 
+		| (blend(ra, rb, rt))
+		| (blend(ga, gb, rt) << 8)
+		| (blend(ba, bb, rt) << 16);
+}
+
 static inline uint32_t contrast(uint32_t color, uint8_t volume) {
-	uint8_t r = color & 0xFF;
-	uint8_t g = (color >> 8) & 0xFF;
-	uint8_t b = (color >> 16) & 0xFF;
-
 	if (volume < 0x20) {
-		r = 255 - (255 - r) * volume / 0x20;
-		g = 255 - (255 - g) * volume / 0x20;
-		b = 255 - (255 - b) * volume / 0x20;
+		return lerp(OFF_COLOR, color, volume / 31.0f);
 	} if (volume > 0x20) {
-		r = r * (0x3f - volume) / 0x20;
-		g = g * (0x3f - volume) / 0x20;
-		b = b * (0x3f - volume) / 0x20;
+		return lerp(color, ON_COLOR, (volume - 0x20) / 31.0f);
+	} else {
+		return color;
 	}
-
-	return (b << 16) | (g << 8) | (r);
 }
 
 static void renderline(LCD::State& lcd, int com) {
 	uint32_t* line = lcd.framebuffer[lcd.reverse_com_scan ? (63 - com) : com];
 
-	const uint32_t off = contrast(0xB7CAB7, lcd.volume);
-	const uint32_t on = contrast(0x041604, lcd.volume);
-
+	const uint32_t off = contrast(OFF_COLOR, lcd.volume);
+	const uint32_t on = contrast(ON_COLOR, lcd.volume);
 
 	int drawline = (com + lcd.start_address) % 0x40;
 	uint8_t mask = 1 << (drawline % 8);
