@@ -52,26 +52,25 @@ static inline uint32_t contrast(uint32_t color, uint8_t volume) {
 static void renderline(LCD::State& lcd, int com) {
 	uint32_t* line = lcd.framebuffer[lcd.reverse_com_scan ? (63 - com) : com];
 
-	const uint32_t off = contrast(0xFFFFFF, lcd.volume);
-	const uint32_t on = contrast(0x000000, lcd.volume);
+	const uint32_t off = contrast(0xB7CAB7, lcd.volume);
+	const uint32_t on = contrast(0x041604, lcd.volume);
 
-	if (!lcd.display_enable) {
-		memset(line, 0xFF, sizeof(lcd.framebuffer[0]));
-		return ;
-	} else if (lcd.all_on) {
-		memset(line, on, sizeof(lcd.framebuffer[0]));
-		return ;
-	}
 
 	int drawline = (com + lcd.start_address) % 0x40;
 	uint8_t mask = 1 << (drawline % 8);
 	uint8_t* current_page = lcd.gddram[drawline / 8];
 
 	for (int x = 0; x < LCD_WIDTH; x++) {
-		uint8_t byte =  current_page[lcd.adc_select ? 131 - x : x];
-		bool set = byte & mask;
-		
-		*(line++) = 0xFF000000 | (set ? on : off);
+		if (!lcd.display_enable) {
+			*(line++) = off;
+		} else if (lcd.all_on) {
+			*(line++) = on;
+		} else {
+			uint8_t byte =  current_page[lcd.adc_select ? 131 - x : x];
+			bool set = byte & mask;
+			
+			*(line++) = 0xFF000000 | (set ? on : off);
+		}
 	}
 }
 
