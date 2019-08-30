@@ -54,7 +54,7 @@ export default class Registers extends Component {
 				gl.TEXTURE_2D, 0, 
 				0, this._frameIndex * VRAM_HEIGHT,
 				VRAM_WIDTH, VRAM_HEIGHT, 
-				gl.RED_INTEGER, gl.UNSIGNED_BYTE, 
+				gl.RGBA_INTEGER, gl.UNSIGNED_BYTE, 
 				memory, address);
 		}
 	}
@@ -88,7 +88,7 @@ export default class Registers extends Component {
 
 		this._vram = gl.createTexture();
 		gl.bindTexture(gl.TEXTURE_2D, this._vram);
-		gl.texImage2D(gl.TEXTURE_2D, 0, gl.R8UI, 256, 256, 0, gl.RED_INTEGER, gl.UNSIGNED_BYTE, new Uint8Array(0x10000));
+		gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8UI, 256, 256, 0, gl.RGBA_INTEGER, gl.UNSIGNED_BYTE, new Uint8Array(0x40000));
 		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
 		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
 	}
@@ -194,11 +194,8 @@ export default class Registers extends Component {
 			gl.uniform1f(this._shader.uniforms.clock, now / 1000 % (24*60*60));
 			gl.uniform1f(this._shader.uniforms.time, delta);
 			gl.uniform1i(this._shader.uniforms.frame, this._frameIndex);
-			gl.uniform3f(this._shader.uniforms.color_light, 0xB7 / 255.0, 0xCA / 255.0, 0xB7 / 255.0);
-			gl.uniform3f(this._shader.uniforms.color_dark, 0x4 / 255.0, 0x16 / 255.0, 0x04 / 255.0);
 
 			gl.uniform1f(this._shader.uniforms.analog, 50);
-			gl.uniform1i(this._shader.uniforms.dot_mask, 0);
 			gl.uniform1i(this._shader.uniforms.simulate_gray, 1);
 
 			gl.enableVertexAttribArray(this._shader.attributes.vertex);

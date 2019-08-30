@@ -44,7 +44,7 @@ namespace LCD {
 		uint8_t	operating_mode;
 		uint8_t scanline;
 
-		uint8_t framebuffer[64][96];
+		uint32_t framebuffer[64][96];
 
 		int 	overflow;
 	};
