@@ -62,22 +62,33 @@ static inline uint32_t contrast(uint32_t color, uint8_t volume) {
 	}
 }
 
-static void renderline(LCD::State& lcd, int com) {
-	uint32_t* line = lcd.framebuffer[lcd.reverse_com_scan ? (63 - com) : com];
+static void fill(LCD::State& lcd, uint32_t color) {
+	uint32_t* target = &lcd.framebuffer[0][0];
+	for (int i = 96*64; i > 0; i--) {
+		*(target++) = color;
+	}
+}
 
+static void render(LCD::State& lcd) {
 	const uint32_t off = contrast(OFF_COLOR, lcd.volume);
 	const uint32_t on = contrast(ON_COLOR, lcd.volume);
 
-	int drawline = (com + lcd.start_address) % 0x40;
-	uint8_t mask = 1 << (drawline % 8);
-	uint8_t* current_page = lcd.gddram[drawline / 8];
+	if (!lcd.display_enable) {
+		fill(lcd, off);
+		return ;
+	} else if (lcd.all_on) {
+		fill(lcd, on);
+		return ;
+	}
 
-	for (int x = 0; x < LCD_WIDTH; x++) {
-		if (!lcd.display_enable) {
-			*(line++) = off;
-		} else if (lcd.all_on) {
-			*(line++) = on;
-		} else {
+	for (int com = 0; com <= 63; com++) {
+		uint32_t* line = lcd.framebuffer[lcd.reverse_com_scan ? (63 - com) : com];
+
+		int drawline = (com + lcd.start_address) % 0x40;
+		uint8_t mask = 1 << (drawline % 8);
+		uint8_t* current_page = lcd.gddram[drawline / 8];
+
+		for (int x = 0; x < LCD_WIDTH; x++) {
 			uint8_t byte =  current_page[lcd.adc_select ? 131 - x : x];
 			bool set = byte & mask;
 			
@@ -91,12 +102,13 @@ void LCD::clock(Machine::State& cpu, int osc3) {
 
 	while (cpu.lcd.overflow >= OSC3_SPEED) {
 		if (cpu.lcd.scanline >= 0x40) {
+			render(cpu.lcd);
 			flip_screen(cpu.lcd.framebuffer);
 
 			cpu.lcd.scanline = 0;
 			Blitter::clock(cpu);
 		} else {
-			renderline(cpu.lcd, cpu.lcd.scanline++);
+			cpu.lcd.scanline++;
 		}
 
 		cpu.lcd.overflow -= OSC3_SPEED;
