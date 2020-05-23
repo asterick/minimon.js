@@ -1,7 +1,7 @@
 {
   "name": "minimon.js",
   "version": "1.0.0",
-  "description": "My personal webpage",
+  "description": "Pokemon mini emulator",
   "main": "server/index.js",
   "scripts": {
     "core": "cd core; make",
