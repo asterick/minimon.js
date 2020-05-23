@@ -1,13 +1,9 @@
 OBJECTS=bridge.o irq.o lcd.o blitter.o operations.o machine.o debug.o tim256.o rtc.o control.o timers.o input.o eeprom.o gpio.o audio.o
 TARGET=libminimon.wasm
 
-LD=$(shell which wasm-ld-8)
-LD := $(if $(LD), $(LD), "wasm-ld")
-CC=clang-8
-
-DUMP=$(shell which llvm-dwarfdump-8)
-DUMP := $(if $(DUMP), $(DUMP), "llvm-dwarfdump")
-CC=clang-8
+LD=wasm-ld
+DUMP=llvm-dwarfdump
+CC=clang
 
 EXPORTS = \
 	--export get_machine \
