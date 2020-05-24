@@ -124,7 +124,7 @@ static inline uint8_t sub8(Machine::State& cpu, uint8_t t, uint8_t s, int carry)
 		cpu.reg.flag.n = 0;
 	} else {
 		cpu.reg.flag.v = ((t ^ s) & (t ^ o) & 0x80) != 0;
-		cpu.reg.flag.n = (t & 0x80) != 0;
+		cpu.reg.flag.n = (o & 0x80) != 0;
 	}
 
 	cpu.reg.flag.c = o < 0;
