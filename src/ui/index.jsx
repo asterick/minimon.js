@@ -70,18 +70,24 @@ let defaultLayout = {
 export default class UI extends React.Component {
 	static contextType = SystemContext;
 
-	getRef = (r) => {
-		this.dockLayout = r;
-	};
-
-	state = {saved: null};
+	reloadLayout(r) {
+		let layout = window.localStorage.getItem("minimon-layout");
+		
+		if (layout) {
+			try {
+				r.loadLayout(JSON.parse(layout));
+			} catch(e) {
+				console.error("Could not load layour");
+			}
+		}
+	}
 
 	render() {
-		console.log(this.state.saved)
-
-		return (
-				<DockLayout ref={this.getRef} defaultLayout={defaultLayout}
-										style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0}}/>
-		);
+		return <DockLayout 
+			ref={(r) => this.reloadLayout(r)} 
+			defaultLayout={defaultLayout} 
+			onLayoutChange={(newLayout) => window.localStorage.setItem("minimon-layout",JSON.stringify(newLayout))}
+			style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0}}
+			/>;
 	}
 }
