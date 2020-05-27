@@ -66,6 +66,27 @@ export default class Registers extends Component {
 		delete this.context.repaint;
 	}
 
+    onDragOver (e) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = "copy";
+    }
+
+    onDragLeave () {
+    }
+
+    onDrop (e) {
+        e.preventDefault();
+
+        var file = e.dataTransfer.files[0],
+            reader = new FileReader();
+
+        reader.onload = (e) => {
+        	this.context.load(e.target.result);
+        };
+
+        reader.readAsArrayBuffer(file);
+    }
+
 	init() {
 		const gl = this._ctx;
 
@@ -209,7 +230,10 @@ export default class Registers extends Component {
 
 	render() {
 		return (
-			<div className={classes.screen}>
+			<div onDragOver={(e) => this.onDragOver(e)}
+				onDragLeave={(e) => this.onDragLeave(e)}
+				onDrop={(e) => this.onDrop(e)} 
+				className={classes.screen}>
 				<canvas ref={this._ref} />
 			</div>
 		);

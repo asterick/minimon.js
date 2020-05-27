@@ -69,7 +69,7 @@ let defaultLayout = {
 
 export default class UI extends React.Component {
 	static contextType = SystemContext;
-
+	
 	reloadLayout(r) {
 		let layout = window.localStorage.getItem("minimon-layout");
 		

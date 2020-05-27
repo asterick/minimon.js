@@ -76,7 +76,6 @@ class Memory extends Component {
 		return <div className={classes['memory']}>
 			<AutoSizer>
 				{({ height, width }) => {
-					console.log(this.props.memory.length / this.props.bytesPerRow)
 					return (
 						<List
 							bytesPerRow={this.props.bytesPerRow}
