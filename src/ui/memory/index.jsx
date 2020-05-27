@@ -37,27 +37,50 @@ function rowRenderer ({ key, style, index, parent }) {
 	let address = index * bytesPerRow;
 
 	for (let i = 0, a = address; i < bytesPerRow && a < memory.length; i++, a++) 
-		data.push(<span key={a} className={classes['byte-cell']}>{toHex(memory[a], 2)}</span>);
+		data.push(<span key={a} className={classes.byteCell}>{toHex(memory[a], 2)}</span>);
 
 	return (
 		<div className={classes.dataRow} key={key} style={style}>
-			<span className={classes['address']}>{toHex(address + baseAddress, 6)}</span>
+			<span className={classes.address}>{toHex(address + baseAddress, 6)}</span>
 			{ data }
 		</div>
 	)
 }
 
-class Memory extends Component {
+export default class Memory extends Component {
 	static contextType = SystemContext;
 
 	constructor(props) {
 		super(props);
 
+		this.state = {};
 		this._list = React.createRef();
 	}
 
 	componentDidUpdate() {
 		this._list.current.forceUpdateGrid();
+	}
+
+	measure(r) {
+		if (!r) return ;
+
+		console.log('ggg')
+
+		let { offsetWidth, offsetHeight } = r.querySelector(".one-element");
+		let elementWidth = r.querySelector(".two-element").offsetWidth - offsetWidth;
+		let rowHeight = offsetHeight;
+		let baseWidth = offsetWidth - elementWidth;
+
+		if (elementWidth != this.state.elementWidth || 
+			rowHeight != this.state.rowHeight || 
+			baseWidth != this.state.baseWidth
+			) {
+			this.setState({
+				baseWidth,
+				elementWidth,
+				rowHeight 
+			});
+		}
 	}
 
 	render() {
@@ -73,32 +96,45 @@ class Memory extends Component {
 				break ;
 		}
 
-		return <div className={classes['memory']}>
-			<AutoSizer>
-				{({ height, width }) => {
-					return (
-						<List
-							bytesPerRow={this.props.bytesPerRow}
-							baseAddress={this.props.baseAddress}
-							memory={memory}
+		return <AutoSizer>
+			{({width, height}) => {
+				/* Measure row / child sizes */
+				if (!this.state.baseWidth) {
+					return <div style={{position: 'absolute', visibility: "hidden"}} ref={(r) => this.measure(r)}>
+						<div className="one-element" style={{display: 'inline-block'}}>
+							<span className={classes.address}>{toHex(0, 6)}</span>
+							<span className={classes.byteCell}>00</span>
+						</div>
+						<div className="two-element" style={{display: 'inline-block'}}>
+							<span className={classes.address}>{toHex(0, 6)}</span>
+							<span className={classes.byteCell}>00</span>
+							<span className={classes.byteCell}>00</span>
+						</div>
+					</div>;
+				} 
 
-							ref={this._list}
+				let { baseWidth, elementWidth, rowHeight } = this.state;
 
-							width={width}
-							height={height}
-							rowCount={Math.ceil(memory.length / this.props.bytesPerRow)}
-							rowHeight={20}
-							rowRenderer={rowRenderer}
-							/>
-					)
-				}}
-			</AutoSizer>
-		</div>
+				let bytesPerRow = Math.floor((width - baseWidth) / elementWidth) - 2;
+				if (bytesPerRow <= 0) return null;
+
+				return (
+					<List
+						className="Memory"
+						baseAddress={this.props.baseAddress}
+						memory={memory}
+
+						ref={this._list}
+
+						width={width}
+						height={height}
+						bytesPerRow={bytesPerRow}
+						rowCount={Math.ceil(memory.length / bytesPerRow)}
+						rowHeight={rowHeight}
+						rowRenderer={rowRenderer}
+						/>
+				);
+			}}
+		</AutoSizer>
 	}
 }
-
-Memory.defaultProps = {
-	bytesPerRow: 0x8
-};
-
-export default Memory;

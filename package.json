@@ -2,12 +2,11 @@
   "name": "minimon.js",
   "version": "1.0.0",
   "description": "Pokemon mini emulator",
-  "main": "server/index.js",
+  "main": "src/index.jsx",
   "scripts": {
     "core": "cd core; make",
     "start": "webpack-dev-server --open --mode development",
     "build": "npm run core; webpack --mode production",
-    "test": "npm run core; webpack --config webpack.test.config.js; node test/bios.js",
     "deploy": "npm run build; scp public/* node@scyl.us:~/minimon/"
   },
   "keywords": [],
@@ -49,7 +48,6 @@
     "webpack": "^4.43.0"
   },
   "devDependencies": {
-    "test": "^0.6.0",
     "webpack-cli": "^3.3.11",
     "webpack-dev-server": "^3.11.0"
   }

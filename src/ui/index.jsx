@@ -28,7 +28,7 @@ import Disassembler from "./disassemble";
 
 import style from "./style.less";
 
-let screen_tab = {id: 'screen', title: 'Screen', content: <Screen />, closable: false };
+let screen_tab = {id: 'screen', minWidth: 96, minHeight:64, title: 'Screen', content: <Screen />, closable: false };
 let registers_tab = {id: 'registers', title: 'Registers', content: <Registers /> };
 let disassembly_tab = {id: 'disassembly', title: 'Disassembly', content: <Disassembler /> };
 let memory_tab = {id: 'memory', title: 'Memory', content: <Memory baseAddress={0x1000} memory='ram' />};
@@ -70,6 +70,10 @@ let defaultLayout = {
 export default class UI extends React.Component {
 	static contextType = SystemContext;
 	
+	preserveLayout(layout) {
+		window.localStorage.setItem("minimon-layout",JSON.stringify(layout));
+	}
+
 	reloadLayout(r) {
 		let layout = window.localStorage.getItem("minimon-layout");
 		
@@ -77,7 +81,7 @@ export default class UI extends React.Component {
 			try {
 				r.loadLayout(JSON.parse(layout));
 			} catch(e) {
-				console.error("Could not load layour");
+				console.error("Could not load layout");
 			}
 		}
 	}
@@ -86,7 +90,7 @@ export default class UI extends React.Component {
 		return <DockLayout 
 			ref={(r) => this.reloadLayout(r)} 
 			defaultLayout={defaultLayout} 
-			onLayoutChange={(newLayout) => window.localStorage.setItem("minimon-layout",JSON.stringify(newLayout))}
+			onLayoutChange={(newLayout) => this.preserveLayout(newLayout)}
 			style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0}}
 			/>;
 	}

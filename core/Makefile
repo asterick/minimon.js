@@ -18,7 +18,7 @@ EXPORTS = \
 CPPFLAGS = --target=wasm32-wasm -O2 -Iinclude -std=c++17 --sysroot=./wasi-libc/sysroot -g
 LDFLAGS = --no-entry --allow-undefined $(EXPORTS) -L ./wasi-libc/sysroot/lib/wasm32-wasi -lc
 
-all: $(DEPDIR) $(TARGET)
+all: $(DEPDIR) wasi-libc $(TARGET)
 	cp libminimon* ../public
 
 clean:
@@ -36,7 +36,10 @@ include/table.h: ../tools/table.py ../tools/s1c88.csv
 #%.wasm.dwarf: %.wasm.full
 #	$(DUMP) --all $< > $@
 
-$(TARGET): include/table.h $(OBJECTS)
+wasi-libc:
+	make -C wasi-libc
+
+$(TARGET): include/table.h wasi-libc $(OBJECTS)
 	$(LD) $(LDFLAGS) $(OBJECTS) -o $@
 
 %.o: %.cc include/table.h include/*.h
@@ -45,4 +48,4 @@ $(TARGET): include/table.h $(OBJECTS)
 $(DEPDIR):
 	mkdir -p $(DEPDIR)
 
-.phony: all clean disassembly wasi-libc
+.PHONY: all clean disassembly wasi-libc
