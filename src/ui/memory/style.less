@@ -1,9 +1,11 @@
-@import "../settings.scss";
+@import "../settings.less";
 
 .memory {
 	min-width: 25ch;
 	text-align: center;
-	flex-grow: 1;
+	position: absolute;
+	top: 0;
+	bottom: 0;
 }
 
 .dataRow {
@@ -15,16 +17,16 @@
 	width: calc(6ch + 4px);
 	text-align: left;
 	display: inline-block;
-	color: $green;
+	color: @green;
 }
 
 .byte-cell {
 	width: calc(2ch + 3px);
 	text-align: center;
 	display: inline-block;
-	color: $violet;
+	color: @violet;
 }
 
 .changed {
-	color: $magenta;
+	color: @magenta;
 }

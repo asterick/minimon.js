@@ -19,7 +19,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 import React, { Component } from "react";
 import { AutoSizer, List } from 'react-virtualized';
 
-import classes from "./style.scss";
+import classes from "./style.less";
 import SystemContext from "../context";
 
 const TOP_OF_MEMORY = 0x1FFFFF;
@@ -48,6 +48,8 @@ function rowRenderer ({ key, style, index, parent }) {
 }
 
 class Memory extends Component {
+	static contextType = SystemContext;
+
 	constructor(props) {
 		super(props);
 
@@ -59,14 +61,27 @@ class Memory extends Component {
 	}
 
 	render() {
+		const system = this.context;
+		let memory;
+
+		switch (this.props.memory) {
+			case 'ram':
+				memory = system.state.ram;
+				break ;
+			case 'eeprom':
+				memory = system.state.gpio.eeprom.data;
+				break ;
+		}
+
 		return <div className={classes['memory']}>
 			<AutoSizer>
 				{({ height, width }) => {
+					console.log(width, height)
 					return (
 						<List
 							bytesPerRow={this.props.bytesPerRow}
 							baseAddress={this.props.baseAddress}
-							memory={this.props.memory}
+							memory={memory}
 
 							ref={this._list}
 

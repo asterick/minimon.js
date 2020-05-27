@@ -1,4 +1,4 @@
-@import "../settings.scss";
+@import "../settings.less";
 
 .registers {
 	display: flex;
@@ -32,13 +32,13 @@
 		.checked:after {
 			display: inline;
 			content: '\2713';
-			color: $green;
+			color: @green;
 		}
 
 		.unchecked:after {
 			display: inline;
 			content: '\2014';
-			color: $blue;
+			color: @blue;
 		}
 	}
 }

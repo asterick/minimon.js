@@ -21,7 +21,7 @@ import React, { Component } from "react";
 import VertexShader from "./shaders/vertex.glsl";
 import FragmentShader from "./shaders/fragment.glsl";
 
-import classes from "./style.scss";
+import classes from "./style.less";
 
 import SystemContext from "../context";
 
@@ -77,7 +77,7 @@ export default class Registers extends Component {
 		gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 		
 		gl.colorMask(true, true, true, false);
-		gl.clearColor(0xA8 / 255.0, 0xC6 / 255.0, 0x4E / 255.0, 1.0);
+		gl.clearColor(1.0, 1.0, 1.0, 1.0);
 		gl.clear(gl.COLOR_BUFFER_BIT);
 
 		this._shader = this._createShader(VertexShader, FragmentShader);

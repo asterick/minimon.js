@@ -19,7 +19,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 import React, { Component } from "react";
 import { AutoSizer } from 'react-virtualized';
 
-import classes from "./style.scss";
+import classes from "./style.less";
 import SystemContext from "../context";
 
 import { Disassembler } from "../../system/disassemble.js";
@@ -37,7 +37,7 @@ class Disassembly extends Component {
 		super();
 
 		this.state = {
-			address: props.target
+			address: 0
 		};
 	}
 
@@ -50,8 +50,8 @@ class Disassembly extends Component {
 			return ;
 		}
 
-		const { target } = this.props;
 		const system = this.context;
+		const target = system.state.cpu.pc;
 		const disasm = new Disassembler(system);
 
 		const lines = disasm.process(this.state.address, 21);

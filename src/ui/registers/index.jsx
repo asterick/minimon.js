@@ -18,7 +18,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 import React, { Component } from "react";
 
-import classes from "./style.scss";
+import classes from "./style.less";
 import SystemContext from "../context";
 
 function toHex(i, c) {

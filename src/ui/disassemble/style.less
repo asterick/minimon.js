@@ -1,12 +1,10 @@
-@import "../settings.scss";
+@import "../settings.less";
 
 .disasm {
-	display: flex;
-	flex-grow: 1;
 }
 
 tr.active {
-	background: $background-selected;
+	background: @background-selected;
 }
 
 .disasm table {
@@ -20,12 +18,12 @@ tr.active {
 .disasm td:nth-child(1) {
 	min-width: 8ch;
 	text-align: center;
-	color: $green;
+	color: @green;
 }
 
 .disasm td:nth-child(2) {
 	min-width: 12ch;
-	color: $violet;
+	color: @violet;
 	span { margin: 0 0.25ch; }
 }
 
@@ -40,7 +38,7 @@ tr.active {
 
 .breakpoint:before {
 	content: '\25CF';
-	color: $magenta;
+	color: @magenta;
 	display: inline;
 	position: absolute;
 	padding-right: 2px;
