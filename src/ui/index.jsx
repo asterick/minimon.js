@@ -70,19 +70,19 @@ let defaultLayout = {
 export default class UI extends React.Component {
 	static contextType = SystemContext;
 	
+	state = {};
+
 	preserveLayout(layout) {
 		window.localStorage.setItem("minimon-layout",JSON.stringify(layout));
 	}
 
 	reloadLayout(r) {
+		if (r == null) return ;
+
 		let layout = window.localStorage.getItem("minimon-layout");
 		
 		if (layout) {
-			try {
-				r.loadLayout(JSON.parse(layout));
-			} catch(e) {
-				console.error("Could not load layout");
-			}
+			r.loadLayout(JSON.parse(layout));
 		}
 	}
 

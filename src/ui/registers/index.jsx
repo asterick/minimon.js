@@ -31,7 +31,7 @@ export default class Registers extends Component {
 	static contextType = SystemContext;
 
 	render() {
-		const system = this.context;
+		const system = this.context.system;
 		const regs = system.state.cpu;
 
 		return (

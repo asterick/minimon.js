@@ -39,10 +39,10 @@ export default class Registers extends Component {
 	}
 
 	componentDidMount() {
-		const system = this.context;
+		const system = this.context.system;
 
 		this._repainter();
-		this.context.repaint = (memory, address) => {
+		system.repaint = (memory, address) => {
 			const gl = this._ctx;
 
 			if (!gl) return ;
@@ -81,7 +81,7 @@ export default class Registers extends Component {
             reader = new FileReader();
 
         reader.onload = (e) => {
-        	this.context.load(e.target.result);
+        	this.context.system.load(e.target.result);
         };
 
         reader.readAsArrayBuffer(file);

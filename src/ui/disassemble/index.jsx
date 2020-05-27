@@ -50,7 +50,7 @@ class Disassembly extends Component {
 			return ;
 		}
 
-		const system = this.context;
+		const system = this.context.system;
 		const target = system.state.cpu.pc;
 		const disasm = new Disassembler(system);
 
@@ -70,7 +70,7 @@ class Disassembly extends Component {
 	}
 
 	onClick(address) {
-		const system = this.context;
+		const system = this.context.system;
 
 		if (system.breakpoints.indexOf(address) >= 0) {
 			system.breakpoints = system.breakpoints.filter((v) => v != address);
@@ -89,7 +89,7 @@ class Disassembly extends Component {
 				{({ height, width }) => {
 					const rowCount = Math.floor(height / 20);
 
-					const system = this.context;
+					const system = this.context.system;
 					const disasm = new Disassembler(system);
 					const lines = disasm.process(this.state.address, rowCount);
 

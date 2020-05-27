@@ -64,8 +64,6 @@ export default class Memory extends Component {
 	measure(r) {
 		if (!r) return ;
 
-		console.log('ggg')
-
 		let { offsetWidth, offsetHeight } = r.querySelector(".one-element");
 		let elementWidth = r.querySelector(".two-element").offsetWidth - offsetWidth;
 		let rowHeight = offsetHeight;
@@ -84,7 +82,7 @@ export default class Memory extends Component {
 	}
 
 	render() {
-		const system = this.context;
+		const system = this.context.system;
 		let memory;
 
 		switch (this.props.memory) {
