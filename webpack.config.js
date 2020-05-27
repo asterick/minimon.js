@@ -31,22 +31,20 @@ module.exports = {
                 ],
             },
             {
-                test: /\.s?[ac]ss$/,
+                test: /\.less$/,
                 use: [
                     'style-loader',
-                    { 
+                    {
                         loader: 'css-loader',
                         options: {
                             modules: true
                         }
                     },
                     {
-                        loader: 'sass-loader',
+                        loader: 'less-loader',
                         options: {
-                            sassOptions: {
-                                includePaths: [
-                                    path.join(__dirname, 'node_modules')
-                                ]
+                            lessOptions: {
+                                paths: [path.resolve(__dirname, 'node_modules')]
                             }
                         }
                     }
