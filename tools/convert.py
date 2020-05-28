@@ -17,6 +17,7 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 from json import dumps
+import os
 import csv
 
 op0s, op1s, op2s = [None] * 0x100, [None] * 0x100, [None] * 0x100
@@ -114,7 +115,7 @@ def display(table, tabs = ""):
 all_ops = []
 all_args = []
 
-with open('s1c88.csv', 'r') as csvfile:
+with open(os.path.join(os.path.dirname(__file__), 's1c88.csv'), 'r') as csvfile:
     spamreader = csv.reader(csvfile)
 
     next(spamreader)
