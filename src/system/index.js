@@ -50,15 +50,12 @@ export class Minimon {
 
 					console.log(str.join(""));
 				},
-				trace_access: ()=>0//(cpu, address, kind) => console.log(`${address.toString(16)}: ${kind.toString(2)}`)
+				trace_access: (cpu, address, kind) => 0//console.log(`${address.toString(16)}: ${kind.toString(2)}`)
 			}
 		};
 
 		const data = await (await fetch("./libminimon.wasm")).arrayBuffer();
 		this._exports = (await WebAssembly.instantiate(data, env)).instance.exports;
-
-		const data_tracing = await (await fetch("./libminimon.tracing.wasm")).arrayBuffer();
-		this._tracing = (await WebAssembly.instantiate(data_tracing, env)).instance.exports;
 
 		this._cpu_state = this._exports.get_machine();
 		this._machineBytes = new Uint8Array(this._exports.memory.buffer);
@@ -103,7 +100,7 @@ export class Minimon {
 			time = now;
 
 			if (this.breakpoints) {
-				this.state.clocks += (delta * CPU_FREQ / 100000) | 0;	// advance our clock
+				this.state.clocks += (delta * CPU_FREQ / 1000) | 0;	// advance our clock
 
 				while (this.state.clocks > 0) {
 					if (this.breakpoints.indexOf(this.translate(this.state.cpu.pc)) >= 0) {
@@ -111,7 +108,7 @@ export class Minimon {
 						break ;
 					}
 
-					this._tracing.cpu_step(this._cpu_state);
+					this._exports.cpu_step(this._cpu_state);
 				}
 			} else {
 				this._exports.cpu_advance(this._cpu_state, delta);

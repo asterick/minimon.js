@@ -46,6 +46,9 @@ export default class Registers extends Component {
 						<tr><td>SP</td><td>{toHex(regs.sp, 4)}</td><td>NB</td><td>{toHex(regs.nb, 2)}</td></tr>
 					</tbody>
 				</table>
+				<div>
+					<button onClick={() => system.step()}>Step</button>
+				</div>
 				<div className={classes.flags}>
 					<div className={classes.register}>
 						<span className={classes.name}>SC</span>
