@@ -11,7 +11,7 @@ enum TraceType :uint32_t {
 };
 
 #ifdef TRACING
-extern "C" void trace_access(Machine::State& cpu, uint32_t address, TraceType kind);
+extern "C" void trace_access(Machine::State& cpu, uint32_t address, uint32_t kind);
 #else
 #define trace_access(...)
 #endif

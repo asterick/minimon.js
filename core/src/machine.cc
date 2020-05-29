@@ -33,6 +33,8 @@ extern "C" void cpu_reset(Machine::State& cpu) {
 	cpu.reg.yp = 0x00;
 	cpu.reg.nb = 0x01;
 
+	trace_access(cpu, calc_pc(cpu), TRACE_INSTRUCTION | TRACE_BRANCH_TARGET);
+
 	cpu.status = Machine::STATUS_NORMAL;
 	cpu.osc1_overflow = 0;
 
