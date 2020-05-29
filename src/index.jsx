@@ -48,9 +48,9 @@ export default class Root extends React.Component {
 }
 
 async function main() {
-	const system = new Minimon();
-
-	await system.init();
+	const system = new Minimon("default");
+	await system.init(false);
+	system.running = true;
 
 	ReactDOM.render(<Root system={system}/>, document.querySelector(".container"));
 }

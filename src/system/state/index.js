@@ -40,6 +40,16 @@ const SETTERS = {
 	[TYPE_BOOL]: 'setUint8'
 }
 
+const ARRAYTYPE = {
+	[TYPE_UINT8]: Uint8Array,
+	[TYPE_UINT16]: Uint16Array,
+	[TYPE_UINT32]: Uint32Array,
+	[TYPE_INT8]: Int8Array,
+	[TYPE_INT16]: Int16Array,
+	[TYPE_INT32]: Int32Array,
+	[TYPE_BOOL]: Uint8Array
+}
+
 function utf8(bytes, offset) {
 	let length = 0;
 
@@ -48,12 +58,26 @@ function utf8(bytes, offset) {
 	return decoder.decode(bytes.subarray(offset, offset+length));
 }
 
+function data_array(buffer, type, offset, entries, ... rest) {
+	if (rest.length > 0) {
+		const stride = rest.reduce((a, b) => a * b, SIZES[type]);
+		let result = [];
+
+		for (let i = 0; i < entries; i++) {
+			result[i] = data_array(buffer, type, offset + index * stride, ... rest);
+		}
+	} else {
+		return new (ARRAYTYPE[type])(buffer, offset, entries);
+	}
+}
+
 function proxy(dv, type, offset, entries, ... rest) {
 	const stride = rest.reduce((a, b) => a * b, SIZES[type]);
 
 	return new Proxy({}, {
 		get: function(_, index) {
 			if (index === 'length') return entries;
+			index |= 0;
 
 			if (index < 0 || index >= entries) return null;
 
@@ -64,12 +88,14 @@ function proxy(dv, type, offset, entries, ... rest) {
 			}
 		},
 		set: function(_, index, value) {
+			index |= 0;
 			if (rest.length > 0) {
 				throw new Error("Cannot assign array row")
 			} else {
 				if (index < 0 || index >= entries) return ;
 
-				return dv[SETTERS[type]](offset + index * stride, value, true);
+				dv[SETTERS[type]](offset + index * stride, value, true);
+				return true;
 			}
 		}
 	})
@@ -99,7 +125,11 @@ export default function struct(buffer, offset) {
 				topo.push(dim);
 			}
 
-			out[name] = proxy(dv, type, data, ... topo);
+			if (type == TYPE_STRUCT) {
+				out[name] = proxy(dv, type, data, ... topo);
+			} else {
+				out[name] = data_array(buffer, type, data, ... topo);
+			}
 		} else if (type == TYPE_STRUCT) {
 			out[name] = struct(buffer, data);
 		} else {

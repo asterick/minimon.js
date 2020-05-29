@@ -47,7 +47,11 @@ export default class Registers extends Component {
 					</tbody>
 				</table>
 				<div>
-					<button onClick={() => system.step()}>Step</button>
+				<button onClick={() => system.eject()}>Eject</button>
+				<button onClick={() => system.reset()}>Reset</button>
+				<button onClick={() => system.step()}>Step</button>
+				<button onClick={() => {system.running = !system.running}}>{system.running ? "Stop" : "Start"}</button>
+				<button onClick={() => {system.tracing = !system.tracing}}>{system.tracing ? "Tracing" : "Not Tracing"}</button>
 				</div>
 				<div className={classes.flags}>
 					<div className={classes.register}>

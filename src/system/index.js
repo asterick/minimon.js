@@ -30,39 +30,30 @@ const KEYBOARD_CODES = {
 	 8: 0b10000000
 };
 
+export const TRACING_FLAGS = {
+    INSTRUCTION:   0b00000001,
+    IMMEDIATE:     0b00000010,
+    BRANCH_TARGET: 0b00000100,
+    TILE_DATA:     0b00001000,
+    SPRITE_DATA:   0b00010000,
+    READ:          0b01000000,
+    WRITE:         0b10000000
+};
+
 const INPUT_CART_N = 0b1000000000;
 const CPU_FREQ = 4000000;
 
 export class Minimon {
-	async init() {
-	
-		const env = {
-			env: {
-				cpu_read_cart: (cpu, address) => this.cpu_read_cart(address),
-				cpu_write_cart: (cpu, data, address) => this.cpu_write_cart(data, address),
-				flip_screen: (address) => {
-					this.repaint(this._machineBytes, address);
-				},
-				debug_print: (a) => {
-					const str = [];
-					let ch;
-					while (ch = this._machineBytes[a++]) str.push(String.fromCharCode(ch));
-
-					console.log(str.join(""));
-				},
-				trace_access: (cpu, address, kind) => 0//console.log(`${address.toString(16)}: ${kind.toString(2)}`)
-			}
-		};
-
-		const data = await (await fetch("./libminimon.wasm")).arrayBuffer();
-		this._exports = (await WebAssembly.instantiate(data, env)).instance.exports;
-
-		this._cpu_state = this._exports.get_machine();
-		this._machineBytes = new Uint8Array(this._exports.memory.buffer);
+	constructor(name) {
+		this._name = name;
+		this._inputState = 0b1111111111; // No cartridge inserted, no IRQ
 		this._audio = new Audio();
-
-		this.state = new State(this._exports.memory.buffer, this._exports.get_description());
 		this.cartridge = new Uint8Array(0x200000);
+		this.breakpoints = [];
+
+		window.addEventListener("beforeunload", (e) => {
+			this.preserveEEPROM();
+		}, false);
 
 		document.body.addEventListener('keydown', (e) => {
 			this._inputState &= ~KEYBOARD_CODES[e.keyCode];
@@ -73,13 +64,75 @@ export class Minimon {
 			this._inputState |= KEYBOARD_CODES[e.keyCode];
 			this._updateinput();
 		});
+	}
 
-		// Reset our CPU
-		this._inputState = 0b1111111111; // No cartridge inserted, no IRQ
+	preserveEEPROM() {
+		if (!this.state) return ;
+
+		let encoded = "";
+		for (let i = 0; i < 0x2000; i++) {
+			encoded += String.fromCharCode(this.state.gpio.eeprom.data[i]);
+		}
+
+		window.localStorage.setItem(`${this._name}-eeprom`, encoded);
+	}
+
+	restoreEEPROM() {
+		if (!this.state) return ;
+
+		let encoded = window.localStorage.getItem(`${this._name}-eeprom`);
+
+		for (let i = 0; i < 0x2000; i++) {
+			this.state.gpio.eeprom.data[i] = encoded.charCodeAt(i);
+		}
+	}
+
+	async init(tracing) {
+		this._tracing = tracing;
+
+		// TODO: RESTORE EEPROM HERE
+		if (this.state) {
+			this.preserveEEPROM();
+		}
+
+		const request = await fetch(tracing ? "./libminimon.tracing.wasm" : "./libminimon.wasm");
+		const wasm = await WebAssembly.instantiate(await request.arrayBuffer(), this._wasm_environment);
+		this._exports = wasm.instance.exports;
+
+		this._cpu_state = this._exports.get_machine();
+		this._machineBytes = new Uint8Array(this._exports.memory.buffer);
+		this.state = new State(this._exports.memory.buffer, this._exports.get_description());
+
+		this.restoreEEPROM();
 		this.reset();
+	}
 
-		this.breakpoints = [];
-		this.running = true;
+	_wasm_environment = {
+		env: {
+			cpu_read_cart: (cpu, address) => this.cpu_read_cart(address),
+			cpu_write_cart: (cpu, data, address) => this.cpu_write_cart(data, address),
+			flip_screen: (address) => {
+				this.repaint(this._machineBytes, address);
+			},
+			debug_print: (a) => {
+				const str = [];
+				let ch;
+				while (ch = this._machineBytes[a++]) str.push(String.fromCharCode(ch));
+
+				console.log(str.join(""));
+			},
+			trace_access: (cpu, address, kind) => this.trace(cpu, address, kind)
+		}
+	}
+
+	get tracing() {
+		return this._tracing;
+	}
+
+	set tracing(v) {
+		if (this._tracing == v) return ;
+
+		this.init(v);
 	}
 
 	get running() {
@@ -99,7 +152,7 @@ export class Minimon {
 
 			time = now;
 
-			if (this.breakpoints) {
+			if (this.breakpoints.length) {
 				this.state.clocks += (delta * CPU_FREQ / 1000) | 0;	// advance our clock
 
 				while (this.state.clocks > 0) {
@@ -132,6 +185,10 @@ export class Minimon {
 
 	update() {
 		// This will be overidden elsewhere
+	}
+
+	trace(cpu, address, kind) {
+
 	}
 
 	_updateinput(v) {
