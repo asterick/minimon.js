@@ -31,10 +31,12 @@ const KEYBOARD_CODES = {
 };
 
 const INPUT_CART_N = 0b1000000000;
+const CPU_FREQ = 4000000;
 
 export class Minimon {
-	async init(data) {
-		this._module = await WebAssembly.instantiate(data, {
+	async init() {
+	
+		const env = {
 			env: {
 				cpu_read_cart: (cpu, address) => this.cpu_read_cart(address),
 				cpu_write_cart: (cpu, data, address) => this.cpu_write_cart(data, address),
@@ -47,11 +49,17 @@ export class Minimon {
 					while (ch = this._machineBytes[a++]) str.push(String.fromCharCode(ch));
 
 					console.log(str.join(""));
-				}
+				},
+				trace_access: ()=>0//(cpu, address, kind) => console.log(`${address.toString(16)}: ${kind.toString(2)}`)
 			}
-		});
+		};
 
-		this._exports = this._module.instance.exports;
+		const data = await (await fetch("./libminimon.wasm")).arrayBuffer();
+		this._exports = (await WebAssembly.instantiate(data, env)).instance.exports;
+
+		const data_tracing = await (await fetch("./libminimon.tracing.wasm")).arrayBuffer();
+		this._tracing = (await WebAssembly.instantiate(data_tracing, env)).instance.exports;
+
 		this._cpu_state = this._exports.get_machine();
 		this._machineBytes = new Uint8Array(this._exports.memory.buffer);
 		this._audio = new Audio();
@@ -95,7 +103,7 @@ export class Minimon {
 			time = now;
 
 			if (this.breakpoints) {
-				this.state.clocks += (delta * 4000000 / 1000) | 0;	// advance our clock
+				this.state.clocks += (delta * CPU_FREQ / 100000) | 0;	// advance our clock
 
 				while (this.state.clocks > 0) {
 					if (this.breakpoints.indexOf(this.translate(this.state.cpu.pc)) >= 0) {
@@ -103,7 +111,7 @@ export class Minimon {
 						break ;
 					}
 
-					this._exports.cpu_step(this._cpu_state);
+					this._tracing.cpu_step(this._cpu_state);
 				}
 			} else {
 				this._exports.cpu_advance(this._cpu_state, delta);
@@ -118,8 +126,6 @@ export class Minimon {
 		} else {
 			clearInterval(this._timer);
 		}
-
-		this.update();
 	}
 
 	// Trigger an update to the UI

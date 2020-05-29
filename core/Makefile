@@ -6,8 +6,8 @@ OBJEXT=o
 SOURCES=$(wildcard $(SRCDIR)/*.cc)
 OBJECTS=$(patsubst $(SRCDIR)/%.cc,$(BUILDDIR)/%.o,$(SOURCES))
 TRACE_OBJECTS=$(OBJECTS:.o=.to)
-TARGET=libminimon.wasm
-TRACE_TARGET=libminimon.tracing.wasm
+TARGET=../public/libminimon.wasm
+TRACE_TARGET=../public/libminimon.tracing.wasm
 
 LD=wasm-ld
 DUMP=llvm-dwarfdump
@@ -26,8 +26,7 @@ EXPORTS = \
 CPPFLAGS = --target=wasm32-wasm -O2 -Iinclude -std=c++17 --sysroot=./wasi-libc/sysroot -g
 LDFLAGS = --no-entry --allow-undefined $(EXPORTS) -L ./wasi-libc/sysroot/lib/wasm32-wasi -lc
 
-all: $(BUILDDIR) wasi-libc $(TARGET) $(TRACE_TARGET)
-	cp $(TARGET) $(TRACE_TARGET) ../public
+all: wasi-libc $(BUILDDIR) $(TARGET) $(TRACE_TARGET)
 
 clean:
 	rm -Rf $(TARGET) $(TRACE_TARGET) $(OBJECTS) $(TRACE_OBJECTS) include/table.h

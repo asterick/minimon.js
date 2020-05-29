@@ -49,9 +49,8 @@ export default class Root extends React.Component {
 
 async function main() {
 	const system = new Minimon();
-	const wasm = await fetch("./libminimon.wasm");
 
-	await system.init(await wasm.arrayBuffer());
+	await system.init();
 
 	ReactDOM.render(<Root system={system}/>, document.querySelector(".container"));
 }
