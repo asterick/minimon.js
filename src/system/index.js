@@ -70,7 +70,7 @@ export class Minimon {
 		if (!this.state) return ;
 
 		let encoded = "";
-		for (let i = 0; i < 0x2000; i++) {
+		for (let i = 0; i < this.state.gpio.eeprom.data.length; i++) {
 			encoded += String.fromCharCode(this.state.gpio.eeprom.data[i]);
 		}
 
@@ -82,7 +82,7 @@ export class Minimon {
 
 		let encoded = window.localStorage.getItem(`${this._name}-eeprom`);
 
-		for (let i = 0; i < 0x2000; i++) {
+		for (let i = 0; i < encoded.length; i++) {
 			this.state.gpio.eeprom.data[i] = encoded.charCodeAt(i);
 		}
 	}
@@ -90,10 +90,7 @@ export class Minimon {
 	async init(tracing) {
 		this._tracing = tracing;
 
-		// TODO: RESTORE EEPROM HERE
-		if (this.state) {
-			this.preserveEEPROM();
-		}
+		this.preserveEEPROM();
 
 		const request = await fetch(tracing ? "./libminimon.tracing.wasm" : "./libminimon.wasm");
 		const wasm = await WebAssembly.instantiate(await request.arrayBuffer(), this._wasm_environment);
@@ -103,8 +100,8 @@ export class Minimon {
 		this._machineBytes = new Uint8Array(this._exports.memory.buffer);
 		this.state = new State(this._exports.memory.buffer, this._exports.get_description());
 
-		this.restoreEEPROM();
 		this.reset();
+		this.restoreEEPROM();
 	}
 
 	_wasm_environment = {
