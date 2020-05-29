@@ -33,6 +33,7 @@ namespace Machine { struct State; };
 #include "eeprom.h"
 #include "gpio.h"
 #include "audio.h"
+#include "tracing.h"
 
 const auto OSC1_SPEED	= 32768;
 const auto OSC3_SPEED	= 4000000;
@@ -155,3 +156,13 @@ uint8_t cpu_pop8(Machine::State& cpu);
 void cpu_push16(Machine::State& cpu, uint16_t t);
 uint16_t cpu_pop16(Machine::State& cpu);
 int inst_advance(Machine::State& cpu);
+
+static inline uint32_t calc_pc(Machine::State& cpu) {
+	uint16_t address = cpu.reg.pc;
+
+	if (address & 0x8000) {
+		return (cpu.reg.cb << 15) | (address & 0x7FFF);
+	} else {
+		return address;
+	}
+}

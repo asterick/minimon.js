@@ -88,9 +88,11 @@ extern "C" void cpu_step(Machine::State& cpu) {
 
 	// CPU Core steps
 	if (cpu.status == Machine::STATUS_NORMAL) {
+		trace_access(cpu, calc_pc(cpu), TRACE_INSTRUCTION);
 		cpu_clock(cpu, inst_advance(cpu));
 	} else {
-		cpu_clock(cpu, 1); // This is lazy
+		// Eat a cycle
+		cpu_clock(cpu, 1);
 	}
 }
 
@@ -226,10 +228,12 @@ extern "C" void cpu_write(Machine::State& cpu, uint8_t data, uint32_t address) {
 
 
 uint8_t cpu_read8(Machine::State& cpu, uint32_t address) {
+	trace_access(cpu, address, TRACE_READ);
 	return cpu.bus_cap = cpu_read(cpu, address);
 }
 
 void cpu_write8(Machine::State& cpu, uint8_t data, uint32_t address) {
+	trace_access(cpu, address, TRACE_WRITE);
 	cpu_write(cpu, cpu.bus_cap = data, address);
 }
 
@@ -246,13 +250,11 @@ void cpu_write16(Machine::State& cpu, uint16_t data, uint32_t address) {
 }
 
 uint8_t cpu_imm8(Machine::State& cpu) {
-	uint16_t address = cpu.reg.pc++;
+	auto address = calc_pc(cpu);
+	cpu.reg.pc++;
 
-	if (address & 0x8000) {
-		return cpu_read8(cpu, (cpu.reg.cb << 15) | (address & 0x7FFF));
-	} else {
-		return cpu_read8(cpu, address);
-	}
+	trace_access(cpu, address, TRACE_IMMEDIATE);
+	return cpu_read8(cpu, address);
 }
 
 uint16_t cpu_imm16(Machine::State& cpu) {

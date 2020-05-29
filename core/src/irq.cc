@@ -24,7 +24,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 using namespace IRQ;
 
-int irq_group[] = {
+static const int irq_group[] = {
 	0, 0, 0,				// NMI
 
 	0, 0,					// Blitter Group

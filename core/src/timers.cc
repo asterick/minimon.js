@@ -42,11 +42,11 @@ static const uint8_t TIMER_MASK[] = {
 	0b11111111
 };
 
-int PRESCALE_OSC1[] = {
+static const int PRESCALE_OSC1[] = {
 	1, 2, 4, 8, 16, 32, 64, 128
 };
 
-int PRESCALE_OSC3[] = {
+static const int PRESCALE_OSC3[] = {
 	2, 8, 32, 64, 128, 256, 1024, 4096
 };
 

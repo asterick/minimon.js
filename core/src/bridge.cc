@@ -4,6 +4,7 @@
 #include "machine.h"
 #include "debug.h"
 
+#ifndef TRACING
 enum FieldType : uint32_t {
 	TYPE_END,
 	TYPE_STRUCT,
@@ -142,3 +143,4 @@ static const StructTable table[] = {
 extern "C" const StructTable* get_description() {
 	return table;
 }
+#endif

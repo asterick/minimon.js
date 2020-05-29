@@ -479,11 +479,15 @@ static inline void inst_pop_ale(Machine::State& cpu) {
 static inline void op_jrs8(Machine::State& cpu, uint8_t t) {
 	cpu.reg.cb = cpu.reg.nb;
 	cpu.reg.pc += (int8_t)t - 1;
+
+	trace_access(cpu, calc_pc(cpu), TRACE_BRANCH_TARGET);
 }
 
 static inline void op_jrl16(Machine::State& cpu, uint16_t t) {
 	cpu.reg.cb = cpu.reg.nb;
 	cpu.reg.pc += t - 1;
+
+	trace_access(cpu, calc_pc(cpu), TRACE_BRANCH_TARGET);
 }
 
 static inline void inst_djr_nz_rr(Machine::State& cpu) {
@@ -493,12 +497,16 @@ static inline void inst_djr_nz_rr(Machine::State& cpu) {
 	if (!cpu.reg.flag.z) {
 		cpu.reg.cb = cpu.reg.nb;
 		cpu.reg.pc += off - 1;
+
+		trace_access(cpu, calc_pc(cpu), TRACE_BRANCH_TARGET);
 	}
 }
 
 static inline void op_jp16(Machine::State& cpu, uint16_t t) {
 	cpu.reg.pc = t;
 	cpu.reg.cb = cpu.reg.nb;
+
+	trace_access(cpu, calc_pc(cpu), TRACE_BRANCH_TARGET);
 }
 
 static inline void op_cars8(Machine::State& cpu, uint8_t t) {
@@ -507,6 +515,8 @@ static inline void op_cars8(Machine::State& cpu, uint8_t t) {
 
 	cpu.reg.pc += (int8_t)t - 1;
 	cpu.reg.cb = cpu.reg.nb;
+
+	trace_access(cpu, calc_pc(cpu), TRACE_BRANCH_TARGET);
 }
 
 static inline void op_carl16(Machine::State& cpu, uint16_t t) {
@@ -515,6 +525,8 @@ static inline void op_carl16(Machine::State& cpu, uint16_t t) {
 
 	cpu.reg.pc += t - 1;
 	cpu.reg.cb = cpu.reg.nb;
+
+	trace_access(cpu, calc_pc(cpu), TRACE_BRANCH_TARGET);
 }
 
 static inline void op_call16(Machine::State& cpu, uint16_t t) {
@@ -523,6 +535,8 @@ static inline void op_call16(Machine::State& cpu, uint16_t t) {
 
 	cpu.reg.pc = t;
 	cpu.reg.cb = cpu.reg.nb;
+
+	trace_access(cpu, calc_pc(cpu), TRACE_BRANCH_TARGET);
 }
 
 static inline void op_int16(Machine::State& cpu, uint16_t t) {
@@ -532,6 +546,8 @@ static inline void op_int16(Machine::State& cpu, uint16_t t) {
 
 	cpu.reg.pc = t;
 	cpu.reg.cb = cpu.reg.nb;
+
+	trace_access(cpu, calc_pc(cpu), TRACE_BRANCH_TARGET);
 }
 
 static inline void inst_ret(Machine::State& cpu) {
