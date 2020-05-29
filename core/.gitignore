@@ -1,2 +1,2 @@
-*.o
-libminimon.wasm*
+obj
+*.wasm
