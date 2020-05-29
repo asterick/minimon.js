@@ -66,13 +66,15 @@ function data_array(buffer, type, offset, entries, ... rest) {
 		for (let i = 0; i < entries; i++) {
 			result[i] = data_array(buffer, type, offset + index * stride, ... rest);
 		}
+
+		return result;
 	} else {
 		return new (ARRAYTYPE[type])(buffer, offset, entries);
 	}
 }
 
 function proxy(dv, type, offset, entries, ... rest) {
-	const stride = rest.reduce((a, b) => a * b, SIZES[type]);
+	const stride = rest.reduce((a, b) => a * b, 1);
 
 	return new Proxy({}, {
 		get: function(_, index) {

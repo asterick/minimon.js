@@ -46,13 +46,6 @@ export default class Registers extends Component {
 						<tr><td>SP</td><td>{toHex(regs.sp, 4)}</td><td>NB</td><td>{toHex(regs.nb, 2)}</td></tr>
 					</tbody>
 				</table>
-				<div>
-				<button onClick={() => system.eject()}>Eject</button>
-				<button onClick={() => system.reset()}>Reset</button>
-				<button onClick={() => system.step()}>Step</button>
-				<button onClick={() => {system.running = !system.running}}>{system.running ? "Stop" : "Start"}</button>
-				<button onClick={() => {system.tracing = !system.tracing}}>{system.tracing ? "Tracing" : "Not Tracing"}</button>
-				</div>
 				<div className={classes.flags}>
 					<div className={classes.register}>
 						<span className={classes.name}>SC</span>
@@ -86,6 +79,13 @@ export default class Registers extends Component {
 						<span className={classes.name}>Z</span>
 						<div className={(regs.sc & 0b000001) ? classes.checked : classes.unchecked} />
 					</div>
+				</div>
+				<div>
+					<button onClick={() => system.eject()}>Eject</button>
+					<button onClick={() => system.reset()}>Reset</button>
+					<button onClick={() => system.step()}>Step</button>
+					<button onClick={() => {system.running = !system.running}}>{system.running ? "Stop" : "Start"}</button>
+					<button onClick={() => {system.tracing = !system.tracing}}>{system.tracing ? "Tracing" : "Not Tracing"}</button>
 				</div>
 			</div>
 		);

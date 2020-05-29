@@ -23,6 +23,8 @@ struct StructTable {
 	const int* sizes;
 };
 
+#define 
+
 static Machine::State machine_state;
 
 extern "C" Machine::State* const get_machine() {

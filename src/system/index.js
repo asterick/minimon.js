@@ -173,6 +173,8 @@ export class Minimon {
 		} else {
 			clearInterval(this._timer);
 		}
+		
+		this.update();
 	}
 
 	// Trigger an update to the UI
