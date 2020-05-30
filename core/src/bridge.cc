@@ -109,14 +109,14 @@ static const StructDecl EepromState = {
 	sizeof(EEPROM::State),
 	(const FieldDecl[]) {
 		FIELD("data", EEPROM::State, data,	TYPE_UINT8, SIZE(0x2000)),
+		FIELD("data_in", EEPROM::State, data_in, TYPE_UINT8),
+		FIELD("data_out", EEPROM::State, data_out, TYPE_UINT8),
+		FIELD("clock_in", EEPROM::State, clock_in, TYPE_UINT8),
+		FIELD("address", EEPROM::State, address, TYPE_UINT16),
 		//I2C_MODE mode;
 		//uint8_t shift;
 		//int bit;
-		//unsigned address:13;
 
-		//PinState data_in;
-		//PinState data_out;
-		//PinState clock_in;
 		{ TYPE_END }
 	}
 };

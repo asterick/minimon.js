@@ -23,7 +23,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 namespace Machine { struct State; };
 
 namespace EEPROM {
-	enum PinState {
+	enum PinState : uint8_t {
 		PIN_RESET,
 		PIN_SET,
 		PIN_FLOAT
@@ -45,7 +45,7 @@ namespace EEPROM {
 		I2C_MODE mode;
 		uint8_t shift;
 		int bit;
-		unsigned address:13;
+		uint16_t address;
 
 		PinState data_in;
 		PinState data_out;

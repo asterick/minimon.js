@@ -75,7 +75,7 @@ void EEPROM::setClockPin(EEPROM::State& state, PinState clock) {
 				}
 				break ;
 			case SYSTEM_ADDRESS_H:
-				state.address = state.shift << 8;
+				state.address = (state.shift << 8) & 0x1FFF;
 				state.data_out = PIN_RESET;
 				state.mode = SYSTEM_ADDRESS_L;
 				break ;
@@ -85,12 +85,11 @@ void EEPROM::setClockPin(EEPROM::State& state, PinState clock) {
 				state.mode = SYSTEM_WRITE;
 				break ;
 			case SYSTEM_WRITE:
-				dprintf("WRITE(%x): %x", state.address, state.shift);
 				state.data[state.address++] = state.shift;
+				state.address = (state.address + 1) & 0x1FFF;
 				state.data_out = PIN_RESET;
 				break ;
 			case SYSTEM_READ:
-				dprintf("READ(%x): %x", state.address, state.data[state.address++]);
 				state.data_out = PIN_FLOAT;
 				break ;
 			}
