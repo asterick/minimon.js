@@ -64,24 +64,27 @@ static const StructDecl CpuState = {
 	}
 };
 
-/*
-static const StructTable tim256_table[] = {
-	{ TYPE_BOOL, "running", &machine_state.tim256.running },
-	{ TYPE_UINT16, "value", &machine_state.tim256.value },
-
-	{ TYPE_END }
+static const StructDecl IrqState = {
+	sizeof(IRQ::State),
+	(const FieldDecl[]) {
+		FIELD("enable", IRQ::State, enable, TYPE_BOOL),
+		FIELD("active", IRQ::State, active, TYPE_BOOL),
+		FIELD("priorty", IRQ::State, priority, TYPE_UINT8, SIZE(IRQ::TOTAL_HARDWARE_IRQS)),
+		FIELD("next_priority", IRQ::State, next_priority, TYPE_INT32),
+		FIELD("next_irq", IRQ::State, next_irq, TYPE_INT8),
+		{ TYPE_END }
+	}
 };
 
-static const StructTable irq_table[] = {
-	{ TYPE_BOOL, "enable", &machine_state.irq.enable, (const int[]){ IRQ::TOTAL_HARDWARE_IRQS, - 1} },
-	{ TYPE_BOOL, "active", &machine_state.irq.active, (const int[]){ IRQ::TOTAL_HARDWARE_IRQS, - 1} },
-	{ TYPE_UINT8, "priority", &machine_state.irq.priority, (const int[]){ IRQ::TOTAL_HARDWARE_IRQS, - 1} },
-	{ TYPE_INT32, "next_priority", &machine_state.irq.next_priority },
-	{ TYPE_UINT8, "next_irq", &machine_state.irq.next_irq },
 
-	{ TYPE_END }
+static const StructDecl Tim256State = {
+	sizeof(TIM256::State),
+	(const FieldDecl[]) {
+		FIELD("running", TIM256::State, running, TYPE_BOOL),
+		FIELD("value", TIM256::State, value, TYPE_UINT16),
+		{ TYPE_END }
+	}
 };
-*/
 
 static const StructDecl RtcState = {
 	sizeof(RTC::State),
@@ -135,10 +138,9 @@ static const StructDecl MachineState = {
 		STRUCT("ctrl", Machine::State, ctrl, ControlState),
 		STRUCT("gpio", Machine::State, gpio, GpioState),
 		STRUCT("rtc",  Machine::State, rtc, RtcState),
+		STRUCT("irq",  Machine::State, irq, IrqState),
+		STRUCT("tim256",  Machine::State, tim256, Tim256State),
 		FIELD("ram",   Machine::State, ram, TYPE_UINT8, SIZE(0x1000)),
-
-		//{ TYPE_STRUCT, "tim256", tim256_table },
-		//{ TYPE_STRUCT, "irq", irq_table },
 
 		//Timers::State timers;
 		//Input::State input;
