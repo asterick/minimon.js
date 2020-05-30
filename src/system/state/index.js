@@ -124,7 +124,6 @@ export default function struct(buffer, my_def, offset) {
 				enumerable: true,
 				value: array(buffer, target+offset, type, def, ... size)
 			});
-			// TODO: ARRAY OF STUFF HERE
 		} else if (type == TYPE_STRUCT) {
 			Object.defineProperty(out, name, {
 				enumerable: true,

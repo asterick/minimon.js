@@ -25,7 +25,7 @@ namespace Machine { struct State; };
 namespace RTC {
 	struct State {
 		bool running;
-		uint64_t value;
+		uint32_t value;
 	};
 
 	void reset(Machine::State& cpu);

@@ -81,27 +81,22 @@ static const StructTable irq_table[] = {
 
 	{ TYPE_END }
 };
-
-static const StructTable rtc_table[] = {
-	{ TYPE_BOOL, "running", &machine_state.rtc.running },
-	{ TYPE_UINT32, "value", &machine_state.rtc.value },
-
-	{ TYPE_END }
-};
 */
+
+static const StructDecl RtcState = {
+	sizeof(RTC::State),
+	(const FieldDecl[]) {
+		FIELD("running", RTC::State, running, TYPE_BOOL),
+		FIELD("value", RTC::State, value, TYPE_UINT32),
+		{ TYPE_END }
+	}
+};
+
 
 static const StructDecl ControlState = {
 	sizeof(Control::State),
 	(const FieldDecl[]) {
 		FIELD("data", Control::State, data, TYPE_UINT8, SIZE(3)),
-		//I2C_MODE mode;
-		//uint8_t shift;
-		//int bit;
-		//unsigned address:13;
-
-		//PinState data_in;
-		//PinState data_out;
-		//PinState clock_in;
 		{ TYPE_END }
 	}
 };
@@ -135,12 +130,12 @@ static const StructDecl GpioState = {
 static const StructDecl MachineState = {
 	sizeof(Machine::State),
 	(const FieldDecl[]) {
-		STRUCT("cpu", Machine::State, reg, CpuState),
+		STRUCT("cpu",  Machine::State, reg, CpuState),
 		STRUCT("ctrl", Machine::State, ctrl, ControlState),
 		STRUCT("gpio", Machine::State, gpio, GpioState),
-		FIELD("ram", Machine::State, ram, TYPE_UINT8, SIZE(0x1000)),
+		STRUCT("rtc",  Machine::State, rtc, RtcState),
+		FIELD("ram",   Machine::State, ram, TYPE_UINT8, SIZE(0x1000)),
 
-		//{ TYPE_STRUCT, "rtc", rtc_table },
 		//{ TYPE_STRUCT, "tim256", tim256_table },
 		//{ TYPE_STRUCT, "irq", irq_table },
 
