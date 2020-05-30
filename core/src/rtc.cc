@@ -23,20 +23,26 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 void RTC::reset(Machine::State& cpu) {
 	cpu.rtc.running = false;
 	cpu.rtc.value = 0;
+	cpu.rtc.prescale = 0;
 }
 
 void RTC::clock(Machine::State& cpu, int osc1) {
 	if (cpu.rtc.running) {
-		cpu.rtc.value += osc1;
+		cpu.rtc.prescale += osc1;
+
+		while (cpu.rtc.prescale >= 0x8000)	 {
+			cpu.rtc.value ++;
+			cpu.rtc.prescale -= cpu.rtc.prescale;
+		}
 	}
 }
 
 uint8_t RTC::read(Machine::State& cpu, uint32_t address) {
 	switch (address) {
 		case 0x2008: return cpu.rtc.running ? 0b1 :0b0;
-		case 0x2009: return cpu.rtc.value >> 15;
-		case 0x200A: return cpu.rtc.value >> 23;
-		case 0x200B: return cpu.rtc.value >> 31;
+		case 0x2009: return cpu.rtc.value;
+		case 0x200A: return cpu.rtc.value >> 8;
+		case 0x200B: return cpu.rtc.value >> 16;
 	}
 
 	return 0;
@@ -48,6 +54,7 @@ void RTC::write(Machine::State& cpu, uint8_t data, uint32_t address) {
 
 		if (data & 0b10) {
 			cpu.rtc.value = 0;
+			cpu.rtc.prescale = 0;
 		}
 	}
 }

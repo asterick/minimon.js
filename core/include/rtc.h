@@ -25,6 +25,7 @@ namespace Machine { struct State; };
 namespace RTC {
 	struct State {
 		bool running;
+		uint16_t prescale;
 		uint32_t value;
 	};
 

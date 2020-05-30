@@ -88,6 +88,7 @@ static const StructDecl RtcState = {
 	(const FieldDecl[]) {
 		FIELD("running", RTC::State, running, TYPE_BOOL),
 		FIELD("value", RTC::State, value, TYPE_UINT32),
+		FIELD("prescale", RTC::State, prescale, TYPE_UINT16),
 		{ TYPE_END }
 	}
 };
