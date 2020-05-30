@@ -24,7 +24,7 @@ namespace Machine { struct State; };
 
 namespace Input {
 	union State {
-		uint8_t input_bytes[6];
+		uint8_t bytes[6];
 
 		struct __attribute__((packed)) {
 			unsigned interrupt_direction:10;

@@ -176,22 +176,68 @@ static const StructDecl LcdState = {
 	}
 };
 
+static const StructDecl InputState = {
+	sizeof(Input::State),
+	(const FieldDecl[]) {
+		FIELD("bytes", Input::State, bytes, TYPE_UINT8, SIZE(6)),
+		FIELD("interrupt_direction", Input::State, bytes[0], TYPE_UINT16),
+		FIELD("input_state", Input::State, bytes[2], TYPE_UINT16),
+		FIELD("dejitter", Input::State, bytes[4], TYPE_UINT16),
+		{ TYPE_END }
+	}
+};
+
+static const StructDecl BlitterState = {
+	sizeof(Blitter::State),
+	(const FieldDecl[]) {
+		FIELD("enables", Blitter::State, enables, TYPE_UINT8),
+		FIELD("rate_control", Blitter::State, rate_control, TYPE_UINT8),
+		FIELD("map_base", Blitter::State, map_base, TYPE_UINT32),
+		FIELD("sprite_base", Blitter::State, sprite_base, TYPE_UINT32),
+		FIELD("scroll_x", Blitter::State, scroll_x, TYPE_UINT8),
+		FIELD("scroll_y", Blitter::State, scroll_y, TYPE_UINT8),
+		FIELD("divider", Blitter::State, divider, TYPE_UINT8),
+		{ TYPE_END }
+	}
+};
+
+static const StructDecl BlitterSprite = {
+	sizeof(Blitter::Sprite),
+	(const FieldDecl[]) {
+		FIELD("x", Blitter::Sprite, bytes[0], TYPE_UINT8),
+		FIELD("y", Blitter::Sprite, bytes[1], TYPE_UINT8),
+		FIELD("tile", Blitter::Sprite, bytes[2], TYPE_UINT8),
+		FIELD("flags", Blitter::Sprite, bytes[3], TYPE_UINT8, SIZE(384)),
+		{ TYPE_END }
+	}
+};
+
+static const StructDecl BlitterOverlay = {
+	sizeof(Blitter::Overlay),
+	(const FieldDecl[]) {
+		FIELD("framebuffer", Blitter::Overlay, framebuffer, TYPE_UINT8, SIZE(8, 96)),
+		STRUCT("oam", Blitter::Overlay, oam, BlitterSprite, SIZE(24)),
+		FIELD("map", Blitter::Overlay, framebuffer, TYPE_UINT8, SIZE(384)),
+		{ TYPE_END }
+	}
+};
+
 static const StructDecl MachineState = {
 	sizeof(Machine::State),
 	(const FieldDecl[]) {
-		STRUCT("cpu",   Machine::State, reg, CpuState),
-		STRUCT("ctrl",  Machine::State, ctrl, ControlState),
-		STRUCT("gpio",  Machine::State, gpio, GpioState),
-		STRUCT("rtc",   Machine::State, rtc, RtcState),
-		STRUCT("irq",   Machine::State, irq, IrqState),
-		STRUCT("tim256",Machine::State, tim256, Tim256State),
-		FIELD("ram",   	Machine::State, ram, TYPE_UINT8, SIZE(0x1000)),
-		STRUCT("lcd",	Machine::State, lcd, LcdState),
+		STRUCT("cpu",   	Machine::State, reg, CpuState),
+		STRUCT("ctrl",  	Machine::State, ctrl, ControlState),
+		STRUCT("gpio",  	Machine::State, gpio, GpioState),
+		STRUCT("rtc",   	Machine::State, rtc, RtcState),
+		STRUCT("irq",   	Machine::State, irq, IrqState),
+		STRUCT("tim256",	Machine::State, tim256, Tim256State),
+		FIELD("ram",   		Machine::State, ram, TYPE_UINT8, SIZE(0x1000)),
+		STRUCT("lcd",		Machine::State, lcd, LcdState),
+		STRUCT("input",		Machine::State, input, InputState),
+		STRUCT("blitter",	Machine::State, blitter, BlitterState),
+		STRUCT("overlay",	Machine::State, overlay, BlitterOverlay),
 
 		//Timers::State timers;
-		//Input::State input;
-		//Blitter::State blitter;
-		//Blitter::Overlay overlay;
 
 		FIELD("bus_cap", Machine::State, bus_cap, TYPE_UINT8),
 		FIELD("clocks", Machine::State, clocks, TYPE_INT32),

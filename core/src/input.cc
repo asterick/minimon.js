@@ -50,22 +50,22 @@ void Input::update(Machine::State& cpu, uint16_t value) {
 }
 
 uint8_t Input::read(Input::State& inputs, uint32_t address) {
-	return inputs.input_bytes[address - 0x2050];
+	return inputs.bytes[address - 0x2050];
 }
 
 void Input::write(Input::State& inputs, uint8_t data, uint32_t address) {
 	switch (address) {
 	case 0x2050:
-		inputs.input_bytes[0] = data;
+		inputs.bytes[0] = data;
 		break ;	
 	case 0x2051:
-		inputs.input_bytes[1] = data & 0b00000011;
+		inputs.bytes[1] = data & 0b00000011;
 		break ;	
 	case 0x2054:
-		inputs.input_bytes[4] = data & 0b01110111;
+		inputs.bytes[4] = data & 0b01110111;
 		break ;	
 	case 0x2055:
-		inputs.input_bytes[5] = data & 0b00000111;
+		inputs.bytes[5] = data & 0b00000111;
 		break ;	
 	}
 }
