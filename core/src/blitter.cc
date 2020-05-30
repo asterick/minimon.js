@@ -244,14 +244,8 @@ void Blitter::write(Machine::State& cpu, uint8_t data, uint32_t address) {
 		case 0x2081:
 			cpu.blitter.rate_control = data;
 			break ;
-		case 0x2082:
-			cpu.blitter.map_bytes[0] = data;
-			break ;
-		case 0x2083:
-			cpu.blitter.map_bytes[1] = data;
-			break ;
-		case 0x2084:
-			cpu.blitter.map_bytes[2] = data;
+		case 0x2082 ... 0x2084:
+			cpu.blitter.map_bytes[address - 0x2082] = data;
 			break ;
 		case 0x2085:
 			cpu.blitter.scroll_y = data;
@@ -259,14 +253,8 @@ void Blitter::write(Machine::State& cpu, uint8_t data, uint32_t address) {
 		case 0x2086:
 			cpu.blitter.scroll_x = data;
 			break ;
-		case 0x2087:
-			cpu.blitter.sprite_bytes[0] = data;
-			break ;
-		case 0x2088:
-			cpu.blitter.sprite_bytes[1] = data;
-			break ;
-		case 0x2089:
-			cpu.blitter.sprite_bytes[2] = data;
+		case 0x2087 ... 0x2089:
+			cpu.blitter.sprite_bytes[address - 0x2087] = data;
 			break ;
 	}
 }
