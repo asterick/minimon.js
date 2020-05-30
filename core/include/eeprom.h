@@ -29,7 +29,7 @@ namespace EEPROM {
 		PIN_FLOAT
 	};
 
-	enum I2C_MODE {
+	enum I2C_MODE : uint8_t {
 		SYSTEM_STOP,
 		
 		SYSTEM_SELECT,
