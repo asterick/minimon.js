@@ -2,6 +2,7 @@
 node_modules
 *.log
 public
+src/system/table.js
 !public/favicon.png
 !public/index.html
 compiled.js

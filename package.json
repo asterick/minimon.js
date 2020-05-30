@@ -5,8 +5,9 @@
   "main": "src/index.jsx",
   "scripts": {
     "core": "cd core; make",
-    "start": "webpack-dev-server --open --mode development",
-    "build": "npm run core; webpack --mode production",
+    "table": "python3 ./tools/convert.py > ./src/system/table.js",
+    "start": "npm run table; webpack-dev-server --open --mode development",
+    "build": "npm run table; npm run core; webpack --mode production",
     "deploy": "npm run build; scp public/* node@scyl.us:~/minimon/"
   },
   "keywords": [],
