@@ -76,7 +76,6 @@ static const StructDecl IrqState = {
 	}
 };
 
-
 static const StructDecl Tim256State = {
 	sizeof(TIM256::State),
 	(const FieldDecl[]) {
@@ -95,7 +94,6 @@ static const StructDecl RtcState = {
 		{ TYPE_END }
 	}
 };
-
 
 static const StructDecl ControlState = {
 	sizeof(Control::State),
