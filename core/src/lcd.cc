@@ -62,27 +62,26 @@ static inline uint32_t contrast(uint32_t color, uint8_t volume) {
 	}
 }
 
-static void fill(LCD::State& lcd, uint32_t color) {
-	uint32_t* target = &lcd.framebuffer[0][0];
+static inline void fill(uint32_t* target, uint32_t color) {
 	for (int i = 96*64; i > 0; i--) {
 		*(target++) = color;
 	}
 }
 
-static void render(LCD::State& lcd) {
+static void render(uint32_t (&framebuffer)[64][96], LCD::State& lcd) {
 	const uint32_t off = contrast(OFF_COLOR, lcd.volume);
 	const uint32_t on = contrast(ON_COLOR, lcd.volume);
 
 	if (!lcd.display_enable) {
-		fill(lcd, off);
+		fill(&framebuffer[0][0], off);
 		return ;
 	} else if (lcd.all_on) {
-		fill(lcd, on);
+		fill(&framebuffer[0][0], on);
 		return ;
 	}
 
 	for (int com = 0; com <= 63; com++) {
-		uint32_t* line = lcd.framebuffer[lcd.reverse_com_scan ? (63 - com) : com];
+		uint32_t* line = framebuffer[lcd.reverse_com_scan ? (63 - com) : com];
 
 		int drawline = (com + lcd.start_address) % 0x40;
 		uint8_t mask = 1 << (drawline % 8);
@@ -102,8 +101,9 @@ void LCD::clock(Machine::State& cpu, int osc3) {
 
 	while (cpu.lcd.overflow >= OSC3_SPEED) {
 		if (cpu.lcd.scanline >= 0x40) {
-			render(cpu.lcd);
-			flip_screen(cpu.lcd.framebuffer);
+			uint32_t framebuffer[64][96];
+			render(framebuffer, cpu.lcd);
+			flip_screen(framebuffer);
 
 			cpu.lcd.scanline = 0;
 			Blitter::clock(cpu);
