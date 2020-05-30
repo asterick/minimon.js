@@ -85,17 +85,17 @@ function array(buffer, offset, type, my_def, elements, ... size) {
 
 	// Return a sub array
 	if (size.length > 0) {
-		let array = new Array(elements);
+		let out = new Array(elements);
 		for (let i = 0; i < elements; i++) {
-			array[i] = array(buffer, offset + (stride*i), type, my_def, ... size);
+			out[i] = array(buffer, offset + (stride*i), type, my_def, ... size);
 		}
-		return array;
+		return out;
 	} else if (type == TYPE_STRUCT) {
-		let array = new Array(elements);
+		let out = new Array(elements);
 		for (let i = 0; i < elements; i++) {
-			array[i] = struct(buffer, my_def, offset + (stride*i))
+			out[i] = struct(buffer, my_def, offset + (stride*i))
 		}
-		return array;
+		return out;
 	}
 
 	return new (ARRAYTYPE[type])(buffer, offset, elements);

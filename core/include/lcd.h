@@ -44,7 +44,7 @@ namespace LCD {
 		uint8_t	operating_mode;
 		uint8_t scanline;
 
-		int 	overflow;
+		int32_t overflow;
 	};
 
 	void reset(LCD::State& lcd);

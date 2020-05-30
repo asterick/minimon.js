@@ -128,20 +128,50 @@ static const StructDecl GpioState = {
 	}
 };
 
+static const StructDecl LcdState = {
+	sizeof(LCD::State),
+	(const FieldDecl[]) {
+		FIELD("gddram", LCD::State, gddram, TYPE_UINT8, SIZE(9, 132)),
+		FIELD("read_buffer", LCD::State, read_buffer, TYPE_UINT8),
+		FIELD("volume", LCD::State, volume, TYPE_UINT8),
+		FIELD("column_address", LCD::State, column_address, TYPE_UINT8),
+		FIELD("page_address", LCD::State, page_address, TYPE_UINT8),
+		FIELD("start_address", LCD::State, start_address, TYPE_UINT8),
+
+		FIELD("rmw_mode", LCD::State, rmw_mode, TYPE_BOOL),
+		FIELD("adc_select", LCD::State, adc_select, TYPE_BOOL),
+		FIELD("setting_volume", LCD::State, setting_volume, TYPE_BOOL),
+		FIELD("display_enable", LCD::State, display_enable, TYPE_BOOL),
+		FIELD("reverse_display", LCD::State, reverse_display, TYPE_BOOL),
+		FIELD("all_on", LCD::State, all_on, TYPE_BOOL),
+		FIELD("reverse_com_scan", LCD::State, reverse_com_scan, TYPE_BOOL),
+		FIELD("static_indicator", LCD::State, static_indicator, TYPE_BOOL),
+		FIELD("lcd_bias", LCD::State, lcd_bias, TYPE_BOOL),
+
+		FIELD("resistor_ratio", LCD::State, resistor_ratio, TYPE_UINT8),
+		FIELD("operating_mode", LCD::State, operating_mode, TYPE_UINT8),
+		FIELD("scanline", LCD::State, scanline, TYPE_UINT8),
+
+		FIELD("overflow", LCD::State, overflow, TYPE_INT32),
+
+		{ TYPE_END }
+	}
+};
+
 static const StructDecl MachineState = {
 	sizeof(Machine::State),
 	(const FieldDecl[]) {
-		STRUCT("cpu",  Machine::State, reg, CpuState),
-		STRUCT("ctrl", Machine::State, ctrl, ControlState),
-		STRUCT("gpio", Machine::State, gpio, GpioState),
-		STRUCT("rtc",  Machine::State, rtc, RtcState),
-		STRUCT("irq",  Machine::State, irq, IrqState),
-		STRUCT("tim256",  Machine::State, tim256, Tim256State),
-		FIELD("ram",   Machine::State, ram, TYPE_UINT8, SIZE(0x1000)),
+		STRUCT("cpu",   Machine::State, reg, CpuState),
+		STRUCT("ctrl",  Machine::State, ctrl, ControlState),
+		STRUCT("gpio",  Machine::State, gpio, GpioState),
+		STRUCT("rtc",   Machine::State, rtc, RtcState),
+		STRUCT("irq",   Machine::State, irq, IrqState),
+		STRUCT("tim256",Machine::State, tim256, Tim256State),
+		FIELD("ram",   	Machine::State, ram, TYPE_UINT8, SIZE(0x1000)),
+		STRUCT("lcd",	Machine::State, lcd, LcdState),
 
 		//Timers::State timers;
 		//Input::State input;
-		//LCD::State lcd;
 		//Blitter::State blitter;
 		//Blitter::Overlay overlay;
 
