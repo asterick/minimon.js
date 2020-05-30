@@ -23,23 +23,20 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 namespace Machine { struct State; };
 
 namespace Blitter {
-	union Sprite {
-		struct {
-			unsigned x:7;
-			unsigned:1;
+	struct Sprite {
+		unsigned x:7;
+		unsigned:1;
 
-			unsigned y:7;
-			unsigned:1;
+		unsigned y:7;
+		unsigned:1;
 
-			unsigned tile:8;
+		unsigned tile:8;
 
-			unsigned x_flip: 1;
-			unsigned y_flip: 1;
-			unsigned invert: 1;
-			unsigned enable: 1;
-			unsigned:4;
-		};
-		uint8_t bytes[];
+		unsigned x_flip: 1;
+		unsigned y_flip: 1;
+		unsigned invert: 1;
+		unsigned enable: 1;
+		unsigned:4;
 	};
 
 	struct Overlay {

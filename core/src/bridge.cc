@@ -204,10 +204,10 @@ static const StructDecl BlitterState = {
 static const StructDecl BlitterSprite = {
 	sizeof(Blitter::Sprite),
 	(const FieldDecl[]) {
-		FIELD("x", Blitter::Sprite, bytes[0], TYPE_UINT8),
-		FIELD("y", Blitter::Sprite, bytes[1], TYPE_UINT8),
-		FIELD("tile", Blitter::Sprite, bytes[2], TYPE_UINT8),
-		FIELD("flags", Blitter::Sprite, bytes[3], TYPE_UINT8, SIZE(384)),
+		{ TYPE_UINT8, "x", 0 },
+		{ TYPE_UINT8, "y", 1 },
+		{ TYPE_UINT8, "tile", 2 },
+		{ TYPE_UINT8, "flags", 3 },
 		{ TYPE_END }
 	}
 };
