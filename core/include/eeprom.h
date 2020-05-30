@@ -44,7 +44,7 @@ namespace EEPROM {
 
 		I2C_MODE mode;
 		uint8_t shift;
-		int bit;
+		int8_t bit;
 		uint16_t address;
 
 		PinState data_in;

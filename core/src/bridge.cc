@@ -115,8 +115,7 @@ static const StructDecl EepromState = {
 		FIELD("address", EEPROM::State, address, TYPE_UINT16),
 		FIELD("mode", EEPROM::State, mode, TYPE_UINT8),
 		FIELD("shift", EEPROM::State, shift, TYPE_UINT8),
-		//int bit;
-
+		FIELD("bit", EEPROM::State, bit, TYPE_INT8),
 		{ TYPE_END }
 	}
 };
