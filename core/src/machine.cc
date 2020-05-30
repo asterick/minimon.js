@@ -235,7 +235,7 @@ uint8_t cpu_read8(Machine::State& cpu, uint32_t address) {
 }
 
 void cpu_write8(Machine::State& cpu, uint8_t data, uint32_t address) {
-	trace_access(cpu, address, TRACE_WRITE);
+	trace_access(cpu, address, TRACE_WRITE, data);
 	cpu_write(cpu, cpu.bus_cap = data, address);
 }
 

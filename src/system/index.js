@@ -118,7 +118,7 @@ export class Minimon {
 
 				console.log(str.join(""));
 			},
-			trace_access: (cpu, address, kind) => this.trace(cpu, address, kind)
+			trace_access: (cpu, address, kind, data) => this.trace(cpu, address, kind, data)
 		}
 	}
 
@@ -186,7 +186,7 @@ export class Minimon {
 		// This will be overidden elsewhere
 	}
 
-	trace(cpu, address, kind) {
+	trace(cpu, address, kind, data) {
 
 	}
 
