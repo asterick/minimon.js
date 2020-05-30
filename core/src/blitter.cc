@@ -80,8 +80,9 @@ static inline uint16_t rev(uint16_t a) {
 	a = ((a & 0b1010101010101010) >> 1) | ((a & 0b0101010101010101) << 1);
 	a = ((a & 0b1100110011001100) >> 2) | ((a & 0b0011001100110011) << 2);
 	a = ((a & 0b1111000011110000) >> 4) | ((a & 0b0000111100001111) << 4);
+	a = ((a & 0b1111111100000000) >> 4) | ((a & 0b0000000011111111) << 4);
 
-	return (a >> 8) | (a << 8);
+	return a;
 }
 
 void Blitter::reset(Machine::State& cpu) {
@@ -216,22 +217,14 @@ uint8_t Blitter::read(Machine::State& cpu, uint32_t address) {
 			return cpu.blitter.enables;
 		case 0x2081:
 			return cpu.blitter.rate_control | (cpu.blitter.divider << 4);
-		case 0x2082:
-			return cpu.blitter.map_bytes[0];
-		case 0x2083:
-			return cpu.blitter.map_bytes[1];
-		case 0x2084:
-			return cpu.blitter.map_bytes[2];
 		case 0x2085:
 			return cpu.blitter.scroll_y;
 		case 0x2086:
 			return cpu.blitter.scroll_x;
-		case 0x2087:
-			return cpu.blitter.sprite_bytes[0];
-		case 0x2088:
-			return cpu.blitter.sprite_bytes[1];
-		case 0x2089:
-			return cpu.blitter.sprite_bytes[2];
+		case 0x2082 ... 0x2084:
+			return cpu.blitter.map_bytes[address - 0x2082];
+		case 0x2087 ... 0x2089:
+			return cpu.blitter.sprite_bytes[address - 0x2087];
 		case 0x208A:
 			return LCD::get_scanline(cpu.lcd);
 
