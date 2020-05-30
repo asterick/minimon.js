@@ -94,7 +94,7 @@ namespace CPU {
 };
 
 namespace Machine {
-	enum Status {
+	enum Status : uint8_t {
 		STATUS_NORMAL,
 		STATUS_HALTED,
 		STATUS_SLEEPING,

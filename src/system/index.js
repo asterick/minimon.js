@@ -98,7 +98,7 @@ export class Minimon {
 
 		this._cpu_state = this._exports.get_machine();
 		this._machineBytes = new Uint8Array(this._exports.memory.buffer);
-		this.state = new State(this._exports.memory.buffer, this._exports.get_description());
+		this.state = new State(this._exports.memory.buffer, this._exports.get_description(), this._cpu_state);
 
 		this.reset();
 		this.restoreEEPROM();

@@ -50,97 +50,95 @@ const ARRAYTYPE = {
 	[TYPE_BOOL]: Uint8Array
 }
 
-function utf8(bytes, offset) {
-	let length = 0;
-
-	while (bytes[offset+length]) length++;
-
-	return decoder.decode(bytes.subarray(offset, offset+length));
+function utf8(dv, offset) {
+	let address = dv.getUint32(offset, true);
+	if (!address) return ;
+	for (var length = 0; dv.getUint8(address+length); length++) ;
+	return decoder.decode(dv.buffer.slice(address, address+length));
 }
 
-function data_array(buffer, type, offset, entries, ... rest) {
-	if (rest.length > 0) {
-		const stride = rest.reduce((a, b) => a * b, SIZES[type]);
-		let result = [];
+function sizeof(dv, offset) {
+	let address = dv.getUint32(offset, true);
+	if (!address) return ;
 
-		for (let i = 0; i < entries; i++) {
-			result[i] = data_array(buffer, type, offset + index * stride, ... rest);
-		}
-
-		return result;
-	} else {
-		return new (ARRAYTYPE[type])(buffer, offset, entries);
+	let out = [];
+	while (true) {
+		let len = dv.getInt32(address, true);
+		if (len < 0) break ;
+		out.push(len);
+		address += 4;
 	}
+
+	return out;
 }
 
-function proxy(dv, type, offset, entries, ... rest) {
-	const stride = rest.reduce((a, b) => a * b, 1);
-
-	return new Proxy({}, {
-		get: function(_, index) {
-			if (index === 'length') return entries;
-			index |= 0;
-
-			if (index < 0 || index >= entries) return null;
-
-			if (rest.length > 0) {
-				return proxy(dv, type, offset + index * stride, ... rest);
-			} else {
-				return dv[GETTERS[type]](offset + index * stride, true);
-			}
-		},
-		set: function(_, index, value) {
-			index |= 0;
-			if (rest.length > 0) {
-				throw new Error("Cannot assign array row")
-			} else {
-				if (index < 0 || index >= entries) return ;
-
-				dv[SETTERS[type]](offset + index * stride, value, true);
-				return true;
-			}
-		}
-	})
-}
-
-export default function struct(buffer, offset) {
+function array(buffer, offset, type, my_def, elements, ... size) {
 	let dv = new DataView(buffer);
-	let bytes = new Uint8Array(buffer);
-	let out = {};
+	let stride = size.reduce((a,b) => size, 1);
 
-	for (;; offset += 16) {
-		let type = dv.getUint32(offset, true);
+	// Offset based on element size
+	if (type == TYPE_STRUCT) {
+		stride *= dv.getUint32(my_def, true);
+	} else {
+		stride *= SIZES[type];
+	}
+
+	// Return a sub array
+	if (size.length > 0) {
+		let array = new Array(elements);
+		for (let i = 0; i < elements; i++) {
+			array[i] = array(buffer, offset + (stride*i), type, my_def, ... size);
+		}
+		return array;
+	} else if (type == TYPE_STRUCT) {
+		let array = new Array(elements);
+		for (let i = 0; i < elements; i++) {
+			array[i] = struct(buffer, my_def, offset + (stride*i))
+		}
+		return array;
+	}
+
+	return new (ARRAYTYPE[type])(buffer, offset, elements);
+}
+
+export default function struct(buffer, my_def, offset) {
+	let dv = new DataView(buffer);
+	let out = {};
+	
+	const size = dv.getUint32(my_def, true);
+	let fields = dv.getUint32(my_def + 4, true);
+	
+	for (;;) {
+		let type = dv.getUint32(fields, true);
 
 		if (type == TYPE_END) break ;
+		
+		let name = utf8(dv, fields + 4);
 
-		let name = utf8(bytes, dv.getUint32(offset + 4, true));
-		let data = dv.getUint32(offset + 8, true);
-		let size = dv.getUint32(offset + 12, true);
-		let getter, setter;
+		let target = dv.getUint32(fields + 8, true);
+		let def = dv.getUint32(fields + 12, true);
+		let size = sizeof(dv, fields+16);
 
 		if (size) {
-			let topo = [];
-
-			for (;; size += 4) {
-				let dim = dv.getInt32(size, true);
-				if (dim <= 0) break ;
-				topo.push(dim);
-			}
-
-			if (type == TYPE_STRUCT) {
-				out[name] = proxy(dv, type, data, ... topo);
-			} else {
-				out[name] = data_array(buffer, type, data, ... topo);
-			}
+			Object.defineProperty(out, name, {
+				enumerable: true,
+				value: array(buffer, target+offset, type, def, ... size)
+			});
+			// TODO: ARRAY OF STUFF HERE
 		} else if (type == TYPE_STRUCT) {
-			out[name] = struct(buffer, data);
+			Object.defineProperty(out, name, {
+				enumerable: true,
+				value: struct(buffer, def, target+offset)
+			})
 		} else {
 			Object.defineProperty(out, name, {
 				enumerable: true,
-				get: () => dv[GETTERS[type]](data, true),
-				set: (v) => dv[SETTERS[type]](data, v, true)
+				get: () => dv[GETTERS[type]](target+offset, true),
+				set: (v) => dv[SETTERS[type]](target+offset, v, true)
 			});
 		}
+
+		fields += 20;
 	}
 
 	return out ;
