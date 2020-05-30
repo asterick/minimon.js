@@ -23,7 +23,9 @@ static const uint8_t EEPROM_CLOCK = 0b1000;
 static const uint8_t EEPROM_DATA = 0b0100;
 
 void GPIO::reset(GPIO::State& gpio) {
-	memset(&gpio, 0, sizeof(gpio));
+	gpio.output = 0;
+	gpio.direction = 0;
+	gpio.unknown = 0;
 
 	EEPROM::reset(gpio.eeprom);
 }
