@@ -222,6 +222,37 @@ static const StructDecl BlitterOverlay = {
 	}
 };
 
+static const StructDecl TimerInstance = {
+	sizeof(Timers::Timer),
+	(const FieldDecl[]) {
+		FIELD("hi_flags", Timers::Timer, bytes[0], TYPE_BOOL),
+		FIELD("lo_flags", Timers::Timer, bytes[1], TYPE_BOOL),
+		FIELD("preset", Timers::Timer, preset, TYPE_UINT16),
+		FIELD("compare", Timers::Timer, compare, TYPE_UINT16),
+		FIELD("count", Timers::Timer, count, TYPE_UINT16),
+
+		FIELD("lo_clock_ratio", Timers::Timer, lo_clock_ratio, TYPE_INT32),
+		FIELD("lo_clock_ctrl", Timers::Timer, lo_clock_ctrl, TYPE_BOOL),
+		FIELD("lo_clock_source", Timers::Timer, lo_clock_source, TYPE_BOOL),
+		FIELD("hi_clock_ratio", Timers::Timer, hi_clock_ratio, TYPE_INT32),
+		FIELD("hi_clock_ctrl", Timers::Timer, hi_clock_ctrl, TYPE_BOOL),
+		FIELD("hi_clock_source", Timers::Timer, hi_clock_source, TYPE_BOOL),
+		{ TYPE_END }
+	}
+};
+
+static const StructDecl TimerState = {
+	sizeof(Timers::State),
+	(const FieldDecl[]) {
+		STRUCT("timer", Timers::State, timer[3], TimerInstance, SIZE(3)),
+		FIELD("osc1_enable", Timers::State, osc1_enable, TYPE_BOOL),
+		FIELD("osc3_enable", Timers::State, osc3_enable, TYPE_BOOL),
+		FIELD("osc1_prescale", Timers::State, osc1_prescale, TYPE_UINT32),
+		FIELD("osc3_prescale", Timers::State, osc3_prescale, TYPE_UINT32),
+		{ TYPE_END }
+	}
+};
+
 static const StructDecl MachineState = {
 	sizeof(Machine::State),
 	(const FieldDecl[]) {
