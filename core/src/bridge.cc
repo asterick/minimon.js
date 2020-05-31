@@ -241,7 +241,7 @@ static const StructDecl TimerInstance = {
 	}
 };
 
-static const StructDecl TimerState = {
+static const StructDecl TimersState = {
 	sizeof(Timers::State),
 	(const FieldDecl[]) {
 		STRUCT("timer", Timers::State, timer[3], TimerInstance, SIZE(3)),
@@ -267,9 +267,7 @@ static const StructDecl MachineState = {
 		STRUCT("input",		Machine::State, input, InputState),
 		STRUCT("blitter",	Machine::State, blitter, BlitterState),
 		STRUCT("overlay",	Machine::State, overlay, BlitterOverlay),
-
-		//Timers::State timers;
-
+		STRUCT("timers",	Machine::State, timers, TimersState),
 		FIELD("bus_cap", Machine::State, bus_cap, TYPE_UINT8),
 		FIELD("clocks", Machine::State, clocks, TYPE_INT32),
 		FIELD("osc1_overflow", Machine::State, osc1_overflow, TYPE_INT32),
