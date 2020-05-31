@@ -17,8 +17,13 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
 import React, { Component } from "react";
+import { Toggle } from 'office-ui-fabric-react/lib/Toggle';
+import { Stack } from 'office-ui-fabric-react/lib/Stack';
+import { DefaultButton } from 'office-ui-fabric-react';
 
 import SystemContext from "../context";
+
+const stackTokens = { childrenGap: 10 };
 
 function toHex(i, c) {
 	let v = i.toString(16).toUpperCase();
@@ -29,18 +34,38 @@ function toHex(i, c) {
 export default class Registers extends Component {
 	static contextType = SystemContext;
 
+	constructor(...props) {
+		super(...props);
+		this.fileDialog = React.createRef();
+	}
+
+	async load(e) {
+		const file = e.target.files[0];
+		this.context.system.load(await file.arrayBuffer());
+	}
+
 	render() {
 		const system = this.context.system;
 
 		return (
-			<div>
-                <button onClick={() => system.eject()}>Eject</button>
-                <button onClick={() => system.reset()}>Reset</button>
-                <button onClick={() => system.step()}>Step</button>
-                <button onClick={() => {system.running = !system.running}}>{system.running ? "Stop" : "Start"}</button>
-                <button onClick={() => {system.tracing = !system.tracing}}>{system.tracing ? "Tracing" : "Not Tracing"}</button>
+			<div style={{ padding: "10px" }}>
+				<input ref={this.fileDialog} type="file" style={{display:'none'}} onChange={(e) => this.load(e)} />
+				<Stack tokens={stackTokens}>
+					<Stack horizontal tokens={stackTokens}>
+						<DefaultButton text="Reset" onClick={() => system.reset()} allowDisabledFocus />
+						<DefaultButton text="Eject" onClick={() => system.eject()} allowDisabledFocus />
+						<DefaultButton text="Step" onClick={() => system.step()} allowDisabledFocus />
+						<DefaultButton text="Load" onClick={() => this.fileDialog.current.click()} allowDisabledFocus />
+					</Stack>
+
+					<Toggle checked={system.running}inlineLabel onText="Running" offText="Stopped" onChange={(e, checked) => {
+						system.running = checked;
+					}} />
+					<Toggle checked={system.tracing} inlineLabel onText="Tracing on" offText="Tracing off" onChange={(e, checked) => {
+						system.tracing = checked;
+					}} />
+				</Stack>
 			</div>
 		);
 	}
 }
-

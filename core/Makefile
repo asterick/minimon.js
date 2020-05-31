@@ -9,7 +9,7 @@ TRACE_OBJECTS=$(patsubst $(SRCDIR)/%.cc,$(BUILDDIR)/%.to,$(SOURCES))
 TARGET=../public/libminimon.wasm
 TRACE_TARGET=../public/libminimon.tracing.wasm
 
-LD=wasm-ld
+LD=$(if $(shell which wasm-ld),wasm-ld,wasm-ld-10)
 DUMP=llvm-dwarfdump
 CC=clang
 

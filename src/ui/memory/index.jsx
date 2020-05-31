@@ -118,7 +118,7 @@ export default class Memory extends Component {
 
 				return (
 					<List
-						className="Memory"
+						className={classes.memory}
 						baseAddress={this.props.baseAddress}
 						memory={memory}
 

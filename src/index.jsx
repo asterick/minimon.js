@@ -19,9 +19,12 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
 import { Minimon } from "./system";
+import { initializeIcons } from '@uifabric/icons';
 
 import UI from "./ui";
 import SystemContext from "./ui/context";
+
+initializeIcons();
 
 export default class Root extends React.Component {
 	constructor(props) {
