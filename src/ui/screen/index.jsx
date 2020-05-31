@@ -98,7 +98,7 @@ export default class Registers extends Component {
 		gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 		
 		gl.colorMask(true, true, true, false);
-		gl.clearColor(1.0, 1.0, 1.0, 1.0);
+		gl.clearColor(0xB7 / 255, 0xCA / 255, 0xB7 / 255, 1.0);
 		gl.clear(gl.COLOR_BUFFER_BIT);
 
 		this._shader = this._createShader(VertexShader, FragmentShader);

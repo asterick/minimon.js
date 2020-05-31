@@ -19,21 +19,30 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 import React from 'react';
 import ReactDOM from 'react-dom';
 import DockLayout from 'rc-dock'
-import SystemContext from "./context";
 
 import Screen from "./screen";
 import Registers from "./registers";
 import Memory from "./memory";
 import Disassembler from "./disassemble";
+import Settings from "./settings";
 
 import style from "./style.less";
 
 let screen_tab = {id: 'screen', minWidth: 96, minHeight:64, title: 'Screen', content: <Screen />, closable: false };
-let registers_tab = {id: 'registers', title: 'Registers', content: <Registers /> };
-let disassembly_tab = {id: 'disassembly', title: 'Disassembly', content: <Disassembler /> };
-let memory_tab = {id: 'memory', title: 'Memory', content: <Memory baseAddress={0x1000} memory='ram' />};
-let eeprom_tab = {id: 'eeprom', title: 'EEPROM', content: <Memory baseAddress={0} memory='eeprom' />};
+let registers_tab = {id: 'registers', title: 'Registers', content: <Registers />, closable: false };
+let disassembly_tab = {id: 'disassembly', title: 'Disassembly', content: <Disassembler />, closable: true };
+let memory_tab = {id: 'memory', title: <div>'Memory'</div>, content: <Memory baseAddress={0x1000} memory='ram' />, closable: true };
+let eeprom_tab = {id: 'eeprom', title: 'EEPROM', content: <Memory baseAddress={0} memory='eeprom' />, closable: true };
+let settings_tab = {id: 'settings', title: 'Settings', content: <Settings />, closable: false };
 
+let all_tabs = [
+	screen_tab, 
+	registers_tab, 
+	disassembly_tab, 
+	memory_tab, 
+	eeprom_tab, 
+	settings_tab
+];
 
 let defaultLayout = {
 	dockbox: {
@@ -46,6 +55,9 @@ let defaultLayout = {
 						tabs: [screen_tab],
 					},
 					{
+						tabs: [settings_tab],
+					},
+					{
 						tabs: [registers_tab],
 					}
 				]
@@ -56,8 +68,7 @@ let defaultLayout = {
 					{
 						mode: 'vertical',
 						children: [
-							{ tabs: [disassembly_tab] },
-							{ tabs: [memory_tab, eeprom_tab] }
+							{ tabs: [disassembly_tab, memory_tab, eeprom_tab] }
 						]
 					}
 				]
@@ -67,9 +78,19 @@ let defaultLayout = {
 	}
 };
 
+function findTabs(layout) {
+	return Object.keys(layout).map((k) => {
+		let elem = layout[k];
+		if (elem.tabs) {
+			return elem.tabs.map((e) => e.id);
+		} else if (elem.children) {
+			return findTabs(elem.children);
+		} else {
+		}
+	}).flat();
+}
+
 export default class UI extends React.Component {
-	static contextType = SystemContext;
-	
 	state = {};
 
 	preserveLayout(layout) {
@@ -77,13 +98,29 @@ export default class UI extends React.Component {
 	}
 
 	reloadLayout(r) {
-		if (r == null) return ;
+		if (this.state.loaded || !r) return ;
+
+		this.setState({loaded:true});
 
 		let layout = window.localStorage.getItem("minimon-layout");
 		
-		if (layout) {
-			r.loadLayout(JSON.parse(layout));
+		if (!layout) return ;
+
+		layout = JSON.parse(layout);
+
+		/* This will shove tabs not found in arbitrary places */
+		let found_tabs = findTabs(layout);
+		let add_tabs = [... all_tabs];
+		var add = add_tabs.filter((t) => (!t.closable && found_tabs.indexOf(t.id) < 0))
+
+		var top = layout.dockbox;
+		while (top.children) {
+			top = top.children[0];
 		}
+		top.tabs.push(... add);
+
+		/* Give the layout to our manager */
+		r.loadLayout(layout);
 	}
 
 	render() {
