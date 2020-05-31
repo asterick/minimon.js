@@ -28,12 +28,12 @@ import Settings from "./settings";
 
 import style from "./style.less";
 
-let screen_tab = {id: 'screen', minWidth: 96, minHeight:64, title: 'Screen', content: <Screen />, closable: false };
-let registers_tab = {id: 'registers', title: 'Registers', content: <Registers />, closable: false };
+let screen_tab = { id: 'screen', minWidth: 96, minHeight:64, title: 'Screen', content: <Screen />, closable: false };
+let registers_tab = {id: 'registers', title: 'Registers', content: <Registers />, closable: true };
 let disassembly_tab = {id: 'disassembly', title: 'Disassembly', content: <Disassembler />, closable: true };
 let memory_tab = {id: 'memory', title: <div>'Memory'</div>, content: <Memory baseAddress={0x1000} memory='ram' />, closable: true };
 let eeprom_tab = {id: 'eeprom', title: 'EEPROM', content: <Memory baseAddress={0} memory='eeprom' />, closable: true };
-let settings_tab = {id: 'settings', title: 'Settings', content: <Settings />, closable: false };
+let settings_tab = {id: 'settings', title: 'Settings', content: <Settings />, closable: true };
 
 let all_tabs = [
 	screen_tab, 
