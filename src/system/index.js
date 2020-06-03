@@ -30,16 +30,6 @@ const KEYBOARD_CODES = {
 	 8: 0b10000000
 };
 
-export const TRACING_FLAGS = {
-    INSTRUCTION:   0b00000001,
-    IMMEDIATE:     0b00000010,
-    BRANCH_TARGET: 0b00000100,
-    TILE_DATA:     0b00001000,
-    SPRITE_DATA:   0b00010000,
-    READ:          0b01000000,
-    WRITE:         0b10000000
-};
-
 const INPUT_CART_N = 0b1000000000;
 const CPU_FREQ = 4000000;
 
@@ -178,6 +168,10 @@ export class Minimon {
 	}
 
 	// Trigger an update to the UI
+	reload() {
+		// This occurs when the rom has changed
+	}
+
 	repaint() {
 
 	}
@@ -199,12 +193,14 @@ export class Minimon {
 		var bytes = new Uint8Array(ab);
 		var hasHeader = (bytes[0] != 0x50 || bytes[1] != 0x4D);
 		var offset = hasHeader ? 0 : 0x2100;
-
+	
 		for (let i = bytes.length - 1; i >= 0; i--) this.cartridge[(i+offset) & 0x1FFFFF] = bytes[i];
 
 		setTimeout(() => {
 			this._inputState &= ~INPUT_CART_N;
+			this.romLength = bytes.length;
 			this._updateinput();
+			this.reload();
 		}, 100);
 
 		this.eject();
@@ -212,7 +208,9 @@ export class Minimon {
 
 	eject() {
 		this._inputState |= INPUT_CART_N;
+		this.romLength = 0x2100;
 		this._updateinput();
+		this.reload();
 	}
 
 	cpu_read_cart(address) {
@@ -239,6 +237,7 @@ export class Minimon {
 
 	reset() {
 		this._exports.cpu_reset(this._cpu_state);
+		this._updateinput();
 		this.update();
 	}
 

@@ -179,8 +179,9 @@ export class Disassembler {
 		}
 	}
 
-	next() {
-		const address = this._system.translate(this._address);
+	get(_address) {
+		this._address = _address;
+		const address = this._system.translate(_address);
 
 		this._data = [];
 
@@ -204,18 +205,5 @@ export class Disassembler {
 			data: this._data,
 			op, args, address
 		};
-	}
-
-	process(target, rows) {
-		const lines = [];
-		let next;
-
-		this._address = target;
-
-		while (rows-- > 0 && (next = this.next())) {
-			lines.push(next);
-		}
-
-		return lines;
 	}
 }
