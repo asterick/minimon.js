@@ -34,7 +34,7 @@ class Disassembly extends Component {
 	static contextType = SystemContext;
 
 	constructor(props) {
-		super();
+		super(props);
 
 		this.state = {
 			address: 0

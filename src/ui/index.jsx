@@ -25,6 +25,7 @@ import Registers from "./registers";
 import Memory from "./memory";
 import Disassembler from "./disassemble";
 import Settings from "./settings";
+import Blitter from "./blitter";
 
 import { IconButton } from '@fluentui/react/lib/Button';
 import style from "./style.less";
@@ -37,12 +38,13 @@ let screen_tab = {
 	content: <Screen />, 
 	closable: false 
 };
+let settings_tab = {id: 'settings', title: 'Settings', content: <Settings />, closable: false };
 
+let blitter_tab = {id: 'blitter', title: 'Blitter', content: <Blitter />, closable: true };
 let registers_tab = {id: 'registers', title: 'Registers', content: <Registers />, closable: true };
 let disassembly_tab = {id: 'disassembly', title: 'Disassembly', content: <Disassembler />, closable: true };
-let memory_tab = {id: 'memory', title: 'Memory', content: <Memory baseAddress={0x1000} memory='ram' />, closable: true };
+let memory_tab = {id: 'memory', title: 'Memory', content: <Memory baseAddress={0x1000} memory='ram' />, closable: false };
 let eeprom_tab = {id: 'eeprom', title: 'EEPROM', content: <Memory baseAddress={0} memory='eeprom' />, closable: true };
-let settings_tab = {id: 'settings', title: 'Settings', content: <Settings />, closable: true };
 
 let all_tabs = [
 	screen_tab, 
@@ -50,7 +52,8 @@ let all_tabs = [
 	disassembly_tab, 
 	memory_tab, 
 	eeprom_tab, 
-	settings_tab
+	settings_tab,
+	blitter_tab
 ];
 
 let defaultLayout = {
@@ -67,7 +70,7 @@ let defaultLayout = {
 						tabs: [settings_tab],
 					},
 					{
-						tabs: [registers_tab],
+						tabs: [registers_tab, blitter_tab],
 					}
 				]
 			},
@@ -122,11 +125,7 @@ export default class UI extends React.Component {
 		let add_tabs = [... all_tabs];
 		var add = add_tabs.filter((t) => (!t.closable && found_tabs.indexOf(t.id) < 0))
 
-		var top = layout.dockbox;
-		while (top.children) {
-			top = top.children[0];
-		}
-		top.tabs.push(... add);
+		layout.floatbox.children.push(... add.map((v, i) => ({ tabs: [v], x: 16*i, y:16*i, w: 300, h: 200 }) ));
 
 		/* Give the layout to our manager */
 		r.loadLayout(layout);

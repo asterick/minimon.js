@@ -52,7 +52,7 @@ export class Minimon {
 		this.breakpoints = [];
 
 		window.addEventListener("beforeunload", (e) => {
-			this.preserveEEPROM();
+			this.preserve();
 		}, false);
 
 		document.body.addEventListener('keydown', (e) => {
@@ -66,31 +66,46 @@ export class Minimon {
 		});
 	}
 
-	preserveEEPROM() {
+	preserve() {
 		if (!this.state) return ;
 
+		let { prescale, running, value } = this.state.rtc;
 		let encoded = "";
 		for (let i = 0; i < this.state.gpio.eeprom.data.length; i++) {
 			encoded += String.fromCharCode(this.state.gpio.eeprom.data[i]);
 		}
 
 		window.localStorage.setItem(`${this._name}-eeprom`, encoded);
+		window.localStorage.setItem(`${this._name}-rtc`, JSON.stringify({ prescale, running, value, timestamp: +Date.now()}));
 	}
 
-	restoreEEPROM() {
+	restore() {
 		if (!this.state) return ;
 
-		let encoded = window.localStorage.getItem(`${this._name}-eeprom`);
+		try {
+			let encoded = window.localStorage.getItem(`${this._name}-eeprom`);
 
-		for (let i = 0; i < encoded.length; i++) {
-			this.state.gpio.eeprom.data[i] = encoded.charCodeAt(i);
+			for (let i = 0; i < encoded.length; i++) {
+				this.state.gpio.eeprom.data[i] = encoded.charCodeAt(i);
+			}
+
+			// Restore clock (if set)
+			let rtc = JSON.parse(window.localStorage.getItem(`${this._name}-rtc`));
+			let sec = Math.floor((+Date.now() - rtc.timestamp) / 1000)
+
+			this.state.rtc.running = rtc.running;
+			this.state.rtc.prescale = rtc.prescale;
+			this.state.rtc.value = rtc.value + sec;
+
+		} catch (e) {
+			console.log("Could not restore system state")
 		}
 	}
 
 	async init(tracing) {
 		this._tracing = tracing;
 
-		this.preserveEEPROM();
+		this.preserve();
 
 		const request = await fetch(tracing ? "./libminimon.tracing.wasm" : "./libminimon.wasm");
 		const wasm = await WebAssembly.instantiate(await request.arrayBuffer(), this._wasm_environment);
@@ -101,7 +116,7 @@ export class Minimon {
 		this.state = new State(this._exports.memory.buffer, this._exports.get_description(), this._cpu_state);
 
 		this.reset();
-		this.restoreEEPROM();
+		this.restore();
 	}
 
 	_wasm_environment = {
@@ -239,6 +254,7 @@ export class Minimon {
 
 	reset() {
 		this._exports.cpu_reset(this._cpu_state);
+		this._updateinput();
 		this.update();
 	}
 
