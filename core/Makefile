@@ -3,7 +3,7 @@ BUILDDIR=obj
 SRCEXT=cc
 OBJEXT=o
 
-SOURCES=$(wildcard $(SRCDIR)/*.cc)
+SOURCES=$(filter-out $(SRCDIR)/retroarch.cc, $(wildcard $(SRCDIR)/*.cc))
 OBJECTS=$(patsubst $(SRCDIR)/%.cc,$(BUILDDIR)/%.o,$(SOURCES))
 TRACE_OBJECTS=$(patsubst $(SRCDIR)/%.cc,$(BUILDDIR)/%.to,$(SOURCES))
 TARGET=../public/libminimon.wasm
@@ -36,6 +36,9 @@ include/table.h: ../tools/table.py ../tools/s1c88.csv
 
 wasi-libc:
 	# make -C wasi-libc
+
+retroarch: $(BUILDDIR)
+	make -f Make.retroarch
 
 $(TARGET): include/table.h wasi-libc $(OBJECTS)
 	$(LD) $(LDFLAGS) $(OBJECTS) -o $@

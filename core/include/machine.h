@@ -141,6 +141,11 @@ extern "C" void cpu_write(Machine::State& cpu, uint8_t data, uint32_t address);
 extern "C" void cpu_step(Machine::State& cpu);
 extern "C" void cpu_advance(Machine::State& cpu, int ticks);
 
+// Bridge functions
+extern "C" void cpu_reset(Machine::State& cpu);
+extern "C" void cpu_advance(Machine::State& cpu, int ticks);
+extern "C" const void update_inputs(Machine::State& cpu, uint16_t value);
+
 // Clock management
 void cpu_clock(Machine::State& cpu, int cycles);
 
