@@ -69,10 +69,7 @@ extern "C" void debug_print(const void* data) {
 }
 
 extern "C" void flip_screen(void* lcd) {
-    uint8_t* pixels = (uint8_t*)lcd;
-    uint32_t* out = framebuffer;
-
-    memcpy(framebuffer, lcd, sizeof(framebuffer));
+    //memcpy(framebuffer, lcd, sizeof(framebuffer));
 }
 
 extern "C" uint8_t cpu_read_cart(Machine::State& cpu, uint32_t address) {
@@ -177,5 +174,7 @@ void retro_run(void)
 
     cpu_advance(machine_state, CPU_FREQ / FPS);
     // TODO: FEED AUDIO
+
+    framebuffer[0]++;
     video_cb(framebuffer, 96, 64, 64 * sizeof(uint32_t));
 }
