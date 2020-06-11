@@ -36,7 +36,7 @@
     "@babel/core": "^7.10.2",
     "@babel/plugin-proposal-class-properties": "^7.10.1",
     "@babel/preset-react": "^7.10.1",
-    "@fluentui/react": "^7.117.3",
+    "@fluentui/react": "^7.119.0",
     "babel-loader": "^8.1.0",
     "css-loader": "^3.5.3",
     "less-loader": "^6.1.0",
