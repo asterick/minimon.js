@@ -21,7 +21,7 @@ EXPORTS = \
 	--export cpu_write \
 	--export get_description
 
-CPPFLAGS = --target=wasm32-wasm -O2 -I. -I../include -std=c++17 --sysroot=./wasi-libc/sysroot -g
+CPPFLAGS = --target=wasm32-wasm -O2 -I. -I../include -std=c++17 --sysroot=./wasi-libc/sysroot -g -Wall
 LDFLAGS = --no-entry --allow-undefined -L ./wasi-libc/sysroot/lib/wasm32-wasi -lc $(EXPORTS)
 
 all: wasi-libc $(BUILDDIR) $(TARGET) $(TRACE_TARGET)

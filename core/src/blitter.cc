@@ -21,8 +21,6 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 static const int SCREEN_WIDTH = 96;
 static const int SCREEN_HEIGHT = 64;
-static const int TICKS_PER_COUNT = 843;
-static const int TICK_OVERFLOW = TICKS_PER_COUNT * 72;
 
 union FrameBuffer {
 	uint8_t  bytes[SCREEN_WIDTH][8];
@@ -68,10 +66,6 @@ static inline uint64_t shift(uint64_t value, int offset) {
 	}
 }
 
-static inline int max(int a, int b) {
-	return (a > b) ? a : b;
-}
-
 static inline int min(int a, int b) {
 	return (a < b) ? a : b;
 }
@@ -115,7 +109,7 @@ void Blitter::clock(Machine::State& cpu) {
 
 			target.column[x] = 0;
 
-			for(int y = -y_fine, yt; y < SCREEN_HEIGHT; y += 8, address += size.width) {
+			for(int y = -y_fine; y < SCREEN_HEIGHT; y += 8, address += size.width) {
 				uint8_t tile = cpu.overlay.map[address];
 				auto tile_address = cpu.blitter.map_base + x_fine + tile * 8;
 				uint8_t graphic = cpu_read8(cpu, tile_address);

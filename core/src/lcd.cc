@@ -63,12 +63,12 @@ static inline uint32_t contrast(uint32_t color, uint8_t volume) {
 }
 
 static inline void fill(uint32_t* target, uint32_t color) {
-	for (int i = 96*64; i > 0; i--) {
+	for (int i = LCD_WIDTH*LCD_HEIGHT; i > 0; i--) {
 		*(target++) = color;
 	}
 }
 
-static void render(uint32_t (&framebuffer)[64][96], LCD::State& lcd) {
+static void render(uint32_t (&framebuffer)[LCD_HEIGHT][LCD_WIDTH], LCD::State& lcd) {
 	const uint32_t off = contrast(OFF_COLOR, lcd.volume);
 	const uint32_t on = contrast(ON_COLOR, lcd.volume);
 
@@ -101,7 +101,7 @@ void LCD::clock(Machine::State& cpu, int osc3) {
 
 	while (cpu.lcd.overflow >= OSC3_SPEED) {
 		if (cpu.lcd.scanline >= 0x40) {
-			uint32_t framebuffer[64][96];
+			uint32_t framebuffer[LCD_HEIGHT][LCD_WIDTH];
 			render(framebuffer, cpu.lcd);
 			flip_screen(framebuffer);
 

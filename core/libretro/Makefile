@@ -7,7 +7,7 @@ TARGET_NAME 	:= $(BUILDDIR)/minimon
 STATIC_LINKING 	:= 0
 AR             	:= ar
 LIBM    		:= -lm
-CFLAGS			:= -I.. -I../include -Wall -pedantic -Wno-gnu
+CFLAGS			:= -I.. -I../include -pedantic
 
 ifeq ($(platform),)
 	platform = unix
@@ -50,6 +50,7 @@ ifeq ($(platform), osx)
 		CFLAGS += $(ARCHFLAGS)
 		LFLAGS += $(ARCHFLAGS)
 	endif
+	CFLAGS += -Wno-gnu
 endif
 
 ifeq ($(STATIC_LINKING), 1)
@@ -121,7 +122,6 @@ else
 endif
 
 LDFLAGS += $(LIBM)
-CFLAGS += $(FPIC)
 
 all: $(TARGET)
 

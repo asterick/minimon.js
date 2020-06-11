@@ -36,12 +36,6 @@ bool retro_load_game_special(unsigned game_type, const struct retro_game_info *i
 
 bool retro_load_game(const struct retro_game_info *info)
 {
-    const char* save_directory;
-    environ_cb(RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY, &save_directory);
-
-
-    log_cb(RETRO_LOG_INFO, "GG %s\n", save_directory);
-
     if (info && info->data) { // ensure there is ROM data
         const uint8_t* data = (const uint8_t*)info->data;
         int offset = 0;
@@ -274,7 +268,7 @@ void retro_run(void)
 
     // Feed audio buffer
     for (int i = 0; i < machine_state.audio.write_index; i++) {
-        int16_t volume = (int16_t)(machine_state.audio.output[i] * 0x1000);
+        int16_t volume = (int16_t)(machine_state.audio.output[i] * 0x100);
         audio_cb(volume, volume);
     }
     
