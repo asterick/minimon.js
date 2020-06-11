@@ -2,7 +2,7 @@ SRCDIR=../src
 BUILDDIR=obj
 
 SOURCES=$(filter-out $(SRCDIR)/retroarch.cc, $(wildcard $(SRCDIR)/*.cc))
-OBJECTS=$(patsubst $(SRCDIR)/%.cc,$(BUILDDIR)/%.o,$(SOURCES))
+OBJECTS=$(patsubst $(SRCDIR)/%.cc,$(BUILDDIR)/%.o,$(SOURCES)) $(BUILDDIR)/main.o
 TRACE_OBJECTS=$(patsubst $(SRCDIR)/%.cc,$(BUILDDIR)/%.to,$(SOURCES)) $(BUILDDIR)/main.o
 TARGET=../../public/libminimon.wasm
 TRACE_TARGET=../../public/libminimon.tracing.wasm

@@ -85,8 +85,8 @@ static inline uint8_t add8(Machine::State& cpu, uint8_t t, uint8_t s, int carry)
 	if (cpu.reg.flag.d) {
 		int h = (t & 0xF) + (s & 0xF) + carry;
 
-		if (h > 0x09) o += 0x6;
-		if (o > 0x90) o += 0x60;
+		if (h >= 0x0A) o += 0x6;
+		if (o >= 0xA0) o += 0x60;
 
 		cpu.reg.flag.v = 0;
 		cpu.reg.flag.n = 0;

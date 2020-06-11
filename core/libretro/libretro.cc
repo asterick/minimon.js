@@ -217,7 +217,7 @@ void retro_run(void)
             
         }
     }
+    
     // TODO: FEED AUDIO
-
     video_cb(pixels, 96, 64, 96 * sizeof(uint32_t));
 }
