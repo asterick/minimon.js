@@ -66,7 +66,7 @@ void retro_unload_game(void) {
 }
 
 extern "C" void debug_print(const void* data) {
-    log_cb(RETRO_LOG_INFO, (const char*) data);
+    log_cb(RETRO_LOG_INFO, "%s\n", (const char*) data);
 }
 
 extern "C" void flip_screen(void* lcd) {
@@ -235,6 +235,5 @@ void retro_run(void)
         audio_cb(volume, volume);
     }
     
-    log_cb(RETRO_LOG_INFO, "%i\n", machine_state.audio.write_index);
     machine_state.audio.write_index = 0;
 }

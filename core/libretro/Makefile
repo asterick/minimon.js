@@ -142,7 +142,7 @@ $(BUILDDIR)/%.o: $(SRCDIR)/%.cc $(BUILDDIR)
 	$(CC) $(CFLAGS) $(FPIC) -c -o $@ $<
 
 test: $(TARGET)
-	~/Desktop/RetroArch.app/Contents/MacOS/RetroArch --verbose -L $< ../../roms/Pokemon\ Pinball\ Mini\ \(U\).min
+	~/Desktop/RetroArch.app/Contents/MacOS/RetroArch --verbose -L $< ../../roms/Pokemon\ Race\ Mini\ \(J\).min
 
 clean:
 	rm -Rf $(BUILDDIR)

@@ -22,6 +22,6 @@ Emulation Status
 | Input Ports       |  50%       | Debounce circuit not done             |
 | Output Ports      |   0%       |                                       |
 | GPIO Ports        |  25%       |                                       |
-| Sound Emulation   |   0%       |                                       |
+| Sound Emulation   |  80%       | Works in libretro, not wired to web   |
 | ADC Emulation     |  20%       | Stubbed with constant value           |
 | EEPROM Emulation  | 100%       | Complete                              |
