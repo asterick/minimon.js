@@ -11,7 +11,7 @@ const   uint16_t    INPUT_CART_N = 0b1000000000;
 
 static  Machine::State          machine_state;
 static  uint8_t                 cartridge_memory[0x200000];
-static  uint32_t                framebuffer[64][96];
+static  uint8_t                 framebuffer[4][64][96][4];
 static  uint16_t                input_state;
 static  int                     insert_countdown;
 
@@ -69,7 +69,10 @@ extern "C" void debug_print(const void* data) {
 }
 
 extern "C" void flip_screen(void* lcd) {
-    memcpy(framebuffer, lcd, sizeof(framebuffer));
+    static int frame = 0;
+
+    memcpy(framebuffer[frame], lcd, sizeof(framebuffer[0]));
+    frame = (frame + 1) % 4;
 }
 
 extern "C" uint8_t cpu_read_cart(Machine::State& cpu, uint32_t address) {
@@ -139,7 +142,8 @@ void retro_init(void)
     environ_cb(RETRO_ENVIRONMENT_SET_PERFORMANCE_LEVEL, &level);
 
     insert_countdown = 0;
-    update_inputs(machine_state, input_state = 0b1111111111);
+    input_state = 0b1111111111;
+    
     cpu_reset(machine_state);
 }
 
@@ -197,7 +201,23 @@ void retro_run(void)
         cpu_step(machine_state);
     }
 
+    uint8_t pixels[96*64*4];
+    uint8_t* output = pixels;
+
+    for (int y = 0; y < 64; y++) {
+        for (int x = 0; x < 96; x++) {
+            for (int c = 0; c < 4; c++) {
+                *(output++) = (
+                    framebuffer[0][y][x][c]+
+                    framebuffer[1][y][x][c] +
+                    framebuffer[2][y][x][c] +
+                    framebuffer[3][y][x][c]
+                    ) / 4;
+            }
+            
+        }
+    }
     // TODO: FEED AUDIO
 
-    video_cb(framebuffer, 96, 64, 96 * sizeof(uint32_t));
+    video_cb(pixels, 96, 64, 96 * sizeof(uint32_t));
 }
