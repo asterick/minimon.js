@@ -1,6 +1,7 @@
 all: libretro wasm
 
 clean:
+	rm -Rf table.h
 	make -C wasm clean
 	make -C libretro clean
 
@@ -13,6 +14,4 @@ libretro: table.h
 table.h: ../tools/table.py ../tools/s1c88.csv
 	python3 ../tools/table.py > table.h
 
-all:
-
-.PHONY: all clean
+.PHONY: all clean wasm libretro

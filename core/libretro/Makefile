@@ -7,7 +7,7 @@ TARGET_NAME 	:= $(BUILDDIR)/minimon
 STATIC_LINKING 	:= 0
 AR             	:= ar
 LIBM    		:= -lm
-CFLAGS			:= -I.. -I../include -Wall -pedantic
+CFLAGS			:= -I.. -I../include -Wall -pedantic -Wno-gnu
 
 ifeq ($(platform),)
 	platform = unix

@@ -196,7 +196,7 @@ void retro_run(void)
 
     update_inputs(machine_state, input_state);
 
-    machine_state.clocks += OSC3_SPEED / FPS / 4;
+    machine_state.clocks += OSC3_SPEED / FPS;
     while (machine_state.clocks > 0) {
         cpu_step(machine_state);
     }
