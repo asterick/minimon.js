@@ -103,13 +103,24 @@ void retro_set_controller_port_device(unsigned port, unsigned device) {
    environ_cb(RETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS, input_desc);
 }
 
-void *retro_get_memory_data(unsigned id) { return NULL; }
-size_t retro_get_memory_size(unsigned id){ return 0; }
-
 // Serialisation methods
-size_t retro_serialize_size(void) { return 0; }
-bool retro_serialize(void *data, size_t size) { return false; }
-bool retro_unserialize(const void *data, size_t size) { return false; }
+size_t retro_serialize_size(void) {
+    return sizeof(machine_state);
+}
+
+bool retro_serialize(void *data, size_t size) {
+    if (size != sizeof(machine_state)) return false;
+
+    memcpy(data, &machine_state, size);
+    return true;
+}
+
+bool retro_unserialize(const void *data, size_t size) {
+    if (size != sizeof(machine_state)) return false;
+
+    memcpy(&machine_state, data, size);
+    return false;
+}
 
 // End of retrolib
 void retro_deinit(void) {}
@@ -161,6 +172,37 @@ void retro_get_system_info(struct retro_system_info *info)
     info->need_fullpath = false;
     info->valid_extensions = "bin|min"; // file types supported
 }
+
+void *retro_get_memory_data(unsigned id)
+{
+   switch (id)
+   {
+      case RETRO_MEMORY_SAVE_RAM:
+         return machine_state.gpio.eeprom.data;
+      case RETRO_MEMORY_SYSTEM_RAM:
+         return machine_state.ram;
+      default:
+         break;
+   }
+
+   return NULL;
+}
+
+size_t retro_get_memory_size(unsigned id)
+{
+   switch (id)
+   {
+      case RETRO_MEMORY_SAVE_RAM:
+         return sizeof(machine_state.gpio.eeprom.data);
+      case RETRO_MEMORY_SYSTEM_RAM:
+         return sizeof(machine_state.ram);
+      default:
+         break;
+   }
+
+   return 0;
+}
+
 
 /*
  * Tell libretro about the AV system; the fps, sound sample rate and the
