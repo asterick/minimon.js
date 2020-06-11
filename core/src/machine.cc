@@ -99,7 +99,7 @@ extern "C" void cpu_step(Machine::State& cpu) {
 }
 
 extern "C" void cpu_advance(Machine::State& cpu, int ticks) {
-	cpu.clocks += OSC3_SPEED / TICK_SPEED * ticks;
+	cpu.clocks += ticks;
 
 	while (cpu.clocks > 0) {
 		cpu_step(cpu);

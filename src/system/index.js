@@ -160,12 +160,12 @@ export class Minimon {
 			if (!this._running) return ;
 
 			let now = Date.now();
-			let delta = Math.min(200, now - time);
+			let delta = Math.floor(Math.min(200, now - time) * CPU_FREQ / 1000);
 
 			time = now;
 
 			if (this.breakpoints.length) {
-				this.state.clocks += (delta * CPU_FREQ / 1000) | 0;	// advance our clock
+				this.state.clocks += delta;	// advance our clock
 
 				while (this.state.clocks > 0) {
 					if (this.breakpoints.indexOf(this.translate(this.state.cpu.pc)) >= 0) {

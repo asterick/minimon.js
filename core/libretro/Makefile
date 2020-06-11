@@ -141,6 +141,9 @@ $(BUILDDIR)/libretro.o: libretro.cc $(BUILDDIR)
 $(BUILDDIR)/%.o: $(SRCDIR)/%.cc $(BUILDDIR)
 	$(CC) $(CFLAGS) $(FPIC) -c -o $@ $<
 
+test: $(TARGET)
+	~/Desktop/RetroArch.app/Contents/MacOS/RetroArch -L $< ../../roms/Pokemon\ Pinball\ Mini\ \(U\).min
+
 clean:
 	rm -Rf $(BUILDDIR)
 
