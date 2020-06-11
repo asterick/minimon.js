@@ -123,8 +123,6 @@ else
 CFLAGS += -std=c++17
 endif
 
-CFLAGS += -I../../libretro-common/include
-
 all: $(TARGET)
 
 $(TARGET): $(OBJECTS)
