@@ -5,6 +5,7 @@
   "main": "src/index.jsx",
   "scripts": {
     "core": "cd core; make",
+    "retroarch": "cd core/libretro; make test",
     "table": "python3 ./tools/convert.py > ./src/system/table.js",
     "start": "npm run table; webpack-dev-server --open --mode development",
     "build": "npm run table; npm run core; webpack --mode production",

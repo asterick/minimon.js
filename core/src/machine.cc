@@ -25,6 +25,10 @@ static const uint8_t bios[0x2000] = {
 	#include "bios.h"
 };
 
+extern "C" const char* get_version() {
+	return "0.1.0";
+}
+
 extern "C" void cpu_reset(Machine::State& cpu) {
 	cpu.reg.pc = cpu_read16(cpu, 0x0000);
 	cpu.reg.sc = 0xC0;

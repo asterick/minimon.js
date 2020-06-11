@@ -145,6 +145,7 @@ extern "C" void cpu_advance(Machine::State& cpu, int ticks);
 extern "C" void cpu_reset(Machine::State& cpu);
 extern "C" void cpu_advance(Machine::State& cpu, int ticks);
 extern "C" const void update_inputs(Machine::State& cpu, uint16_t value);
+extern "C" const char* get_version();
 
 // Clock management
 void cpu_clock(Machine::State& cpu, int cycles);

@@ -36,7 +36,11 @@ bool retro_load_game_special(unsigned game_type, const struct retro_game_info *i
 
 bool retro_load_game(const struct retro_game_info *info)
 {
-   retro_unload_game();
+    const char* save_directory;
+    environ_cb(RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY, &save_directory);
+
+
+    log_cb(RETRO_LOG_INFO, "GG %s\n", save_directory);
 
     if (info && info->data) { // ensure there is ROM data
         const uint8_t* data = (const uint8_t*)info->data;
@@ -52,9 +56,11 @@ bool retro_load_game(const struct retro_game_info *info)
         for (int i = 0; i < info->size; i++) {
             cartridge_memory[(i + offset) % sizeof(cartridge_memory)] = data[i];
         }
-
-        insert_countdown = 2;
     }
+
+    input_state &= ~INPUT_CART_N;
+    update_inputs(machine_state, input_state);
+    cpu_reset(machine_state);
 
     return true;
 }
@@ -167,39 +173,39 @@ void retro_get_system_info(struct retro_system_info *info)
 {
     memset(info, 0, sizeof(*info));
     info->library_name = "Minimon";
-    info->library_version = "0.1.0";
+    info->library_version = get_version();
     info->need_fullpath = false;
     info->valid_extensions = "bin|min"; // file types supported
 }
 
 void *retro_get_memory_data(unsigned id)
 {
-   switch (id)
-   {
-      case RETRO_MEMORY_SAVE_RAM:
-         return machine_state.gpio.eeprom.data;
-      case RETRO_MEMORY_SYSTEM_RAM:
-         return machine_state.ram;
-      default:
-         break;
-   }
+    switch (id)
+    {
+        case RETRO_MEMORY_SAVE_RAM:
+            return machine_state.gpio.eeprom.data;
+        case RETRO_MEMORY_SYSTEM_RAM:
+            return machine_state.ram;
+        default:
+            break;
+    }
 
    return NULL;
 }
 
 size_t retro_get_memory_size(unsigned id)
 {
-   switch (id)
-   {
-      case RETRO_MEMORY_SAVE_RAM:
-         return sizeof(machine_state.gpio.eeprom.data);
-      case RETRO_MEMORY_SYSTEM_RAM:
-         return sizeof(machine_state.ram);
-      default:
-         break;
-   }
+    switch (id)
+    {
+        case RETRO_MEMORY_SAVE_RAM:
+            return sizeof(machine_state.gpio.eeprom.data);
+        case RETRO_MEMORY_SYSTEM_RAM:
+            return sizeof(machine_state.ram);
+        default:
+            break;
+    }
 
-   return 0;
+    return 0;
 }
 
 
@@ -232,10 +238,6 @@ extern "C" void audio_push(float*) {
 
 void retro_run(void)
 {
-    if (insert_countdown > 0 && --insert_countdown) {
-        input_state &= ~INPUT_CART_N;
-    }
-
     input_state &= ~0xFF;
 
     for (int i = 0; i < 8; i++) {
