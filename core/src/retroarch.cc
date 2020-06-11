@@ -11,7 +11,7 @@ const   uint16_t    INPUT_CART_N = 0b1000000000;
 
 static  Machine::State          machine_state;
 static  uint8_t                 cartridge_memory[0x200000];
-static  uint32_t                framebuffer[64*96];
+static  uint32_t                framebuffer[64][96];
 static  uint16_t                input_state;
 static  int                     insert_countdown;
 
@@ -35,7 +35,7 @@ bool retro_load_game_special(unsigned game_type, const struct retro_game_info *i
 
 bool retro_load_game(const struct retro_game_info *info)
 {
-    update_inputs(machine_state, input_state |= INPUT_CART_N);
+   retro_unload_game();
 
     if (info && info->data) { // ensure there is ROM data
         const uint8_t* data = (const uint8_t*)info->data;
@@ -60,7 +60,7 @@ bool retro_load_game(const struct retro_game_info *info)
 
 // Unload the cartridge
 void retro_unload_game(void) { 
-    // TODO: CLEAR CART INSERT FALG
+    update_inputs(machine_state, input_state |= INPUT_CART_N);
     memset(cartridge_memory, 0xFF, sizeof(cartridge_memory));
 }
 
@@ -69,7 +69,7 @@ extern "C" void debug_print(const void* data) {
 }
 
 extern "C" void flip_screen(void* lcd) {
-    //memcpy(framebuffer, lcd, sizeof(framebuffer));
+    memcpy(framebuffer, lcd, sizeof(framebuffer));
 }
 
 extern "C" uint8_t cpu_read_cart(Machine::State& cpu, uint32_t address) {
@@ -83,8 +83,21 @@ extern "C" void cpu_write_cart(Machine::State& cpu, uint8_t data, uint32_t addre
 unsigned retro_get_region(void) { return RETRO_REGION_NTSC; }
 
 // libretro unused api functions
-void retro_set_controller_port_device(unsigned port, unsigned device) {}
+struct retro_input_descriptor input_desc[] = {
+    { 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_A,     "A" },
+    { 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_B,     "B" },
+    { 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_Y,     "C" },
+    { 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_UP,    "Joy Up" },
+    { 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_DOWN,  "Joy Down" },
+    { 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_LEFT,  "Joy Left" },
+    { 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_RIGHT, "Joy Right" },
+    { 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_START, "Power" },
+    { 0, 0, 0, 0, NULL }
+};
 
+void retro_set_controller_port_device(unsigned port, unsigned device) {
+   environ_cb(RETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS, input_desc);
+}
 
 void *retro_get_memory_data(unsigned id) { return NULL; }
 size_t retro_get_memory_size(unsigned id){ return 0; }
@@ -130,7 +143,6 @@ void retro_init(void)
     cpu_reset(machine_state);
 }
 
-
 /*
  * Tell libretro about this core, it's name, version and which rom file types it supports.
  */
@@ -149,7 +161,7 @@ void retro_get_system_info(struct retro_system_info *info)
  */
 void retro_get_system_av_info(struct retro_system_av_info *info) {
     memset(info, 0, sizeof(*info));
-    info->timing.fps            = FPS;
+    info->timing.fps            = (double)FPS;
     info->timing.sample_rate    = 44100;    // 44.1kHz
     info->geometry.base_width   = 96;
     info->geometry.base_height  = 64;
@@ -169,12 +181,23 @@ void retro_reset(void)
 void retro_run(void)
 {
     if (insert_countdown > 0 && --insert_countdown) {
-        update_inputs(machine_state, input_state &= ~INPUT_CART_N);
+        input_state &= ~INPUT_CART_N;
     }
 
-    cpu_advance(machine_state, CPU_FREQ / FPS);
+    input_state &= ~0xFF;
+
+    for (int i = 0; i < 8; i++) {
+        input_state |= input_state_cb(0, input_desc[i].device, 0, input_desc[i].id) ? 0 : (1 << i);
+    }
+
+    update_inputs(machine_state, input_state);
+
+    machine_state.clocks += OSC3_SPEED / FPS / 4;
+    while (machine_state.clocks > 0) {
+        cpu_step(machine_state);
+    }
+
     // TODO: FEED AUDIO
 
-    framebuffer[0]++;
-    video_cb(framebuffer, 96, 64, 64 * sizeof(uint32_t));
+    video_cb(framebuffer, 96, 64, 96 * sizeof(uint32_t));
 }
