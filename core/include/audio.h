@@ -22,10 +22,10 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 namespace Machine { struct State; };
 
-static const int AUDIO_BUFFER_LENGTH = 4096;
+static const int AUDIO_BUFFER_LENGTH = 1024;
 
 namespace Audio {
-	union State {
+	struct State {
 		uint8_t volume;
 		uint8_t enable;
 

@@ -14,6 +14,7 @@ static  uint8_t                 cartridge_memory[0x200000];
 static  uint8_t                 framebuffer[4][64][96][4];
 static  uint16_t                input_state;
 static  int                     insert_countdown;
+static  int                     cpu_prescale = 0;
 
 // Callbacks
 static retro_log_printf_t log_cb;
@@ -65,7 +66,7 @@ void retro_unload_game(void) {
 }
 
 extern "C" void debug_print(const void* data) {
-    log_cb(RETRO_LOG_DEBUG, (const char*) data);
+    log_cb(RETRO_LOG_INFO, (const char*) data);
 }
 
 extern "C" void flip_screen(void* lcd) {
@@ -145,6 +146,8 @@ void retro_init(void)
     input_state = 0b1111111111;
     
     cpu_reset(machine_state);
+    Audio::setSampleRate(machine_state.audio, 44100);
+    log_cb(RETRO_LOG_INFO, "ggg %i\n", machine_state.audio.sampleRate);
 }
 
 /*
@@ -182,6 +185,10 @@ void retro_reset(void)
     cpu_reset(machine_state);
 }
 
+extern "C" void audio_push(float*) {
+    // We do not use this in libretro
+}
+
 void retro_run(void)
 {
     if (insert_countdown > 0 && --insert_countdown) {
@@ -196,11 +203,13 @@ void retro_run(void)
 
     update_inputs(machine_state, input_state);
 
-    machine_state.clocks += OSC3_SPEED / FPS;
-    while (machine_state.clocks > 0) {
-        cpu_step(machine_state);
-    }
+    cpu_prescale += OSC3_SPEED;
+    int ticks = cpu_prescale / FPS;
+    cpu_prescale %= FPS;
 
+    cpu_advance(machine_state, ticks);
+
+    // Feed video buffer
     uint8_t pixels[96*64*4];
     uint8_t* output = pixels;
 
@@ -217,7 +226,15 @@ void retro_run(void)
             
         }
     }
-    
-    // TODO: FEED AUDIO
+
     video_cb(pixels, 96, 64, 96 * sizeof(uint32_t));
+
+    // Feed audio buffer
+    for (int i = 0; i < machine_state.audio.write_index; i++) {
+        int16_t volume = (int16_t)(machine_state.audio.output[i] * 0x1000);
+        audio_cb(volume, volume);
+    }
+    
+    log_cb(RETRO_LOG_INFO, "%i\n", machine_state.audio.write_index);
+    machine_state.audio.write_index = 0;
 }

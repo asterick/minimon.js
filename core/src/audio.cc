@@ -21,10 +21,15 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 #include "machine.h"
 
+#include "debug.h"
+
 extern "C" void audio_push(float*);
 
 void Audio::reset(Audio::State& audio) {
-	memset(&audio, 0, sizeof(audio));
+	audio.enable = 0;
+	audio.volume = 0;
+	audio.write_index = 0;
+	memset(&audio.output, 0, sizeof(audio.output));
 }
 
 void Audio::setSampleRate(Audio::State& audio, int sampleRate) {
@@ -35,8 +40,38 @@ void Audio::clock(Machine::State& state, int osc3) {
 	Audio::State& audio = state.audio;
 
 	audio.sampleError += osc3 * audio.sampleRate;
-
 	while (audio.sampleError > OSC3_SPEED) {
+		Timers::Timer& timer = state.timers.timer[2];
+		float volume;
+
+		if (!audio.enable) {
+			switch (audio.volume) {
+				case 0b000: case 0b100:
+					volume = 0.0;
+					break ;
+				default:
+					volume = 0.5;
+					break ;
+				case 0b011: case 0b111:
+					volume = 1.0;
+					break ;
+			}
+
+			if (timer.count < timer.compare) {
+				volume = -volume;
+			}
+		} else {
+			volume = 0.0;
+		}
+
+
+		audio.output[audio.write_index++] = volume;
+		
+		if (audio.write_index >= AUDIO_BUFFER_LENGTH) {
+			audio_push(audio.output);
+			audio.write_index = 0;
+		}
+
 		audio.sampleError -= OSC3_SPEED;
 	}
 }
