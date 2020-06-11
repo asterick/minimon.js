@@ -158,7 +158,6 @@ void retro_init(void)
     
     cpu_reset(machine_state);
     Audio::setSampleRate(machine_state.audio, 44100);
-    log_cb(RETRO_LOG_INFO, "ggg %i\n", machine_state.audio.sampleRate);
 }
 
 /*
