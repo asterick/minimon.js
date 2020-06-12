@@ -16,25 +16,46 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-const BUFFER_LENGTH = 4096 / 2; // This is the size of an audio clip push
+const BUFFER_LENGTH = 1024; // This is the size of an audio clip push
 
 export default class Audio {
 	constructor() {
 		this.context = new AudioContext();
-        this.sampleRate = this.context.sampleRate;
 
         this.node = this.context.createScriptProcessor(BUFFER_LENGTH, 1, 1);
         this.node.onaudioprocess = this.process.bind(this);
 
+        this._buffer = new Float32Array(BUFFER_LENGTH * 4);
+        this._writeIndex = 0;
+        this._readIndex = 0;
+        this._sample = 0.0;
+
 		this.node.connect(this.context.destination);
 	}
+
+    get sampleRate() {
+        return this.context.sampleRate;
+    }
+
+    push(f) {
+        for (let i = 0; i < f.length; i++) {
+            this._buffer[this._writeIndex++] = f[i];
+            if (this._writeIndex >= this._buffer.length) this._writeIndex = 0;
+        }
+    }
 
     process(e) {
         var audio = e.outputBuffer.getChannelData(0),
             length = audio.length;
 
         for(let i = 0; i < length; i++) {
-            audio[i] = 0.0;
+            if (this._readIndex != this._writeIndex) {
+                this._sample = this._buffer[this._readIndex++] * 0.1;
+                if (this._readIndex >= this._buffer.length) this._readIndex = 0;
+            } else { 
+                this._sample *= 0.95;
+            }
+            audio[i] = this._sample;
         }
     }
 }

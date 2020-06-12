@@ -123,17 +123,13 @@ namespace Machine {
 			uint8_t ram[0x1000];
 		 	Blitter::Overlay overlay;
 		};
+
+		uint8_t cartridge[0x200000];
 	};
 }
 
-// External defines
-extern "C" uint8_t cpu_read_cart(Machine::State& cpu, uint32_t address);
-extern "C" void cpu_write_cart(Machine::State& cpu, uint8_t data, uint32_t address);
-
 // Library functions
 extern "C" Machine::State* const get_machine();
-extern "C" uint8_t cpu_read_cart(Machine::State& cpu, uint32_t address);
-extern "C" void cpu_write_cart(Machine::State& cpu, uint8_t data, uint32_t address);
 
 extern "C" uint8_t cpu_read(Machine::State& cpu, uint32_t address);
 extern "C" void cpu_write(Machine::State& cpu, uint8_t data, uint32_t address);
@@ -144,7 +140,8 @@ extern "C" void cpu_advance(Machine::State& cpu, int ticks);
 // Bridge functions
 extern "C" void cpu_reset(Machine::State& cpu);
 extern "C" void cpu_advance(Machine::State& cpu, int ticks);
-extern "C" const void update_inputs(Machine::State& cpu, uint16_t value);
+extern "C" void set_sample_rate(Machine::State& cpu, int rate);
+extern "C" void update_inputs(Machine::State& cpu, uint16_t value);
 extern "C" const char* get_version();
 
 // Clock management

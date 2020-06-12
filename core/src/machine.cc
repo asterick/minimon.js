@@ -54,8 +54,12 @@ extern "C" void cpu_reset(Machine::State& cpu) {
 	Audio::reset(cpu.audio);
 }
 
-extern "C" const void update_inputs(Machine::State& cpu, uint16_t value) {
+extern "C" void update_inputs(Machine::State& cpu, uint16_t value) {
 	Input::update(cpu, value);
+}
+
+extern "C" void set_sample_rate(Machine::State& cpu, int rate) {
+	Audio::setSampleRate(cpu.audio, rate);
 }
 
 void cpu_clock(Machine::State& cpu, int cycles) {
@@ -190,6 +194,14 @@ static inline void cpu_write_reg(Machine::State& cpu, uint8_t data, uint32_t add
 		break ;
 	}
 }
+
+static inline uint8_t cpu_read_cart(Machine::State& cpu, uint32_t address) {
+    return cpu.cartridge[address % sizeof(cpu.cartridge)];
+}
+
+static inline void cpu_write_cart(Machine::State& cpu, uint8_t data, uint32_t address) {
+}
+
 
 extern "C" uint8_t cpu_read(Machine::State& cpu, uint32_t address) {
 	switch (address) {

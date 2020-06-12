@@ -13,6 +13,7 @@ CC=clang
 
 EXPORTS = \
 	--export get_machine \
+	--export set_sample_rate \
 	--export update_inputs \
 	--export cpu_reset \
 	--export cpu_advance \

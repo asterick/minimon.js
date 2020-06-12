@@ -48,7 +48,6 @@ export class Minimon {
 		this._name = name;
 		this._inputState = 0b1111111111; // No cartridge inserted, no IRQ
 		this._audio = new Audio();
-		this.cartridge = new Uint8Array(0x200000);
 		this.breakpoints = [];
 
 		window.addEventListener("beforeunload", (e) => {
@@ -115,14 +114,18 @@ export class Minimon {
 		this._machineBytes = new Uint8Array(this._exports.memory.buffer);
 		this.state = new State(this._exports.memory.buffer, this._exports.get_description(), this._cpu_state);
 
+		
+		this._exports.set_sample_rate(this._cpu_state, this._audio.sampleRate);
 		this.reset();
 		this.restore();
 	}
 
 	_wasm_environment = {
 		env: {
-			cpu_read_cart: (cpu, address) => this.cpu_read_cart(address),
-			cpu_write_cart: (cpu, data, address) => this.cpu_write_cart(data, address),
+			audio_push: (address, frames) => {
+				let samples = new Float32Array(this._exports.memory.buffer, address, frames);
+				this._audio.push(samples);
+			},
 			flip_screen: (address) => {
 				this.repaint(this._machineBytes, address);
 			},
@@ -215,9 +218,9 @@ export class Minimon {
 		var hasHeader = (bytes[0] != 0x50 || bytes[1] != 0x4D);
 		var offset = hasHeader ? 0 : 0x2100;
 
-		for (let i = bytes.length - 1; i >= 0; i--) this.cartridge[(i+offset) & 0x1FFFFF] = bytes[i];
 
 		setTimeout(() => {
+			for (let i = bytes.length - 1; i >= 0; i--) this.state.cartridge[(i+offset) & 0x1FFFFF] = bytes[i];
 			this._inputState &= ~INPUT_CART_N;
 			this._updateinput();
 		}, 100);
@@ -228,14 +231,6 @@ export class Minimon {
 	eject() {
 		this._inputState |= INPUT_CART_N;
 		this._updateinput();
-	}
-
-	cpu_read_cart(address) {
-		return this.cartridge[address & 0x1FFFFF];
-	}
-
-	cpu_write_cart(data, address) {
-		// ROM, no multi-cart support yet
 	}
 
 	// WASM shim functions

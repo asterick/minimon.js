@@ -10,7 +10,6 @@ const   int         FPS          = 72;
 const   uint16_t    INPUT_CART_N = 0b1000000000;
 
 static  Machine::State          machine_state;
-static  uint8_t                 cartridge_memory[0x200000];
 static  uint8_t                 framebuffer[4][64][96][4];
 static  uint16_t                input_state;
 static  int                     insert_countdown;
@@ -48,7 +47,7 @@ bool retro_load_game(const struct retro_game_info *info)
 
         // Note: this does not properly handle
         for (int i = 0; i < info->size; i++) {
-            cartridge_memory[(i + offset) % sizeof(cartridge_memory)] = data[i];
+            machine_state.cartridge[(i + offset) % sizeof(machine_state.cartridge)] = data[i];
         }
     }
 
@@ -62,7 +61,7 @@ bool retro_load_game(const struct retro_game_info *info)
 // Unload the cartridge
 void retro_unload_game(void) { 
     update_inputs(machine_state, input_state |= INPUT_CART_N);
-    memset(cartridge_memory, 0xFF, sizeof(cartridge_memory));
+    memset(machine_state.cartridge, 0xFF, sizeof(machine_state.cartridge));
 }
 
 extern "C" void debug_print(const void* data) {
@@ -75,14 +74,6 @@ extern "C" void flip_screen(void* lcd) {
     memcpy(framebuffer[frame], lcd, sizeof(framebuffer[0]));
     frame = (frame + 1) % 4;
 }
-
-extern "C" uint8_t cpu_read_cart(Machine::State& cpu, uint32_t address) {
-    return cartridge_memory[address % sizeof(cartridge_memory)];
-}
-
-extern "C" void cpu_write_cart(Machine::State& cpu, uint8_t data, uint32_t address) {
-}
-
 
 unsigned retro_get_region(void) { return RETRO_REGION_NTSC; }
 

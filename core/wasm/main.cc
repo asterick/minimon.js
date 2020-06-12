@@ -263,6 +263,7 @@ static const StructDecl MachineState = {
 		STRUCT("irq",   	Machine::State, irq, IrqState),
 		STRUCT("tim256",	Machine::State, tim256, Tim256State),
 		FIELD("ram",   		Machine::State, ram, TYPE_UINT8, SIZE(0x1000)),
+		FIELD("cartridge",	Machine::State, cartridge, TYPE_UINT8, SIZE(0x200000)),
 		STRUCT("lcd",		Machine::State, lcd, LcdState),
 		STRUCT("input",		Machine::State, input, InputState),
 		STRUCT("blitter",	Machine::State, blitter, BlitterState),

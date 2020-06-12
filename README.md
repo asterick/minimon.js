@@ -18,7 +18,7 @@ Emulation Status
 | 256Hz Timer       | 100%       |                                       |
 | Blitter           | 100%       |                                       |
 | General Timers    | 100%       |                                       |
-| Sound Emulation   |  80%       | Works in libretro, not wired to web   |
+| Sound Emulation   | 100%       |                                       |
 | LCD (SED1565)     |  80%       | Most commands implemented             |
 | Control Registers |  80%       | Bus disable not emulated              |
 | Input Ports       |  50%       | Debounce circuit not done             |

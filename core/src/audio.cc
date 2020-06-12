@@ -23,7 +23,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 #include "debug.h"
 
-extern "C" void audio_push(float*);
+extern "C" void audio_push(float*, int frames);
 
 void Audio::reset(Audio::State& audio) {
 	audio.enable = 0;
@@ -68,7 +68,7 @@ void Audio::clock(Machine::State& state, int osc3) {
 		audio.output[audio.write_index++] = volume;
 		
 		if (audio.write_index >= AUDIO_BUFFER_LENGTH) {
-			audio_push(audio.output);
+			audio_push(audio.output, AUDIO_BUFFER_LENGTH);
 			audio.write_index = 0;
 		}
 
