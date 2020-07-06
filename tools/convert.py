@@ -25,28 +25,28 @@ op0s[0xCE] = op1s
 op0s[0xCF] = op2s
 
 CONDITIONS = {
-    "\xFF": "CONDITION_NONE",
-    "LT": "CONDITION_LESS_THAN",
-    "LE": "CONDITION_LESS_EQUAL",
-    "GT": "CONDITION_GREATER_THAN",
-    "GE": "CONDITION_GREATER_EQUAL",
-    "V": "CONDITION_OVERFLOW",
-    "NV": "CONDITION_NOT_OVERFLOW",
-    "P": "CONDITION_POSITIVE",
-    "M": "CONDITION_MINUS",
-    "C": "CONDITION_CARRY",
-    "NC": "CONDITION_NOT_CARRY",
-    "Z": "CONDITION_ZERO",
-    "NZ": "CONDITION_NOT_ZERO",
+    "\xFF": "NONE",
+    "LT": "LESS_THAN",
+    "LE": "LESS_EQUAL",
+    "GT": "GREATER_THAN",
+    "GE": "GREATER_EQUAL",
+    "V": "OVERFLOW",
+    "NV": "NOT_OVERFLOW",
+    "P": "POSITIVE",
+    "M": "MINUS",
+    "C": "CARRY",
+    "NC": "NOT_CARRY",
+    "Z": "ZERO",
+    "NZ": "NOT_ZERO",
 
-    "F0": "CONDITION_SPECIAL_FLAG_0",
-    "F1": "CONDITION_SPECIAL_FLAG_1",
-    "F2": "CONDITION_SPECIAL_FLAG_2",
-    "F3": "CONDITION_SPECIAL_FLAG_3",
-    "NF0": "CONDITION_NOT_SPECIAL_FLAG_0",
-    "NF1": "CONDITION_NOT_SPECIAL_FLAG_1",
-    "NF2": "CONDITION_NOT_SPECIAL_FLAG_2",
-    "NF3": "CONDITION_NOT_SPECIAL_FLAG_3"
+    "F0": "SPECIAL_FLAG_0",
+    "F1": "SPECIAL_FLAG_1",
+    "F2": "SPECIAL_FLAG_2",
+    "F3": "SPECIAL_FLAG_3",
+    "NF0": "NOT_SPECIAL_FLAG_0",
+    "NF1": "NOT_SPECIAL_FLAG_1",
+    "NF2": "NOT_SPECIAL_FLAG_2",
+    "NF3": "NOT_SPECIAL_FLAG_3"
 }
 
 ARGUMENTS = {
@@ -98,14 +98,14 @@ def format(op, arg1, arg2):
     if arg1 in CONDITIONS:
         condition, arg1, arg2 = CONDITIONS[arg1], arg2, None
 
-    args = [ARGUMENTS[arg] for arg in [arg1, arg2] if arg]
+    args = ["Argument.%s" % ARGUMENTS[arg] for arg in [arg1, arg2] if arg]
 
     # add conditions
-    return { "op": op, "condition": condition or "CONDITION_NONE", "args": args }
+    return { "op": op, "condition": condition or "NONE", "args": args }
 
 def display(table, tabs = ""):
     if type(table) == dict:
-        return '%s{ "op": "%s", "condition": %s, "args": [ %s ] }' % ( tabs, table['op'], table['condition'], ", ".join(table["args"]))
+        return '%s{ "op": "%s", "condition": Condition.%s, "args": [ %s ] }' % ( tabs, table['op'], table['condition'], ", ".join(table["args"]))
         return "%sggg" % tabs
     elif type(table) == list:
         return "%s[\n%s\n%s]" % (tabs, (",\n").join([ display(t, tabs + "\t") for t in table ]), tabs)
@@ -134,12 +134,12 @@ with open(os.path.join(os.path.dirname(__file__), 's1c88.csv'), 'r') as csvfile:
         all_ops += [op0, op1, op2]
         all_args += [arg0_1, arg0_2, arg1_1, arg1_2, arg2_1, arg2_2]
 
-for i, (k, v) in enumerate(ARGUMENTS.items()):
-    print ("export const %s = %i;" % (v, i + 1))
-print ()
+print ("""export enum Argument {
+    %s 
+};""" % ',\n\t'.join(ARGUMENTS.values()))
 
-for i, (k, v) in enumerate(CONDITIONS.items()):
-    print ("export const %s = %i;" % (v, i + 1))
-print ()
+print ("""export enum Condition {
+    %s 
+};""" % ',\n\t'.join(CONDITIONS.values()))
 
-print ("export const INSTRUCTION_TABLE =\n%s;" % display(op0s))
+print ("export const InstructionTable = %s;" % display(op0s))

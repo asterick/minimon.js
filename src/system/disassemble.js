@@ -16,7 +16,7 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-import * as Table from "./table.js";
+import * as Table from "./table.ts";
 
 function toHex(v, c) {
 	v = v.toString(16).toUpperCase();
@@ -56,76 +56,76 @@ export class Disassembler {
 		let val;
 
 		switch (arg) {
-		case Table.REGS_ALL:
+		case Table.Argument.REGS_ALL:
 			return "ALL";
-		case Table.REGS_ALE:
+		case Table.Argument.REGS_ALE:
 			return "ALE";
-		case Table.REG_A:
+		case Table.Argument.REG_A:
 			return "A";
-		case Table.REG_B:
+		case Table.Argument.REG_B:
 			return "B";
-		case Table.REG_L:
+		case Table.Argument.REG_L:
 			return "L";
-		case Table.REG_H:
+		case Table.Argument.REG_H:
 			return "H";
-		case Table.REG_BA:
+		case Table.Argument.REG_BA:
 			return "BA";
-		case Table.REG_HL:
+		case Table.Argument.REG_HL:
 			return "HL";
-		case Table.REG_IX:
+		case Table.Argument.REG_IX:
 			return "IX";
-		case Table.REG_IY:
+		case Table.Argument.REG_IY:
 			return "IY";
-		case Table.REG_NB:
+		case Table.Argument.REG_NB:
 			return "NB";
-		case Table.REG_BR:
+		case Table.Argument.REG_BR:
 			return "BR";
-		case Table.REG_EP:
+		case Table.Argument.REG_EP:
 			return "EP";
-		case Table.REG_IP:
+		case Table.Argument.REG_IP:
 			return "IP";
-		case Table.REG_XP:
+		case Table.Argument.REG_XP:
 			return "XP";
-		case Table.REG_YP:
+		case Table.Argument.REG_YP:
 			return "YP";
-		case Table.REG_SC:
+		case Table.Argument.REG_SC:
 			return "SC";
-		case Table.REG_SP:
+		case Table.Argument.REG_SP:
 			return "SP";
-		case Table.REG_PC:
+		case Table.Argument.REG_PC:
 			return "PC";
-		case Table.MEM_HL:
+		case Table.Argument.MEM_HL:
 			return "[HL]";
-		case Table.MEM_IX:
+		case Table.Argument.MEM_IX:
 			return "[IX]";
-		case Table.MEM_IY:
+		case Table.Argument.MEM_IY:
 			return "[IY]";
-		case Table.MEM_IX_OFF:
+		case Table.Argument.MEM_IX_OFF:
 			return "[IX+L]";
-		case Table.MEM_IY_OFF:
+		case Table.Argument.MEM_IY_OFF:
 			return "[IY+L]";
-		case Table.MEM_SP_DISP:
+		case Table.Argument.MEM_SP_DISP:
 			val = this._sign8();
 			return `[SP${val > 0 ? "+" : ""}${val}]`;
-		case Table.MEM_IX_DISP:
+		case Table.Argument.MEM_IX_DISP:
 			val = this._sign8();
 			return `[IX${val > 0 ? "+" : ""}${val}]`;
-		case Table.MEM_IY_DISP:
+		case Table.Argument.MEM_IY_DISP:
 			val = this._sign8();
 			return `[IY${val > 0 ? "+" : ""}${val}]`;
-		case Table.MEM_ABS16:
+		case Table.Argument.MEM_ABS16:
 			return `[${toHex(this._read16(), 4)}h]`;
-		case Table.MEM_BR:
+		case Table.Argument.MEM_BR:
 			return `[BR:${toHex(this._read8(), 2)}h]`;
-		case Table.MEM_VECTOR:
+		case Table.Argument.MEM_VECTOR:
 			return `[${toHex(this._read8(), 2)}h]`;
-		case Table.IMM_8:
+		case Table.Argument.IMM_8:
 			return `#0${this._read8().toString(16).toUpperCase()}h`;
-		case Table.IMM_16:
+		case Table.Argument.IMM_16:
 			return `#0${this._read16().toString(16).toUpperCase()}h`;
-		case Table.REL_8:
+		case Table.Argument.REL_8:
 			return `#${toHex(this._pcRelative(this._sign8()), 6)}h`
-		case Table.REL_16:
+		case Table.Argument.REL_16:
 			return `#${toHex(this._pcRelative(this._sign16()), 6)}h`
 		default:
 			throw new Error(arg);
@@ -134,45 +134,45 @@ export class Disassembler {
 
 	_processCondition(cond) {
 		switch (cond) {
-		case Table.CONDITION_LESS_THAN:
+		case Table.Condition.LESS_THAN:
 			return "LT";
-		case Table.CONDITION_LESS_EQUAL:
+		case Table.Condition.LESS_EQUAL:
 			return "LE";
-		case Table.CONDITION_GREATER_THAN:
+		case Table.Condition.GREATER_THAN:
 			return "GT";
-		case Table.CONDITION_GREATER_EQUAL:
+		case Table.Condition.GREATER_EQUAL:
 			return "LE";
-		case Table.CONDITION_OVERFLOW:
+		case Table.Condition.OVERFLOW:
 			return "V";
-		case Table.CONDITION_NOT_OVERFLOW:
+		case Table.Condition.NOT_OVERFLOW:
 			return "NV";
-		case Table.CONDITION_POSITIVE:
+		case Table.Condition.POSITIVE:
 			return "P";
-		case Table.CONDITION_MINUS:
+		case Table.Condition.MINUS:
 			return "M";
-		case Table.CONDITION_CARRY:
+		case Table.Condition.CARRY:
 			return "C";
-		case Table.CONDITION_NOT_CARRY:
+		case Table.Condition.NOT_CARRY:
 			return "NC";
-		case Table.CONDITION_ZERO:
+		case Table.Condition.ZERO:
 			return "Z";
-		case Table.CONDITION_NOT_ZERO:
+		case Table.Condition.NOT_ZERO:
 			return "NZ";
-		case Table.CONDITION_SPECIAL_FLAG_0:
+		case Table.Condition.SPECIAL_FLAG_0:
 			return "F0";
-		case Table.CONDITION_SPECIAL_FLAG_1:
+		case Table.Condition.SPECIAL_FLAG_1:
 			return "F1";
-		case Table.CONDITION_SPECIAL_FLAG_2:
+		case Table.Condition.SPECIAL_FLAG_2:
 			return "F2";
-		case Table.CONDITION_SPECIAL_FLAG_3:
+		case Table.Condition.SPECIAL_FLAG_3:
 			return "F3";
-		case Table.CONDITION_NOT_SPECIAL_FLAG_0:
+		case Table.Condition.NOT_SPECIAL_FLAG_0:
 			return "NF0";
-		case Table.CONDITION_NOT_SPECIAL_FLAG_1:
+		case Table.Condition.NOT_SPECIAL_FLAG_1:
 			return "NF1";
-		case Table.CONDITION_NOT_SPECIAL_FLAG_2:
+		case Table.Condition.NOT_SPECIAL_FLAG_2:
 			return "NF2";
-		case Table.CONDITION_NOT_SPECIAL_FLAG_3:
+		case Table.Condition.NOT_SPECIAL_FLAG_3:
 			return "NF3";
 		default:
 			throw new Error(cond);
@@ -184,7 +184,7 @@ export class Disassembler {
 
 		this._data = [];
 
-		let inst = Table.INSTRUCTION_TABLE;
+		let inst = Table.InstructionTable;
 
 		do {
 			inst = inst[this._read8()];
@@ -196,7 +196,7 @@ export class Disassembler {
 
 		args = args.map(a => this._processArg(a))
 
-		if (condition !== Table.CONDITION_NONE) {
+		if (condition !== Table.Condition.NONE) {
 			args.unshift(this._processCondition(condition))
 		}
 
