@@ -31,7 +31,7 @@ clean:
 	rm -Rf $(TARGET) $(TRACE_TARGET) $(BUILDDIR)
 
 wasi-libc:
-	# make -C wasi-libc
+	make -C wasi-libc
 
 retroarch: $(BUILDDIR)
 	make -f Make.retroarch
