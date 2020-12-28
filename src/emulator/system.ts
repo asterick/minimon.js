@@ -44,231 +44,213 @@ export const TRACING_FLAGS:{[key: string]: number} = {
 const INPUT_CART_N = 0b1000000000;
 const CPU_FREQ = 4000000;
 
-export default class System {
-	breakpoints: Array<number>;
-	state: any;
+let breakpoints: Array<number>;
+let state: any;
 
-	_cpu_state: number;
-	_tracing: boolean;
-	_running: boolean;
-	_name: string;
-	_inputState: number;
-	_audio: Audio;
-	_timer: any;
+let _cpu_state: number;
+let _tracing: boolean;
+let _running: boolean;
+let time: number;
+let _inputState: number;
+let _audio: Audio;
+let _timer: any;
 
-	_machineBytes: Uint8Array;
-	_wasm_environment: any;
-	_exports: any;
+let _machineBytes: Uint8Array;
+let _exports: any;
 
-	constructor(name:string) {
-		this._name = name;
-		this._inputState = 0b1111111111; // No cartridge inserted, no IRQ
-		this._audio = new Audio();
-		this.breakpoints = [];
-		screen.init(this);
+const _name: string = "default";
+const _wasm_environment: any = {
+	env: {
+		audio_push: (address:number, frames:number) => {
+			let samples = new Float32Array(_exports.memory.buffer, address, frames);
+			_audio.push(samples);
+		},
+		flip_screen: (address: number) => {
+			screen.repaint(_machineBytes, address);
+		},
+		debug_print: (a: number) => {
+			const str = [];
+			let ch;
+			while (ch = _machineBytes[a++]) str.push(String.fromCharCode(ch));
 
-		this._wasm_environment = {
-			env: {
-				audio_push: (address:number, frames:number) => {
-					let samples = new Float32Array(this._exports.memory.buffer, address, frames);
-					this._audio.push(samples);
-				},
-				flip_screen: (address: number) => {
-					screen.repaint(this._machineBytes, address);
-				},
-				debug_print: (a: number) => {
-					const str = [];
-					let ch;
-					while (ch = this._machineBytes[a++]) str.push(String.fromCharCode(ch));
+			console.log(str.join(""));
+		},
+		trace_access: trace.bind(this)
+	}
+};
 
-					console.log(str.join(""));
-				},
-				trace_access: this.trace.bind(this)
+export async function init(tracing:boolean) {
+	_inputState = 0b1111111111; // No cartridge inserted, no IRQ
+	_audio = new Audio();
+	breakpoints = [];
+	screen.init();
+
+	window.addEventListener("beforeunload", (e) => {
+		preserve();
+	}, false);
+
+	document.body.addEventListener('keydown', (e) => {
+		_inputState &= ~KEYBOARD_CODES[e.keyCode];
+		_updateinput();
+	});
+
+	document.body.addEventListener('keyup', (e) => {
+		_inputState |= KEYBOARD_CODES[e.keyCode];
+		_updateinput();
+	});
+
+	_tracing = tracing;
+
+	preserve();
+
+	const request = await fetch(tracing ? "../static/libminimon.tracing.wasm" : "../static/libminimon.wasm");
+	const wasm = await WebAssembly.instantiate(await request.arrayBuffer(), _wasm_environment);
+	_exports = wasm.instance.exports;
+
+	_cpu_state = _exports.get_machine();
+	_machineBytes = new Uint8Array(_exports.memory.buffer);
+	state = State(_exports.memory.buffer, _exports.get_description(), _cpu_state);
+
+	_exports.set_sample_rate(_cpu_state, _audio.sampleRate);
+	reset();
+	restore();
+}
+
+function preserve() {
+	if (!state) return ;
+
+	let { prescale, running, value } = state.rtc;
+	let encoded = "";
+	for (let i = 0; i < state.gpio.eeprom.data.length; i++) {
+		encoded += String.fromCharCode(state.gpio.eeprom.data[i]);
+	}
+
+	window.localStorage.setItem(`${_name}-eeprom`, encoded);
+	window.localStorage.setItem(`${_name}-rtc`, JSON.stringify({ prescale, running, value, timestamp: +Date.now()}));
+}
+
+function restore() {
+	if (!state) return ;
+
+	try {
+		let encoded = window.localStorage.getItem(`${_name}-eeprom`);
+
+		for (let i = 0; i < encoded.length; i++) {
+			state.gpio.eeprom.data[i] = encoded.charCodeAt(i);
+		}
+
+		// Restore clock (if set)
+		let rtc = JSON.parse(window.localStorage.getItem(`${_name}-rtc`));
+		let sec = Math.floor((+Date.now() - rtc.timestamp) / 1000)
+
+		state.rtc.running = rtc.running;
+		state.rtc.prescale = rtc.prescale;
+		state.rtc.value = rtc.value + sec;
+
+	} catch (e) {
+		console.log("Could not restore system state");
+	}
+}
+
+function tick() {
+	if (!_running) return ;
+
+	let now = Date.now();
+	let delta = Math.floor(Math.min(200, now - time) * CPU_FREQ / 1000);
+
+	time = now;
+
+	if (breakpoints.length) {
+		state.clocks += delta;	// advance our clock
+
+		while (state.clocks > 0) {
+			if (breakpoints.indexOf(translate(state.cpu.pc)) >= 0) {
+				stop();
+				break ;
 			}
+
+			_exports.cpu_step(_cpu_state);
 		}
-
-		window.addEventListener("beforeunload", (e) => {
-			this.preserve();
-		}, false);
-
-		document.body.addEventListener('keydown', (e) => {
-			this._inputState &= ~KEYBOARD_CODES[e.keyCode];
-			this._updateinput();
-		});
-
-		document.body.addEventListener('keyup', (e) => {
-			this._inputState |= KEYBOARD_CODES[e.keyCode];
-			this._updateinput();
-		});
+	} else {
+		_exports.cpu_advance(_cpu_state, delta);
 	}
+	update();
+}
 
-	preserve() {
-		if (!this.state) return ;
+// Trigger an update to the UI
+function update() {
+	// This will be overidden elsewhere
+}
 
-		let { prescale, running, value } = this.state.rtc;
-		let encoded = "";
-		for (let i = 0; i < this.state.gpio.eeprom.data.length; i++) {
-			encoded += String.fromCharCode(this.state.gpio.eeprom.data[i]);
-		}
+function trace(cpu: number, address: number, kind: number, data: number) {
+}
 
-		window.localStorage.setItem(`${this._name}-eeprom`, encoded);
-		window.localStorage.setItem(`${this._name}-rtc`, JSON.stringify({ prescale, running, value, timestamp: +Date.now()}));
+export function start() {
+	if (_running) return ;
+	_running = true;
+
+	let time = Date.now();
+	_timer = setInterval(tick, 0);
+
+	update();
+}
+
+export function stop() {
+	if (!_running) return ;
+	_running = false;
+
+	clearInterval(_timer);
+}
+
+export function _updateinput() {
+	_exports.update_inputs(_cpu_state, _inputState);
+}
+
+// Cartridge I/O
+export function load (ab: ArrayBuffer) {
+	var bytes = new Uint8Array(ab);
+	var hasHeader = (bytes[0] != 0x50 || bytes[1] != 0x4D);
+	var offset = hasHeader ? 0 : 0x2100;
+
+
+	setTimeout(() => {
+		for (let i = bytes.length - 1; i >= 0; i--) state.cartridge[(i+offset) & 0x1FFFFF] = bytes[i];
+		_inputState &= ~INPUT_CART_N;
+		_updateinput();
+	}, 100);
+
+	eject();
+}
+
+export function eject() {
+	_inputState |= INPUT_CART_N;
+	_updateinput();
+}
+
+// WASM shim functions
+export function translate(address: number) {
+	if (address & 0x8000) {
+		return (address & 0x7FFF) | (state.cpu.cb << 15);
+	} else {
+		return address;
 	}
+}
 
-	restore() {
-		if (!this.state) return ;
+export function step() {
+	_exports.cpu_step(_cpu_state);
+	update();
+}
 
-		try {
-			let encoded = window.localStorage.getItem(`${this._name}-eeprom`);
+export function reset() {
+	_exports.cpu_reset(_cpu_state);
+	_updateinput();
+	update();
+}
 
-			for (let i = 0; i < encoded.length; i++) {
-				this.state.gpio.eeprom.data[i] = encoded.charCodeAt(i);
-			}
+export function read(address: number) {
+	return _exports.cpu_read(_cpu_state, address);
+}
 
-			// Restore clock (if set)
-			let rtc = JSON.parse(window.localStorage.getItem(`${this._name}-rtc`));
-			let sec = Math.floor((+Date.now() - rtc.timestamp) / 1000)
-
-			this.state.rtc.running = rtc.running;
-			this.state.rtc.prescale = rtc.prescale;
-			this.state.rtc.value = rtc.value + sec;
-
-		} catch (e) {
-			console.log("Could not restore system state");
-		}
-	}
-
-	async init(tracing:boolean) {
-		this._tracing = tracing;
-
-		this.preserve();
-
-		const request = await fetch(tracing ? "../static/libminimon.tracing.wasm" : "../static/libminimon.wasm");
-		const wasm = await WebAssembly.instantiate(await request.arrayBuffer(), this._wasm_environment);
-		this._exports = wasm.instance.exports;
-
-		this._cpu_state = this._exports.get_machine();
-		this._machineBytes = new Uint8Array(this._exports.memory.buffer);
-		this.state = State(this._exports.memory.buffer, this._exports.get_description(), this._cpu_state);
-
-		this._exports.set_sample_rate(this._cpu_state, this._audio.sampleRate);
-		this.reset();
-		this.restore();
-	}
-
-	get tracing() {
-		return this._tracing;
-	}
-
-	set tracing(v) {
-		if (this._tracing == v) return ;
-
-		this.init(v);
-	}
-
-	get running() {
-		return this._running;
-	}
-
-	set running(v) {
-		if (this._running == v) return ;
-
-		let time = Date.now();
-
-		const _tick = () => {
-			if (!this._running) return ;
-
-			let now = Date.now();
-			let delta = Math.floor(Math.min(200, now - time) * CPU_FREQ / 1000);
-
-			time = now;
-
-			if (this.breakpoints.length) {
-				this.state.clocks += delta;	// advance our clock
-
-				while (this.state.clocks > 0) {
-					if (this.breakpoints.indexOf(this.translate(this.state.cpu.pc)) >= 0) {
-						this.running = false;
-						break ;
-					}
-
-					this._exports.cpu_step(this._cpu_state);
-				}
-			} else {
-				this._exports.cpu_advance(this._cpu_state, delta);
-			}
-			this.update();
-		}
-
-		this._running = v;
-
-		if (v) {
-			this._timer = setInterval(_tick, 0);
-		} else {
-			clearInterval(this._timer);
-		}
-
-		this.update();
-	}
-
-	// Trigger an update to the UI
-	update() {
-		// This will be overidden elsewhere
-	}
-
-	trace(cpu: number, address: number, kind: number, data: number) {
-	}
-
-	_updateinput() {
-		this._exports.update_inputs(this._cpu_state, this._inputState);
-	}
-
-	// Cartridge I/O
-	load (ab: ArrayBuffer) {
-		var bytes = new Uint8Array(ab);
-		var hasHeader = (bytes[0] != 0x50 || bytes[1] != 0x4D);
-		var offset = hasHeader ? 0 : 0x2100;
-
-
-		setTimeout(() => {
-			for (let i = bytes.length - 1; i >= 0; i--) this.state.cartridge[(i+offset) & 0x1FFFFF] = bytes[i];
-			this._inputState &= ~INPUT_CART_N;
-			this._updateinput();
-		}, 100);
-
-		this.eject();
-	}
-
-	eject() {
-		this._inputState |= INPUT_CART_N;
-		this._updateinput();
-	}
-
-	// WASM shim functions
-	translate(address: number) {
-		if (address & 0x8000) {
-			return (address & 0x7FFF) | (this.state.cpu.cb << 15);
-		} else {
-			return address;
-		}
-	}
-
-	step() {
-		this._exports.cpu_step(this._cpu_state);
-		this.update();
-	}
-
-	reset() {
-		this._exports.cpu_reset(this._cpu_state);
-		this._updateinput();
-		this.update();
-	}
-
-	read(address: number) {
-		return this._exports.cpu_read(this._cpu_state, address);
-	}
-
-	write(data: number, address: number) {
-		return this._exports.cpu_write(this._cpu_state, data, address);
-	}
+export function write(data: number, address: number) {
+	return _exports.cpu_write(_cpu_state, data, address);
 }

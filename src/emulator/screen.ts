@@ -19,7 +19,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 import VertexShader from "raw-loader!./shaders/vertex.glsl";
 import FragmentShader from "raw-loader!./shaders/fragment.glsl";
 
-import System from "./system"
+import * as system from "./system"
 
 const VRAM_WIDTH  = 96;
 const VRAM_HEIGHT = 64;
@@ -30,7 +30,6 @@ interface ProgramIndex {
 
 let element: HTMLCanvasElement;
 
-let _system:System;
 let _frameIndex: number;
 let _af: number;
 let _time: number;
@@ -55,15 +54,13 @@ function onDrop (e:DragEvent) {
 		reader = new FileReader();
 
 	reader.onload = (e: any) => {
-		_system.load(e.target.result);
+		system.load(e.target.result);
 	};
 
 	reader.readAsArrayBuffer(file);
 }
 
-export function init(system:System) {
-	_system = system;
-
+export function init() {
 	/* Create our dom element */
 	element = document.createElement("canvas");
 	element.width = VRAM_WIDTH;

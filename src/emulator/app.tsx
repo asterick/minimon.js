@@ -1,12 +1,10 @@
-import Minimon from "./system";
+import * as system from "./system";
 
 import './index.less';
 
 async function main() {
-	const system = new Minimon("default");
-
 	await system.init(true);
-	system.running = true;
+	system.start();
 }
 
 main();

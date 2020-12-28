@@ -1,0 +1,458 @@
+[1mdiff --git a/src/emulator/app.tsx b/src/emulator/app.tsx[m
+[1mindex c9ffa5d..1ecb823 100644[m
+[1m--- a/src/emulator/app.tsx[m
+[1m+++ b/src/emulator/app.tsx[m
+[36m@@ -1,12 +1,10 @@[m
+[31m-import Minimon from "./system";[m
+[32m+[m[32mimport * as system from "./system";[m
+ [m
+ import './index.less';[m
+ [m
+ async function main() {[m
+[31m-	const system = new Minimon("default");[m
+[31m-[m
+ 	await system.init(true);[m
+[31m-	system.running = true;[m
+[32m+[m	[32msystem.start();[m
+ }[m
+ [m
+ main();[m
+[1mdiff --git a/src/emulator/screen.ts b/src/emulator/screen.ts[m
+[1mindex f65da80..ae4989e 100644[m
+[1m--- a/src/emulator/screen.ts[m
+[1m+++ b/src/emulator/screen.ts[m
+[36m@@ -19,7 +19,7 @@[m [mOR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.[m
+ import VertexShader from "raw-loader!./shaders/vertex.glsl";[m
+ import FragmentShader from "raw-loader!./shaders/fragment.glsl";[m
+ [m
+[31m-import System from "./system"[m
+[32m+[m[32mimport * as system from "./system"[m
+ [m
+ const VRAM_WIDTH  = 96;[m
+ const VRAM_HEIGHT = 64;[m
+[36m@@ -30,7 +30,6 @@[m [minterface ProgramIndex {[m
+ [m
+ let element: HTMLCanvasElement;[m
+ [m
+[31m-let _system:System;[m
+ let _frameIndex: number;[m
+ let _af: number;[m
+ let _time: number;[m
+[36m@@ -55,15 +54,13 @@[m [mfunction onDrop (e:DragEvent) {[m
+ 		reader = new FileReader();[m
+ [m
+ 	reader.onload = (e: any) => {[m
+[31m-		_system.load(e.target.result);[m
+[32m+[m		[32msystem.load(e.target.result);[m
+ 	};[m
+ [m
+ 	reader.readAsArrayBuffer(file);[m
+ }[m
+ [m
+[31m-export function init(system:System) {[m
+[31m-	_system = system;[m
+[31m-[m
+[32m+[m[32mexport function init() {[m
+ 	/* Create our dom element */[m
+ 	element = document.createElement("canvas");[m
+ 	element.width = VRAM_WIDTH;[m
+[1mdiff --git a/src/emulator/system.ts b/src/emulator/system.ts[m
+[1mindex 7914635..31d59ac 100644[m
+[1m--- a/src/emulator/system.ts[m
+[1m+++ b/src/emulator/system.ts[m
+[36m@@ -44,231 +44,213 @@[m [mexport const TRACING_FLAGS:{[key: string]: number} = {[m
+ const INPUT_CART_N = 0b1000000000;[m
+ const CPU_FREQ = 4000000;[m
+ [m
+[31m-export default class System {[m
+[31m-	breakpoints: Array<number>;[m
+[31m-	state: any;[m
+[31m-[m
+[31m-	_cpu_state: number;[m
+[31m-	_tracing: boolean;[m
+[31m-	_running: boolean;[m
+[31m-	_name: string;[m
+[31m-	_inputState: number;[m
+[31m-	_audio: Audio;[m
+[31m-	_timer: any;[m
+[31m-[m
+[31m-	_machineBytes: Uint8Array;[m
+[31m-	_wasm_environment: any;[m
+[31m-	_exports: any;[m
+[31m-[m
+[31m-	constructor(name:string) {[m
+[31m-		this._name = name;[m
+[31m-		this._inputState = 0b1111111111; // No cartridge inserted, no IRQ[m
+[31m-		this._audio = new Audio();[m
+[31m-		this.breakpoints = [];[m
+[31m-		screen.init(this);[m
+[31m-[m
+[31m-		this._wasm_environment = {[m
+[31m-			env: {[m
+[31m-				audio_push: (address:number, frames:number) => {[m
+[31m-					let samples = new Float32Array(this._exports.memory.buffer, address, frames);[m
+[31m-					this._audio.push(samples);[m
+[31m-				},[m
+[31m-				flip_screen: (address: number) => {[m
+[31m-					screen.repaint(this._machineBytes, address);[m
+[31m-				},[m
+[31m-				debug_print: (a: number) => {[m
+[31m-					const str = [];[m
+[31m-					let ch;[m
+[31m-					while (ch = this._machineBytes[a++]) str.push(String.fromCharCode(ch));[m
+[31m-[m
+[31m-					console.log(str.join(""));[m
+[31m-				},[m
+[31m-				trace_access: this.trace.bind(this)[m
+[31m-			}[m
+[31m-		}[m
+[31m-[m
+[31m-		window.addEventListener("beforeunload", (e) => {[m
+[31m-			this.preserve();[m
+[31m-		}, false);[m
+[31m-[m
+[31m-		document.body.addEventListener('keydown', (e) => {[m
+[31m-			this._inputState &= ~KEYBOARD_CODES[e.keyCode];[m
+[31m-			this._updateinput();[m
+[31m-		});[m
+[31m-[m
+[31m-		document.body.addEventListener('keyup', (e) => {[m
+[31m-			this._inputState |= KEYBOARD_CODES[e.keyCode];[m
+[31m-			this._updateinput();[m
+[31m-		});[m
+[32m+[m[32mlet breakpoints: Array<number>;[m[41m[m
+[32m+[m[32mlet state: any;[m[41m[m
+[32m+[m[41m[m
+[32m+[m[32mlet _cpu_state: number;[m[41m[m
+[32m+[m[32mlet _tracing: boolean;[m[41m[m
+[32m+[m[32mlet _running: boolean;[m[41m[m
+[32m+[m[32mlet time: number;[m[41m[m
+[32m+[m[32mlet _inputState: number;[m[41m[m
+[32m+[m[32mlet _audio: Audio;[m[41m[m
+[32m+[m[32mlet _timer: any;[m[41m[m
+[32m+[m[41m[m
+[32m+[m[32mlet _machineBytes: Uint8Array;[m[41m[m
+[32m+[m[32mlet _exports: any;[m[41m[m
+[32m+[m[41m[m
+[32m+[m[32mconst _name: string = "default";[m[41m[m
+[32m+[m[32mconst _wasm_environment: any = {[m[41m[m
+[32m+[m	[32menv: {[m[41m[m
+[32m+[m		[32maudio_push: (address:number, frames:number) => {[m[41m[m
+[32m+[m			[32mlet samples = new Float32Array(_exports.memory.buffer, address, frames);[m[41m[m
+[32m+[m			[32m_audio.push(samples);[m[41m[m
+[32m+[m		[32m},[m[41m[m
+[32m+[m		[32mflip_screen: (address: number) => {[m[41m[m
+[32m+[m			[32mscreen.repaint(_machineBytes, address);[m[41m[m
+[32m+[m		[32m},[m[41m[m
+[32m+[m		[32mdebug_print: (a: number) => {[m[41m[m
+[32m+[m			[32mconst str = [];[m[41m[m
+[32m+[m			[32mlet ch;[m[41m[m
+[32m+[m			[32mwhile (ch = _machineBytes[a++]) str.push(String.fromCharCode(ch));[m[41m[m
+[32m+[m[41m[m
+[32m+[m			[32mconsole.log(str.join(""));[m[41m[m
+[32m+[m		[32m},[m[41m[m
+[32m+[m		[32mtrace_access: trace.bind(this)[m[41m[m
+ 	}[m
+[32m+[m[32m};[m[41m[m
+ [m
+[31m-	preserve() {[m
+[31m-		if (!this.state) return ;[m
+[32m+[m[32mexport async function init(tracing:boolean) {[m[41m[m
+[32m+[m	[32m_inputState = 0b1111111111; // No cartridge inserted, no IRQ[m[41m[m
+[32m+[m	[32m_audio = new Audio();[m[41m[m
+[32m+[m	[32mbreakpoints = [];[m[41m[m
+[32m+[m	[32mscreen.init();[m[41m[m
+ [m
+[31m-		let { prescale, running, value } = this.state.rtc;[m
+[31m-		let encoded = "";[m
+[31m-		for (let i = 0; i < this.state.gpio.eeprom.data.length; i++) {[m
+[31m-			encoded += String.fromCharCode(this.state.gpio.eeprom.data[i]);[m
+[31m-		}[m
+[32m+[m	[32mwindow.addEventListener("beforeunload", (e) => {[m[41m[m
+[32m+[m		[32mpreserve();[m[41m[m
+[32m+[m	[32m}, false);[m[41m[m
+ [m
+[31m-		window.localStorage.setItem(`${this._name}-eeprom`, encoded);[m
+[31m-		window.localStorage.setItem(`${this._name}-rtc`, JSON.stringify({ prescale, running, value, timestamp: +Date.now()}));[m
+[31m-	}[m
+[32m+[m	[32mdocument.body.addEventListener('keydown', (e) => {[m[41m[m
+[32m+[m		[32m_inputState &= ~KEYBOARD_CODES[e.keyCode];[m[41m[m
+[32m+[m		[32m_updateinput();[m[41m[m
+[32m+[m	[32m});[m[41m[m
+ [m
+[31m-	restore() {[m
+[31m-		if (!this.state) return ;[m
+[32m+[m	[32mdocument.body.addEventListener('keyup', (e) => {[m[41m[m
+[32m+[m		[32m_inputState |= KEYBOARD_CODES[e.keyCode];[m[41m[m
+[32m+[m		[32m_updateinput();[m[41m[m
+[32m+[m	[32m});[m[41m[m
+ [m
+[31m-		try {[m
+[31m-			let encoded = window.localStorage.getItem(`${this._name}-eeprom`);[m
+[32m+[m	[32m_tracing = tracing;[m[41m[m
+ [m
+[31m-			for (let i = 0; i < encoded.length; i++) {[m
+[31m-				this.state.gpio.eeprom.data[i] = encoded.charCodeAt(i);[m
+[31m-			}[m
+[32m+[m	[32mpreserve();[m[41m[m
+ [m
+[31m-			// Restore clock (if set)[m
+[31m-			let rtc = JSON.parse(window.localStorage.getItem(`${this._name}-rtc`));[m
+[31m-			let sec = Math.floor((+Date.now() - rtc.timestamp) / 1000)[m
+[32m+[m	[32mconst request = await fetch(tracing ? "../static/libminimon.tracing.wasm" : "../static/libminimon.wasm");[m[41m[m
+[32m+[m	[32mconst wasm = await WebAssembly.instantiate(await request.arrayBuffer(), _wasm_environment);[m[41m[m
+[32m+[m	[32m_exports = wasm.instance.exports;[m[41m[m
+ [m
+[31m-			this.state.rtc.running = rtc.running;[m
+[31m-			this.state.rtc.prescale = rtc.prescale;[m
+[31m-			this.state.rtc.value = rtc.value + sec;[m
+[32m+[m	[32m_cpu_state = _exports.get_machine();[m[41m[m
+[32m+[m	[32m_machineBytes = new Uint8Array(_exports.memory.buffer);[m[41m[m
+[32m+[m	[32mstate = State(_exports.memory.buffer, _exports.get_description(), _cpu_state);[m[41m[m
+ [m
+[31m-		} catch (e) {[m
+[31m-			console.log("Could not restore system state");[m
+[31m-		}[m
+[31m-	}[m
+[32m+[m	[32m_exports.set_sample_rate(_cpu_state, _audio.sampleRate);[m[41m[m
+[32m+[m	[32mreset();[m[41m[m
+[32m+[m	[32mrestore();[m[41m[m
+[32m+[m[32m}[m[41m[m
+ [m
+[31m-	async init(tracing:boolean) {[m
+[31m-		this._tracing = tracing;[m
+[32m+[m[32mfunction preserve() {[m[41m[m
+[32m+[m	[32mif (!state) return ;[m[41m[m
+ [m
+[31m-		this.preserve();[m
+[32m+[m	[32mlet { prescale, running, value } = state.rtc;[m[41m[m
+[32m+[m	[32mlet encoded = "";[m[41m[m
+[32m+[m	[32mfor (let i = 0; i < state.gpio.eeprom.data.length; i++) {[m[41m[m
+[32m+[m		[32mencoded += String.fromCharCode(state.gpio.eeprom.data[i]);[m[41m[m
+[32m+[m	[32m}[m[41m[m
+ [m
+[31m-		const request = await fetch(tracing ? "../static/libminimon.tracing.wasm" : "../static/libminimon.wasm");[m
+[31m-		const wasm = await WebAssembly.instantiate(await request.arrayBuffer(), this._wasm_environment);[m
+[31m-		this._exports = wasm.instance.exports;[m
+[32m+[m	[32mwindow.localStorage.setItem(`${_name}-eeprom`, encoded);[m[41m[m
+[32m+[m	[32mwindow.localStorage.setItem(`${_name}-rtc`, JSON.stringify({ prescale, running, value, timestamp: +Date.now()}));[m[41m[m
+[32m+[m[32m}[m[41m[m
+ [m
+[31m-		this._cpu_state = this._exports.get_machine();[m
+[31m-		this._machineBytes = new Uint8Array(this._exports.memory.buffer);[m
+[31m-		this.state = State(this._exports.memory.buffer, this._exports.get_description(), this._cpu_state);[m
+[32m+[m[32mfunction restore() {[m[41m[m
+[32m+[m	[32mif (!state) return ;[m[41m[m
+ [m
+[31m-		this._exports.set_sample_rate(this._cpu_state, this._audio.sampleRate);[m
+[31m-		this.reset();[m
+[31m-		this.restore();[m
+[31m-	}[m
+[32m+[m	[32mtry {[m[41m[m
+[32m+[m		[32mlet encoded = window.localStorage.getItem(`${_name}-eeprom`);[m[41m[m
+ [m
+[31m-	get tracing() {[m
+[31m-		return this._tracing;[m
+[31m-	}[m
+[32m+[m		[32mfor (let i = 0; i < encoded.length; i++) {[m[41m[m
+[32m+[m			[32mstate.gpio.eeprom.data[i] = encoded.charCodeAt(i);[m[41m[m
+[32m+[m		[32m}[m[41m[m
+ [m
+[31m-	set tracing(v) {[m
+[31m-		if (this._tracing == v) return ;[m
+[32m+[m		[32m// Restore clock (if set)[m[41m[m
+[32m+[m		[32mlet rtc = JSON.parse(window.localStorage.getItem(`${_name}-rtc`));[m[41m[m
+[32m+[m		[32mlet sec = Math.floor((+Date.now() - rtc.timestamp) / 1000)[m[41m[m
+ [m
+[31m-		this.init(v);[m
+[31m-	}[m
+[32m+[m		[32mstate.rtc.running = rtc.running;[m[41m[m
+[32m+[m		[32mstate.rtc.prescale = rtc.prescale;[m[41m[m
+[32m+[m		[32mstate.rtc.value = rtc.value + sec;[m[41m[m
+ [m
+[31m-	get running() {[m
+[31m-		return this._running;[m
+[32m+[m	[32m} catch (e) {[m[41m[m
+[32m+[m		[32mconsole.log("Could not restore system state");[m[41m[m
+ 	}[m
+[32m+[m[32m}[m[41m[m
+ [m
+[31m-	set running(v) {[m
+[31m-		if (this._running == v) return ;[m
+[32m+[m[32mfunction tick() {[m[41m[m
+[32m+[m	[32mif (!_running) return ;[m[41m[m
+ [m
+[31m-		let time = Date.now();[m
+[32m+[m	[32mlet now = Date.now();[m[41m[m
+[32m+[m	[32mlet delta = Math.floor(Math.min(200, now - time) * CPU_FREQ / 1000);[m[41m[m
+ [m
+[31m-		const _tick = () => {[m
+[31m-			if (!this._running) return ;[m
+[32m+[m	[32mtime = now;[m[41m[m
+ [m
+[31m-			let now = Date.now();[m
+[31m-			let delta = Math.floor(Math.min(200, now - time) * CPU_FREQ / 1000);[m
+[32m+[m	[32mif (breakpoints.length) {[m[41m[m
+[32m+[m		[32mstate.clocks += delta;	// advance our clock[m[41m[m
+ [m
+[31m-			time = now;[m
+[32m+[m		[32mwhile (state.clocks > 0) {[m[41m[m
+[32m+[m			[32mif (breakpoints.indexOf(translate(state.cpu.pc)) >= 0) {[m[41m[m
+[32m+[m				[32mstop();[m[41m[m
+[32m+[m				[32mbreak ;[m[41m[m
+[32m+[m			[32m}[m[41m[m
+ [m
+[31m-			if (this.breakpoints.length) {[m
+[31m-				this.state.clocks += delta;	// advance our clock[m
+[32m+[m			[32m_exports.cpu_step(_cpu_state);[m[41m[m
+[32m+[m		[32m}[m[41m[m
+[32m+[m	[32m} else {[m[41m[m
+[32m+[m		[32m_exports.cpu_advance(_cpu_state, delta);[m[41m[m
+[32m+[m	[32m}[m[41m[m
+[32m+[m	[32mupdate();[m[41m[m
+[32m+[m[32m}[m[41m[m
+ [m
+[31m-				while (this.state.clocks > 0) {[m
+[31m-					if (this.breakpoints.indexOf(this.translate(this.state.cpu.pc)) >= 0) {[m
+[31m-						this.running = false;[m
+[31m-						break ;[m
+[31m-					}[m
+[32m+[m[32m// Trigger an update to the UI[m[41m[m
+[32m+[m[32mfunction update() {[m[41m[m
+[32m+[m	[32m// This will be overidden elsewhere[m[41m[m
+[32m+[m[32m}[m[41m[m
+ [m
+[31m-					this._exports.cpu_step(this._cpu_state);[m
+[31m-				}[m
+[31m-			} else {[m
+[31m-				this._exports.cpu_advance(this._cpu_state, delta);[m
+[31m-			}[m
+[31m-			this.update();[m
+[31m-		}[m
+[32m+[m[32mfunction trace(cpu: number, address: number, kind: number, data: number) {[m[41m[m
+[32m+[m[32m}[m[41m[m
+ [m
+[31m-		this._running = v;[m
+[32m+[m[32mexport function start() {[m[41m[m
+[32m+[m	[32mif (_running) return ;[m[41m[m
+[32m+[m	[32m_running = true;[m[41m[m
+ [m
+[31m-		if (v) {[m
+[31m-			this._timer = setInterval(_tick, 0);[m
+[31m-		} else {[m
+[31m-			clearInterval(this._timer);[m
+[31m-		}[m
+[32m+[m	[32mlet time = Date.now();[m[41m[m
+[32m+[m	[32m_timer = setInterval(tick, 0);[m[41m[m
+ [m
+[31m-		this.update();[m
+[31m-	}[m
+[32m+[m	[32mupdate();[m[41m[m
+[32m+[m[32m}[m[41m[m
+ [m
+[31m-	// Trigger an update to the UI[m
+[31m-	update() {[m
+[31m-		// This will be overidden elsewhere[m
+[31m-	}[m
+[32m+[m[32mexport function stop() {[m[41m[m
+[32m+[m	[32mif (!_running) return ;[m[41m[m
+[32m+[m	[32m_running = false;[m[41m[m
+ [m
+[31m-	trace(cpu: number, address: number, kind: number, data: number) {[m
+[31m-	}[m
+[32m+[m	[32mclearInterval(_timer);[m[41m[m
+[32m+[m[32m}[m[41m[m
+ [m
+[31m-	_updateinput() {[m
+[31m-		this._exports.update_inputs(this._cpu_state, this._inputState);[m
+[31m-	}[m
+[32m+[m[32mexport function _updateinput() {[m[41m[m
+[32m+[m	[32m_exports.update_inputs(_cpu_state, _inputState);[m[41m[m
+[32m+[m[32m}[m[41m[m
+ [m
+[31m-	// Cartridge I/O[m
+[31m-	load (ab: ArrayBuffer) {[m
+[31m-		var bytes = new Uint8Array(ab);[m
+[31m-		var hasHeader = (bytes[0] != 0x50 || bytes[1] != 0x4D);[m
+[31m-		var offset = hasHeader ? 0 : 0x2100;[m
+[32m+[m[32m// Cartridge I/O[m[41m[m
+[32m+[m[32mexport function load (ab: ArrayBuffer) {[m[41m[m
+[32m+[m	[32mvar bytes = new Uint8Array(ab);[m[41m[m
+[32m+[m	[32mvar hasHeader = (bytes[0] != 0x50 || bytes[1] != 0x4D);[m[41m[m
+[32m+[m	[32mvar offset = hasHeader ? 0 : 0x2100;[m[41m[m
+ [m
+ [m
+[31m-		setTimeout(() => {[m
+[31m-			for (let i = bytes.length - 1; i >= 0; i--) this.state.cartridge[(i+offset) & 0x1FFFFF] = bytes[i];[m
+[31m-			this._inputState &= ~INPUT_CART_N;[m
+[31m-			this._updateinput();[m
+[31m-		}, 100);[m
+[32m+[m	[32msetTimeout(() => {[m[41m[m
+[32m+[m		[32mfor (let i = bytes.length - 1; i >= 0; i--) state.cartridge[(i+offset) & 0x1FFFFF] = bytes[i];[m[41m[m
+[32m+[m		[32m_inputState &= ~INPUT_CART_N;[m[41m[m
+[32m+[m		[32m_updateinput();[m[41m[m
+[32m+[m	[32m}, 100);[m[41m[m
+ [m
+[31m-		this.eject();[m
+[31m-	}[m
+[32m+[m	[32meject();[m[41m[m
+[32m+[m[32m}[m[41m[m
+ [m
+[31m-	eject() {[m
+[31m-		this._inputState |= INPUT_CART_N;[m
+[31m-		this._updateinput();[m
+[31m-	}[m
+[32m+[m[32mexport function eject() {[m[41m[m
+[32m+[m	[32m_inputState |= INPUT_CART_N;[m[41m[m
+[32m+[m	[32m_updateinput();[m[41m[m
+[32m+[m[32m}[m[41m[m
+ [m
+[31m-	// WASM shim functions[m
+[31m-	translate(address: number) {[m
+[31m-		if (address & 0x8000) {[m
+[31m-			return (address & 0x7FFF) | (this.state.cpu.cb << 15);[m
+[31m-		} else {[m
+[31m-			return address;[m
+[31m-		}[m
+[32m+[m[32m// WASM shim functions[m[41m[m
+[32m+[m[32mexport function translate(address: number) {[m[41m[m
+[32m+[m	[32mif (address & 0x8000) {[m[41m[m
+[32m+[m		[32mreturn (address & 0x7FFF) | (state.cpu.cb << 15);[m[41m[m
+[32m+[m	[32m} else {[m[41m[m
+[32m+[m		[32mreturn address;[m[41m[m
+ 	}[m
+[32m+[m[32m}[m[41m[m
+ [m
+[31m-	step() {[m
+[31m-		this._exports.cpu_step(this._cpu_state);[m
+[31m-		this.update();[m
+[31m-	}[m
+[32m+[m[32mexport function step() {[m[41m[m
+[32m+[m	[32m_exports.cpu_step(_cpu_state);[m[41m[m
+[32m+[m	[32mupdate();[m[41m[m
+[32m+[m[32m}[m[41m[m
+ [m
+[31m-	reset() {[m
+[31m-		this._exports.cpu_reset(this._cpu_state);[m
+[31m-		this._updateinput();[m
+[31m-		this.update();[m
+[31m-	}[m
+[32m+[m[32mexport function reset() {[m[41m[m
+[32m+[m	[32m_exports.cpu_reset(_cpu_state);[m[41m[m
+[32m+[m	[32m_updateinput();[m[41m[m
+[32m+[m	[32mupdate();[m[41m[m
+[32m+[m[32m}[m[41m[m
+ [m
+[31m-	read(address: number) {[m
+[31m-		return this._exports.cpu_read(this._cpu_state, address);[m
+[31m-	}[m
+[32m+[m[32mexport function read(address: number) {[m[41m[m
+[32m+[m	[32mreturn _exports.cpu_read(_cpu_state, address);[m[41m[m
+[32m+[m[32m}[m[41m[m
+ [m
+[31m-	write(data: number, address: number) {[m
+[31m-		return this._exports.cpu_write(this._cpu_state, data, address);[m
+[31m-	}[m
+[32m+[m[32mexport function write(data: number, address: number) {[m[41m[m
+[32m+[m	[32mreturn _exports.cpu_write(_cpu_state, data, address);[m[41m[m
+ }[m
