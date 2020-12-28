@@ -3,3 +3,8 @@ declare module "*.csv" {
     const Argument: any;
     const InstructionTable: any;
 }
+
+declare module 'raw-loader!*' {
+    const contents: string
+    export = contents
+}

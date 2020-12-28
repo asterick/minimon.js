@@ -1,7 +1,7 @@
 import { app, BrowserWindow } from 'electron';
 import isDev from 'electron-is-dev';
 
-declare const EMULATOR_WEBPACK_ENTRY: any;
+declare const EMULATOR_WEBPACK_ENTRY: string;
 
 if (require('electron-squirrel-startup')) {
   app.quit();
@@ -14,12 +14,13 @@ const createWindow = (): void => {
   const mainWindow = new BrowserWindow({
     height: 600,
     width: 800,
+    webPreferences: {
+      devTools: isDev
+    }
   });
 
   // and load the index.html of the app.
   mainWindow.loadURL(EMULATOR_WEBPACK_ENTRY);
-  if (isDev)
-    mainWindow.webContents.openDevTools();
 };
 
 app.on('ready', createWindow);
