@@ -1,0 +1,3 @@
+[submodule "src/core/wasm/wasi-libc"]
+	path = src/core/wasm/wasi-libc
+	url = https://github.com/WebAssembly/wasi-libc.git
