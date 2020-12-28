@@ -5,8 +5,24 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const assets = [ 'static' ];
 
 rules.push({
-  test: /\.css$/,
-  use: [{ loader: 'style-loader' }, { loader: 'css-loader' }],
+  test: /\.less$/,
+  use: [
+      'style-loader',
+      {
+          loader: 'css-loader',
+          options: {
+              modules: true
+          }
+      },
+      {
+          loader: 'less-loader',
+          options: {
+              lessOptions: {
+                  paths: [path.resolve(__dirname, 'node_modules')]
+              }
+          }
+      }
+  ],
 }, {
   test: /\.csv$/i,
   use: './loaders/table-loader'
