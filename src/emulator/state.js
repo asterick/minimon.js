@@ -122,15 +122,15 @@ function array(buffer, offset, type, my_def, elements, ... size) {
 export default function struct(buffer, my_def, offset) {
 	let dv = new DataView(buffer);
 	let out = {};
-	
+
 	const size = dv.getUint32(my_def, true);
 	let fields = dv.getUint32(my_def + 4, true);
-	
+
 	for (;;) {
 		let type = dv.getUint32(fields, true);
 
 		if (type == TYPE_END) break ;
-		
+
 		let name = utf8(dv, fields + 4);
 
 		let target = dv.getUint32(fields + 8, true);
@@ -146,7 +146,7 @@ export default function struct(buffer, my_def, offset) {
 			Object.defineProperty(out, name, {
 				enumerable: true,
 				value: struct(buffer, def, target+offset)
-			})
+			});
 		} else {
 			Object.defineProperty(out, name, {
 				enumerable: true,

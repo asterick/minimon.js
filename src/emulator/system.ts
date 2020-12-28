@@ -48,7 +48,6 @@ let breakpoints: Array<number>;
 let state: any;
 
 let _cpu_state: number;
-let _tracing: boolean;
 let _running: boolean;
 let time: number;
 let _inputState: number;
@@ -58,11 +57,11 @@ let _timer: any;
 let _machineBytes: Uint8Array;
 let _exports: any;
 
-const _name: string = "default";
+const _name = "default";
 const _wasm_environment: any = {
 	env: {
 		audio_push: (address:number, frames:number) => {
-			let samples = new Float32Array(_exports.memory.buffer, address, frames);
+			const samples = new Float32Array(_exports.memory.buffer, address, frames);
 			_audio.push(samples);
 		},
 		flip_screen: (address: number) => {
@@ -70,12 +69,17 @@ const _wasm_environment: any = {
 		},
 		debug_print: (a: number) => {
 			const str = [];
-			let ch;
-			while (ch = _machineBytes[a++]) str.push(String.fromCharCode(ch));
+			for(;;) {
+				const ch = _machineBytes[a++];
+				if (!ch) break ;
+				str.push(String.fromCharCode(ch));
+			}
 
 			console.log(str.join(""));
 		},
-		trace_access: trace.bind(this)
+		trace_access: (cpu: number, address: number, kind: number, data: number) => {
+			// TODO
+		}
 	}
 };
 
@@ -85,9 +89,7 @@ export async function init(tracing:boolean) {
 	breakpoints = [];
 	screen.init();
 
-	window.addEventListener("beforeunload", (e) => {
-		preserve();
-	}, false);
+	window.addEventListener("beforeunload", preserve, false);
 
 	document.body.addEventListener('keydown', (e) => {
 		_inputState &= ~KEYBOARD_CODES[e.keyCode];
@@ -98,8 +100,6 @@ export async function init(tracing:boolean) {
 		_inputState |= KEYBOARD_CODES[e.keyCode];
 		_updateinput();
 	});
-
-	_tracing = tracing;
 
 	preserve();
 
@@ -119,7 +119,7 @@ export async function init(tracing:boolean) {
 function preserve() {
 	if (!state) return ;
 
-	let { prescale, running, value } = state.rtc;
+	const { prescale, running, value } = state.rtc;
 	let encoded = "";
 	for (let i = 0; i < state.gpio.eeprom.data.length; i++) {
 		encoded += String.fromCharCode(state.gpio.eeprom.data[i]);
@@ -133,15 +133,15 @@ function restore() {
 	if (!state) return ;
 
 	try {
-		let encoded = window.localStorage.getItem(`${_name}-eeprom`);
+		const encoded = window.localStorage.getItem(`${_name}-eeprom`);
 
 		for (let i = 0; i < encoded.length; i++) {
 			state.gpio.eeprom.data[i] = encoded.charCodeAt(i);
 		}
 
 		// Restore clock (if set)
-		let rtc = JSON.parse(window.localStorage.getItem(`${_name}-rtc`));
-		let sec = Math.floor((+Date.now() - rtc.timestamp) / 1000)
+		const rtc = JSON.parse(window.localStorage.getItem(`${_name}-rtc`));
+		const sec = Math.floor((+Date.now() - rtc.timestamp) / 1000)
 
 		state.rtc.running = rtc.running;
 		state.rtc.prescale = rtc.prescale;
@@ -155,8 +155,8 @@ function restore() {
 function tick() {
 	if (!_running) return ;
 
-	let now = Date.now();
-	let delta = Math.floor(Math.min(200, now - time) * CPU_FREQ / 1000);
+	const now = Date.now();
+	const delta = Math.floor(Math.min(200, now - time) * CPU_FREQ / 1000);
 
 	time = now;
 
@@ -182,14 +182,11 @@ function update() {
 	// This will be overidden elsewhere
 }
 
-function trace(cpu: number, address: number, kind: number, data: number) {
-}
-
 export function start() {
 	if (_running) return ;
 	_running = true;
 
-	let time = Date.now();
+	time = Date.now();
 	_timer = setInterval(tick, 0);
 
 	update();
@@ -208,10 +205,9 @@ export function _updateinput() {
 
 // Cartridge I/O
 export function load (ab: ArrayBuffer) {
-	var bytes = new Uint8Array(ab);
-	var hasHeader = (bytes[0] != 0x50 || bytes[1] != 0x4D);
-	var offset = hasHeader ? 0 : 0x2100;
-
+	const bytes = new Uint8Array(ab);
+	const hasHeader = (bytes[0] != 0x50 || bytes[1] != 0x4D);
+	const offset = hasHeader ? 0 : 0x2100;
 
 	setTimeout(() => {
 		for (let i = bytes.length - 1; i >= 0; i--) state.cartridge[(i+offset) & 0x1FFFFF] = bytes[i];

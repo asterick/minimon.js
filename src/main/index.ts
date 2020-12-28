@@ -1,5 +1,6 @@
 import { app, BrowserWindow } from 'electron';
 import isDev from 'electron-is-dev';
+import updateApp from 'update-electron-app';
 
 declare const EMULATOR_WEBPACK_ENTRY: string;
 
@@ -7,7 +8,7 @@ if (require('electron-squirrel-startup')) {
   app.quit();
 }
 
-require('update-electron-app')();
+updateApp();
 
 const createWindow = (): void => {
   // Create the browser window.

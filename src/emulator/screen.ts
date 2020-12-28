@@ -19,7 +19,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 import VertexShader from "raw-loader!./shaders/vertex.glsl";
 import FragmentShader from "raw-loader!./shaders/fragment.glsl";
 
-import * as system from "./system"
+import * as system from "./system";
 
 const VRAM_WIDTH  = 96;
 const VRAM_HEIGHT = 64;
@@ -31,7 +31,6 @@ interface ProgramIndex {
 let element: HTMLCanvasElement;
 
 let _frameIndex: number;
-let _af: number;
 let _time: number;
 
 let	gl: any;
@@ -44,14 +43,11 @@ function onDragOver (e:DragEvent) {
 	e.dataTransfer.dropEffect = "copy";
 }
 
-function onDragLeave () {
-}
-
 function onDrop (e:DragEvent) {
 	e.preventDefault();
 
-	var file = e.dataTransfer.files[0],
-		reader = new FileReader();
+	const file = e.dataTransfer.files[0];
+	const reader = new FileReader();
 
 	reader.onload = (e: any) => {
 		system.load(e.target.result);
@@ -69,9 +65,8 @@ export function init() {
 
 	_frameIndex = 0;
 
-	element.addEventListener("onDragOver", onDragOver.bind(this));
-	element.addEventListener("onDragLeave", onDragLeave.bind(this));
-	element.addEventListener("onDrop", onDrop.bind(this));
+	element.addEventListener("onDragOver", onDragOver);
+	element.addEventListener("onDrop", onDrop);
 
 	/* Configure our GL context */
 	gl = element.getContext("webgl2", {
@@ -107,8 +102,8 @@ export function init() {
 }
 
 function _createShader (vertex: string, fragment: string) {
-	var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
-	var vertexShader =  gl.createShader(gl.VERTEX_SHADER);
+	const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+	const vertexShader =  gl.createShader(gl.VERTEX_SHADER);
 
 	gl.shaderSource(vertexShader, vertex);
 	gl.compileShader(vertexShader);
@@ -126,7 +121,7 @@ function _createShader (vertex: string, fragment: string) {
 		return null;
 	}
 
-	let shaderProgram = gl.createProgram();
+	const shaderProgram = gl.createProgram();
 	gl.attachShader(shaderProgram, vertexShader);
 	gl.attachShader(shaderProgram, fragmentShader);
 	gl.linkProgram(shaderProgram);
@@ -139,7 +134,7 @@ function _createShader (vertex: string, fragment: string) {
 	const attrCount = gl.getProgramParameter(shaderProgram, gl.ACTIVE_ATTRIBUTES);
 	const attributes:ProgramIndex = {};
 
-	for (var i = 0; i < attrCount; i++) {
+	for (let i = 0; i < attrCount; i++) {
 		const attr = gl.getActiveAttrib(shaderProgram, i);
 		attributes[attr.name] = i;
 	}
@@ -147,7 +142,7 @@ function _createShader (vertex: string, fragment: string) {
 	const uniCount= gl.getProgramParameter(shaderProgram, gl.ACTIVE_UNIFORMS);
 	const uniforms:ProgramIndex = {};
 
-	for (var i = 0; i < uniCount; i++) {
+	for (let i = 0; i < uniCount; i++) {
 		const uni = gl.getActiveUniform(shaderProgram, i);
 		uniforms[uni.name] = gl.getUniformLocation(shaderProgram, uni.name);
 	}
@@ -160,9 +155,7 @@ function _createShader (vertex: string, fragment: string) {
 }
 
 function _repainter() {
-	var time = 0;
-
-	_af = requestAnimationFrame(() => {
+	requestAnimationFrame(() => {
 		const width = Math.max(element.clientWidth, VRAM_WIDTH);
 		const height = Math.max(element.clientHeight, VRAM_HEIGHT);
 		const now = Date.now();
@@ -175,10 +168,10 @@ function _repainter() {
 			element.height = height;
 
 			if (width * 2 / 3 > height) {
-				let fit_x = Math.floor(height * 3 / 2);
+				const fit_x = Math.floor(height * 3 / 2);
 				gl.viewport((width - fit_x) / 2, 0, fit_x, height);
 			} else {
-				let fit_y = width * 2 / 3;
+				const fit_y = width * 2 / 3;
 				gl.viewport(0, (height - fit_y) / 2, width, fit_y);
 			}
 

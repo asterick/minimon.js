@@ -1,6 +1,6 @@
 declare module "*.csv" {
-    const Condition: any;
-    const Argument: any;
+    const Condition: {[key: string]: number};
+    const Argument: {[key: string]: number};
     const InstructionTable: any;
 }
 
