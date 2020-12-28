@@ -1,20 +1,26 @@
 /*
-ISC License
-
-Copyright (c) 2019, Bryon Vandiver
-
-Permission to use, copy, modify, and/or distribute this software for any
-purpose with or without fee is hereby granted, provided that the above
-copyright notice and this permission notice appear in all copies.
-
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
-ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
-ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
-OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-*/
+ * MIT License
+ *
+ * Copyright (c) 2019-2021, Bryon Vandiver
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 
 #include <string.h>
 #include "machine.h"
@@ -30,7 +36,7 @@ struct TimerIRQ {
 static const TimerIRQ irqs[] = {
 	{ IRQ::IRQ_TIM0, IRQ::IRQ_TIM1,                -1 },
 	{ IRQ::IRQ_TIM2, IRQ::IRQ_TIM3,                -1 },
-	{            -1, IRQ::IRQ_TIM5, IRQ::IRQ_TIM5_CMP } 
+	{            -1, IRQ::IRQ_TIM5, IRQ::IRQ_TIM5_CMP }
 };
 
 static const uint8_t TIMER_MASK[] = {
@@ -80,7 +86,7 @@ static inline void compare(Machine::State& cpu, int vec, int ticks, int compare,
 	int compare_ticks = count - compare;
 
 	if (compare_ticks < 0) compare_ticks += preset + 1;
-		
+
 	if (compare_ticks < ticks) {
 		IRQ::trigger(cpu, (IRQ::Vector) vec);
 	}
@@ -92,11 +98,11 @@ static inline void process_timer(Machine::State& cpu, int osc1, int osc3, Timer&
 
 		int adv = ticks(cpu.timers, timer.lo_clock_source, timer.lo_clock_ctrl, timer.lo_clock_ratio, osc1, osc3);
 		int count = timer.count - adv;
-		
+
 		if (count < 0) {
 			irq(cpu, vects.hi_underflow);
 			do {
-				count += timer.preset + 1;	
+				count += timer.preset + 1;
 			} while (count < 0);
 		}
 
@@ -126,7 +132,7 @@ static inline void process_timer(Machine::State& cpu, int osc1, int osc3, Timer&
 			if (count < 0) {
 				irq(cpu, vects.hi_underflow);
 				do {
-					count += timer.preset_bytes[1] + 1;	
+					count += timer.preset_bytes[1] + 1;
 				} while (count < 0);
 			}
 			timer.count_bytes[1] = count;
@@ -170,7 +176,7 @@ uint8_t Timers::read(Machine::State& cpu, uint32_t address) {
 			| (cpu.timers.timer[2].hi_clock_ctrl ? 0b10000000 : 0);
 
 	case 0x2019:
-		return 0	
+		return 0
 			| (cpu.timers.osc3_enable ? 0b00100000 : 0)
 			| (cpu.timers.osc1_enable ? 0b00010000 : 0)
 
@@ -196,7 +202,7 @@ uint8_t Timers::read(Machine::State& cpu, uint32_t address) {
 	// Timer 4/5
 	case 0x2048 ... 0x204F:
 		return cpu.timers.timer[2].bytes[address & 0b111];
-	
+
 	default:
 		return 0xCD;
 	}

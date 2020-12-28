@@ -1,3 +1,27 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2019-2021, Bryon Vandiver
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 #include <string.h>
 #include <stdio.h>
 #include <stdarg.h>
@@ -59,7 +83,7 @@ bool retro_load_game(const struct retro_game_info *info)
 }
 
 // Unload the cartridge
-void retro_unload_game(void) { 
+void retro_unload_game(void) {
     update_inputs(machine_state, input_state |= INPUT_CART_N);
     memset(machine_state.cartridge, 0xFF, sizeof(machine_state.cartridge));
 }
@@ -146,7 +170,7 @@ void retro_init(void)
 
     insert_countdown = 0;
     input_state = 0b1111111111;
-    
+
     cpu_reset(machine_state);
     Audio::setSampleRate(machine_state.audio, 44100);
 }
@@ -251,7 +275,7 @@ void retro_run(void)
                     framebuffer[3][y][x][c]
                     ) / 4;
             }
-            
+
         }
     }
 
@@ -262,6 +286,6 @@ void retro_run(void)
         int16_t volume = (int16_t)(machine_state.audio.output[i] * 0x100);
         audio_cb(volume, volume);
     }
-    
+
     machine_state.audio.write_index = 0;
 }

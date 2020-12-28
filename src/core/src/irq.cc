@@ -1,20 +1,26 @@
 /*
-ISC License
-
-Copyright (c) 2019, Bryon Vandiver
-
-Permission to use, copy, modify, and/or distribute this software for any
-purpose with or without fee is hereby granted, provided that the above
-copyright notice and this permission notice appear in all copies.
-
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
-ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
-ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
-OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-*/
+ * MIT License
+ *
+ * Copyright (c) 2019-2021, Bryon Vandiver
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 
 #include <string.h>
 #include <stdint.h>
@@ -126,7 +132,7 @@ uint8_t IRQ::read(Machine::State& cpu, uint32_t address) {
 			| (cpu.irq.enable[0x14] ? 0b00000001 : 0)
 			;
 
-		case 0x2025: return 0 
+		case 0x2025: return 0
 			| (cpu.irq.enable[0x15] ? 0b10000000 : 0)
 			| (cpu.irq.enable[0x16] ? 0b01000000 : 0)
 			| (cpu.irq.enable[0x17] ? 0b00100000 : 0)
@@ -167,7 +173,7 @@ uint8_t IRQ::read(Machine::State& cpu, uint32_t address) {
 			| (cpu.irq.active[0x14] ? 0b00000001 : 0)
 			;
 
-		case 0x2029: return 0 
+		case 0x2029: return 0
 			| (cpu.irq.active[0x15] ? 0b10000000 : 0)
 			| (cpu.irq.active[0x16] ? 0b01000000 : 0)
 			| (cpu.irq.active[0x17] ? 0b00100000 : 0)
@@ -194,7 +200,7 @@ uint8_t IRQ::read(Machine::State& cpu, uint32_t address) {
 
 void IRQ::write(Machine::State& cpu, uint8_t data, uint32_t address) {
 	switch (address) {
-		case 0x2020: 
+		case 0x2020:
 			cpu.irq.priority[0] = (data >> 6) & 3;
 			cpu.irq.priority[1] = (data >> 4) & 3;
 			cpu.irq.priority[2] = (data >> 2) & 3;
@@ -212,7 +218,7 @@ void IRQ::write(Machine::State& cpu, uint8_t data, uint32_t address) {
 			cpu.irq.priority[8] = (data >> 0) & 3;
 			break ;
 
-		case 0x2023: 
+		case 0x2023:
 			cpu.irq.enable[0x03] = data & 0b10000000;
 			cpu.irq.enable[0x04] = data & 0b01000000;
 			cpu.irq.enable[0x05] = data & 0b00100000;
@@ -223,7 +229,7 @@ void IRQ::write(Machine::State& cpu, uint8_t data, uint32_t address) {
 			cpu.irq.enable[0x0A] = data & 0b00000001;
 			break ;
 
-		case 0x2024: 
+		case 0x2024:
 			cpu.irq.enable[0x0B] = data & 0b00100000;
 			cpu.irq.enable[0x0C] = data & 0b00010000;
 			cpu.irq.enable[0x0D] = data & 0b00001000;
@@ -232,7 +238,7 @@ void IRQ::write(Machine::State& cpu, uint8_t data, uint32_t address) {
 			cpu.irq.enable[0x14] = data & 0b00000001;
 			break ;
 
-		case 0x2025: 
+		case 0x2025:
 			cpu.irq.enable[0x15] = data & 0b10000000;
 			cpu.irq.enable[0x16] = data & 0b01000000;
 			cpu.irq.enable[0x17] = data & 0b00100000;
@@ -253,7 +259,7 @@ void IRQ::write(Machine::State& cpu, uint8_t data, uint32_t address) {
 			cpu.irq.enable[0x1F] = data & 0b00000001;
 			break ;
 
-		case 0x2027: 
+		case 0x2027:
 			if (data & 0b10000000) cpu.irq.active[0x03] = false;
 			if (data & 0b01000000) cpu.irq.active[0x04] = false;
 			if (data & 0b00100000) cpu.irq.active[0x05] = false;
@@ -264,7 +270,7 @@ void IRQ::write(Machine::State& cpu, uint8_t data, uint32_t address) {
 			if (data & 0b00000001) cpu.irq.active[0x0A] = false;
 			break ;
 
-		case 0x2028: 
+		case 0x2028:
 			if (data & 0b00100000) cpu.irq.active[0x0B] = false;
 			if (data & 0b00010000) cpu.irq.active[0x0C] = false;
 			if (data & 0b00001000) cpu.irq.active[0x0D] = false;
@@ -273,7 +279,7 @@ void IRQ::write(Machine::State& cpu, uint8_t data, uint32_t address) {
 			if (data & 0b00000001) cpu.irq.active[0x14] = false;
 			break ;
 
-		case 0x2029: 
+		case 0x2029:
 			if (data & 0b10000000) cpu.irq.active[0x15] = false;
 			if (data & 0b01000000) cpu.irq.active[0x16] = false;
 			if (data & 0b00100000) cpu.irq.active[0x17] = false;
