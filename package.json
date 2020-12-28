@@ -1,8 +1,8 @@
 {
-  "name": "minimon",
-  "productName": "minimon",
+  "name": "minimon.js",
+  "productName": "minimon.js",
   "version": "1.0.0",
-  "description": "My Electron application description",
+  "description": "Pokemon mini emulator",
   "main": ".webpack/main",
   "scripts": {
     "start": "electron-forge start",
@@ -17,6 +17,14 @@
     "email": "unicdk@gmail.com"
   },
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/asterick/minimon.js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/asterick/minimon.js/issues"
+  },
+  "homepage": "https://github.com/asterick/minimon.js#readme",
   "config": {
     "forge": {
       "packagerConfig": {},
@@ -91,6 +99,7 @@
     "electron-is-dev": "^1.2.0",
     "electron-squirrel-startup": "^1.0.0",
     "react": "^17.0.1",
-    "react-dom": "^17.0.1"
+    "react-dom": "^17.0.1",
+    "update-electron-app": "^2.0.1"
   }
 }
