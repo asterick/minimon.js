@@ -7,8 +7,6 @@ async function main() {
 
 	await system.init(true);
 	system.running = true;
-
-	document.body.appendChild(system.element);
 }
 
 main();

@@ -28,7 +28,7 @@ interface ProgramIndex {
 	[key: string]: number;
  }
 
-export let element: HTMLCanvasElement;
+let element: HTMLCanvasElement;
 
 let _system:System;
 let _frameIndex: number;
@@ -68,6 +68,7 @@ export function init(system:System) {
 	element = document.createElement("canvas");
 	element.width = VRAM_WIDTH;
 	element.height = VRAM_HEIGHT;
+	document.body.appendChild(element);
 
 	_frameIndex = 0;
 

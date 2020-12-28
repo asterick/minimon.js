@@ -102,10 +102,6 @@ export default class System {
 		});
 	}
 
-	get element() {
-		return screen.element;
-	}
-
 	preserve() {
 		if (!this.state) return ;
 
