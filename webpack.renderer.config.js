@@ -7,6 +7,9 @@ const assets = [ 'static' ];
 rules.push({
   test: /\.css$/,
   use: [{ loader: 'style-loader' }, { loader: 'css-loader' }],
+}, {
+  test: /\.csv$/i,
+  use: './loaders/table-loader'
 });
 
 // Add asset mapping
