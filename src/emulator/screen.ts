@@ -24,19 +24,29 @@ import * as system from "./system";
 const VRAM_WIDTH  = 96;
 const VRAM_HEIGHT = 64;
 
-interface ProgramIndex {
+interface UniformList {
+	[key: string]: WebGLUniformLocation;
+}
+
+interface AttributeList {
 	[key: string]: number;
- }
+}
+
+interface Shader {
+	program: WebGLShader;
+	uniforms: UniformList;
+	attributes: AttributeList;
+}
 
 let element: HTMLCanvasElement;
 
 let _frameIndex: number;
 let _time: number;
 
-let	gl: any;
-let _vram: any;
-let _shader: any;
-let _copyBuffer: any;
+let	gl: WebGL2RenderingContext;
+let _vram: WebGLTexture;
+let _copyBuffer: WebGLBuffer;
+let _shader: Shader;
 
 function onDragOver (e:DragEvent) {
 	e.preventDefault();
@@ -49,14 +59,14 @@ function onDrop (e:DragEvent) {
 	const file = e.dataTransfer.files[0];
 	const reader = new FileReader();
 
-	reader.onload = (e: any) => {
+	reader.onload = (e: ProgressEvent) => {
 		system.load(e.target.result);
 	};
 
 	reader.readAsArrayBuffer(file);
 }
 
-export function init() {
+export function init(): void {
 	/* Create our dom element */
 	element = document.createElement("canvas");
 	element.width = VRAM_WIDTH;
@@ -101,7 +111,7 @@ export function init() {
 	_repainter();
 }
 
-function _createShader (vertex: string, fragment: string) {
+function _createShader (vertex: string, fragment: string): Shader {
 	const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
 	const vertexShader =  gl.createShader(gl.VERTEX_SHADER);
 
@@ -132,7 +142,7 @@ function _createShader (vertex: string, fragment: string) {
 	}
 
 	const attrCount = gl.getProgramParameter(shaderProgram, gl.ACTIVE_ATTRIBUTES);
-	const attributes:ProgramIndex = {};
+	const attributes:AttributeList = {};
 
 	for (let i = 0; i < attrCount; i++) {
 		const attr = gl.getActiveAttrib(shaderProgram, i);
@@ -140,7 +150,7 @@ function _createShader (vertex: string, fragment: string) {
 	}
 
 	const uniCount= gl.getProgramParameter(shaderProgram, gl.ACTIVE_UNIFORMS);
-	const uniforms:ProgramIndex = {};
+	const uniforms:UniformList = {};
 
 	for (let i = 0; i < uniCount; i++) {
 		const uni = gl.getActiveUniform(shaderProgram, i);
@@ -200,7 +210,7 @@ function _repainter() {
 	});
 }
 
-export function repaint (memory: Uint8Array, address: number) {
+export function repaint (memory: Uint8Array, address: number): void {
 	_frameIndex = (_frameIndex + 1) % 4;
 	gl.bindTexture(gl.TEXTURE_2D, _vram);
 

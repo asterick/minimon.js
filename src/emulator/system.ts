@@ -52,13 +52,13 @@ let _running: boolean;
 let time: number;
 let _inputState: number;
 let _audio: Audio;
-let _timer: any;
+let _timer: ReturnType<typeof setInterval>;
 
 let _machineBytes: Uint8Array;
 let _exports: any;
 
 const _name = "default";
-const _wasm_environment: any = {
+const _wasm_environment = {
 	env: {
 		audio_push: (address:number, frames:number) => {
 			const samples = new Float32Array(_exports.memory.buffer, address, frames);
@@ -83,23 +83,13 @@ const _wasm_environment: any = {
 	}
 };
 
-export async function init(tracing:boolean) {
+export async function init(tracing:boolean): Promise<void> {
 	_inputState = 0b1111111111; // No cartridge inserted, no IRQ
 	_audio = new Audio();
 	breakpoints = [];
 	screen.init();
 
 	window.addEventListener("beforeunload", preserve, false);
-
-	document.body.addEventListener('keydown', (e) => {
-		_inputState &= ~KEYBOARD_CODES[e.keyCode];
-		_updateinput();
-	});
-
-	document.body.addEventListener('keyup', (e) => {
-		_inputState |= KEYBOARD_CODES[e.keyCode];
-		_updateinput();
-	});
 
 	preserve();
 
@@ -114,6 +104,17 @@ export async function init(tracing:boolean) {
 	_exports.set_sample_rate(_cpu_state, _audio.sampleRate);
 	reset();
 	restore();
+
+	document.body.addEventListener('keydown', (e: KeyboardEvent) => {
+		_inputState &= ~KEYBOARD_CODES[e.keyCode];
+		_updateinput();
+	});
+
+	document.body.addEventListener('keyup', (e: KeyboardEvent) => {
+		_inputState |= KEYBOARD_CODES[e.keyCode];
+		_updateinput();
+	});
+
 }
 
 function preserve() {
@@ -174,6 +175,7 @@ function tick() {
 	} else {
 		_exports.cpu_advance(_cpu_state, delta);
 	}
+
 	update();
 }
 
@@ -182,29 +184,29 @@ function update() {
 	// This will be overidden elsewhere
 }
 
-export function start() {
+export function start(): void {
 	if (_running) return ;
 	_running = true;
 
 	time = Date.now();
-	_timer = setInterval(tick, 0);
+	_timer = setInterval(tick, 1);
 
 	update();
 }
 
-export function stop() {
+export function stop(): void {
 	if (!_running) return ;
 	_running = false;
 
 	clearInterval(_timer);
 }
 
-export function _updateinput() {
+export function _updateinput(): void {
 	_exports.update_inputs(_cpu_state, _inputState);
 }
 
 // Cartridge I/O
-export function load (ab: ArrayBuffer) {
+export function load (ab: ArrayBuffer): void {
 	const bytes = new Uint8Array(ab);
 	const hasHeader = (bytes[0] != 0x50 || bytes[1] != 0x4D);
 	const offset = hasHeader ? 0 : 0x2100;
@@ -218,13 +220,13 @@ export function load (ab: ArrayBuffer) {
 	eject();
 }
 
-export function eject() {
+export function eject(): void {
 	_inputState |= INPUT_CART_N;
 	_updateinput();
 }
 
 // WASM shim functions
-export function translate(address: number) {
+export function translate(address: number): number {
 	if (address & 0x8000) {
 		return (address & 0x7FFF) | (state.cpu.cb << 15);
 	} else {
@@ -232,21 +234,21 @@ export function translate(address: number) {
 	}
 }
 
-export function step() {
+export function step(): void {
 	_exports.cpu_step(_cpu_state);
 	update();
 }
 
-export function reset() {
+export function reset(): void {
 	_exports.cpu_reset(_cpu_state);
 	_updateinput();
 	update();
 }
 
-export function read(address: number) {
+export function read(address: number): number {
 	return _exports.cpu_read(_cpu_state, address);
 }
 
-export function write(data: number, address: number) {
-	return _exports.cpu_write(_cpu_state, data, address);
+export function write(data: number, address: number): void {
+	_exports.cpu_write(_cpu_state, data, address);
 }
