@@ -65,8 +65,8 @@ function onDrop (e:DragEvent) {
 	const file = e.dataTransfer.files[0];
 	const reader = new FileReader();
 
-	reader.onload = (e: ProgressEvent) => {
-		system.load(e.target.result);
+	reader.onload = () => {
+		system.load(reader.result as ArrayBuffer);
 	};
 
 	reader.readAsArrayBuffer(file);
