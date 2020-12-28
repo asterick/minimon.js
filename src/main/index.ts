@@ -19,7 +19,7 @@ const createWindow = (): void => {
   });
 
   // and load the index.html of the app.
-  mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
+  mainWindow.loadURL(EMULATOR_WEBPACK_ENTRY);
   if (isDev)
   {
     mainWindow.webContents.openDevTools();
