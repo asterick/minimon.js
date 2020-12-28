@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-import * as Table from './s1c88.csv';
+import * as Table from './loaders/table-loader!./s1c88.csv';
 import './index.css';
 
 async function render() {
