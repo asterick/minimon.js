@@ -54,24 +54,6 @@ let _vram: WebGLTexture;
 let _copyBuffer: WebGLBuffer;
 let _shader: Shader;
 
-function onDragOver (e:DragEvent) {
-	e.preventDefault();
-	e.dataTransfer.dropEffect = "copy";
-}
-
-function onDrop (e:DragEvent) {
-	e.preventDefault();
-
-	const file = e.dataTransfer.files[0];
-	const reader = new FileReader();
-
-	reader.onload = () => {
-		system.load(reader.result as ArrayBuffer);
-	};
-
-	reader.readAsArrayBuffer(file);
-}
-
 export function init(): void {
 	/* Create our dom element */
 	element = document.createElement("canvas");
@@ -80,9 +62,6 @@ export function init(): void {
 	document.body.appendChild(element);
 
 	_frameIndex = 0;
-
-	element.addEventListener("onDragOver", onDragOver);
-	element.addEventListener("onDrop", onDrop);
 
 	/* Configure our GL context */
 	gl = element.getContext("webgl2", {

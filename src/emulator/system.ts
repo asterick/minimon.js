@@ -120,7 +120,6 @@ export async function init(tracing:boolean): Promise<void> {
 		_inputState |= KEYBOARD_CODES[e.keyCode];
 		_updateinput();
 	});
-
 }
 
 function preserve() {
