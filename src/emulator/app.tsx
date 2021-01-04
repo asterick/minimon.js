@@ -32,6 +32,13 @@ ipcRenderer.on('load-file', (event, binary) => {
 	system.load(binary);
 });
 
+console.log(ipcRenderer.sendSync('load-data', 'never'))
+console.log(ipcRenderer.sendSync('save-data', '\x00', "asdf"))
+
+console.log(ipcRenderer.sendSync('save-data', 'default-eeprom', "asdf"))
+console.log(ipcRenderer.sendSync('load-data', 'default-eeprom', 'utf-8'))
+console.log(ipcRenderer.sendSync('load-data', 'default-eeprom'))
+
 async function main() {
 	screen.init();
 	await system.init();

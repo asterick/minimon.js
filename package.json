@@ -112,6 +112,7 @@
     "webpack": "^5.11.0"
   },
   "dependencies": {
+    "dblite": "^1.1.4",
     "electron-is-dev": "^1.2.0",
     "electron-squirrel-startup": "^1.0.0",
     "react": "^17.0.1",
