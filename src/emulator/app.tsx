@@ -28,6 +28,10 @@ import * as system from "./system";
 import * as screen from "./screen";
 import './index.less';
 
+ipcRenderer.on('load-file', (event, binary) => {
+	system.load(binary);
+});
+
 async function main() {
 	screen.init();
 	await system.init();

@@ -25,9 +25,12 @@
 import { app, BrowserWindow, Menu } from 'electron';
 import isDev from 'electron-is-dev';
 import updateApp from 'update-electron-app';
+import { menu } from "./menu";
 
 declare const EMULATOR_WEBPACK_ENTRY: string;
 let mainWindow: BrowserWindow;
+
+Menu.setApplicationMenu(menu);
 
 if (require('electron-squirrel-startup')) {
   app.quit();
@@ -48,8 +51,9 @@ const createWindow = (): void => {
   });
 
 
-  mainWindow.openDevTools();
+  if (isDev) mainWindow.openDevTools();
   // and load the index.html of the app.
+  mainWindow.setMenu(menu);
   mainWindow.loadURL(EMULATOR_WEBPACK_ENTRY);
 };
 
