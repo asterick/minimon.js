@@ -22,11 +22,16 @@
  * SOFTWARE.
  */
 
+import { ipcRenderer } from "electron";
+
 import * as system from "./system";
+import * as screen from "./screen";
 import './index.less';
 
 async function main() {
-	await system.init(true);
+	screen.init();
+	await system.init();
+
 	system.start();
 }
 

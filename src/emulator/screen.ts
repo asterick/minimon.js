@@ -25,8 +25,6 @@
 import VertexShader from "raw-loader!./shaders/vertex.glsl";
 import FragmentShader from "raw-loader!./shaders/fragment.glsl";
 
-import * as system from "./system";
-
 const VRAM_WIDTH  = 96;
 const VRAM_HEIGHT = 64;
 

@@ -22,28 +22,33 @@
  * SOFTWARE.
  */
 
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, Menu } from 'electron';
 import isDev from 'electron-is-dev';
 import updateApp from 'update-electron-app';
 
 declare const EMULATOR_WEBPACK_ENTRY: string;
+let mainWindow: BrowserWindow;
 
 if (require('electron-squirrel-startup')) {
   app.quit();
 }
 
+//Menu.setApplicationMenu(null);
 updateApp();
 
 const createWindow = (): void => {
   // Create the browser window.
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     height: 600,
     width: 800,
     webPreferences: {
+      nodeIntegration: true,
       devTools: isDev
     }
   });
 
+
+  mainWindow.openDevTools();
   // and load the index.html of the app.
   mainWindow.loadURL(EMULATOR_WEBPACK_ENTRY);
 };
