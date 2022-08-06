@@ -590,4 +590,4 @@ static int inst_undefined(Machine::State& cpu) {
 }
 
 // Generated compound instructions and tables
-#include "table.h"
+#include "../table.h"
