@@ -56,12 +56,6 @@ The libretro front-end (`core/libretro/libretro.cc`) wraps the same core; it doe
 
 Agreed ongoing work, one branch/PR per item (see Workflow). Update this list as items land.
 
-**Core portability** — make the core compiler- and platform-generic: no endianness assumptions, no packed bitfields or type-punning unions, just plain fields and explicit bit math. Done: CPU register state (PR #39). Remaining, in order:
-
-1. Peripheral register files — `control.h`, `input.h`, `timers.h`, `blitter.h` `State`: byte-array ↔ bitfield unions become stored raw bytes with bit-math helpers (timers is the fiddliest: nested 16-bit `preset`/`compare`/`count` unions drive the countdown math).
-2. Guest-memory overlays — `Blitter::Sprite` bitfields over OAM bytes and the `FrameBuffer` `bytes[96][8]` ↔ `uint64_t column[96]` punning in `blitter.cc` become explicit shifts/masks.
-3. Sweep — remove remaining `__attribute__((packed))`, `static_assert` struct sizes, reconcile the wasm reflection tables (and `machine-state.ts`); fix the `offsetof(Timers::State, timer[3])` reflection bug; the libretro link needs its missing `link.T` script.
-
-Verify every phase bit-identical: build the core natively, run ROMs headless, hash semantic state (register values + RAM + LCD gddram — never raw struct bytes) per virtual second, and diff against a pre-change baseline (see PR #39 for the recipe). Note that layout changes invalidate raw-`memcpy` libretro savestates; there is no savestate versioning.
+**Core portability** — COMPLETE: the core is compiler- and platform-generic — no endianness assumptions, no packed bitfields or type-punning unions, just plain fields and explicit bit math. CPU register state (PR #39), peripheral register files incl. the Timer reflection fixes (PR #48), guest-memory overlays (PR #49), layout `static_assert`s + libretro `link.T` (PR #50). When changing core state layout, verify bit-identical behavior: build the core natively, run ROMs headless, hash semantic state (register values + RAM + LCD gddram — never raw struct bytes) per virtual second, and diff against a pre-change baseline (see PR #39 for the recipe). Note that layout changes invalidate raw-`memcpy` libretro savestates; there is no savestate versioning.
 
 **UI modernization** — COMPLETE: Vite (PR #35), strict-TS system layer (PR #37), hooks/`useSyncExternalStore` refactor (PR #41), library swaps (`@tanstack/react-virtual` PR #42, native controls PR #43, dockview PR #44), AudioWorklet (PR #45), GitHub Actions CI (PR #47). CI runs a type check plus the full build (instruction table, WASM core, Vite) on every PR and push to main — see `.github/workflows/ci.yml`.
