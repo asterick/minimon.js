@@ -36,13 +36,13 @@ static const IRQ::Vector vectors[] = {
 
 void Input::reset(Input::State& inputs) {
 	memset(&inputs, 0, sizeof(inputs));
-	inputs.input_state = 0b1111111111;
+	inputs.set_input_state(0b1111111111);
 }
 
 void Input::update(Machine::State& cpu, uint16_t value) {
-	uint16_t trigger = (value ^ cpu.input.input_state) & (value ^ cpu.input.interrupt_direction);
+	uint16_t trigger = (value ^ cpu.input.input_state()) & (value ^ cpu.input.interrupt_direction());
 
-	cpu.input.input_state = value;
+	cpu.input.set_input_state(value);
 
 	for (int i = 0; i < 10; i++) {
 		if (trigger & (1 << i)) IRQ::trigger(cpu, vectors[i]);

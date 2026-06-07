@@ -23,13 +23,20 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 namespace Machine { struct State; };
 
 namespace Control {
-	union State {
+	// data[0] bits
+	const uint8_t CTRL_LCD_ENABLED  = 0x01;
+	const uint8_t CTRL_CART_ENABLED = 0x02;
+
+	struct State {
 		uint8_t data[3];
 
-		struct {
-			unsigned lcd_enabled:1;
-			unsigned cart_enabled:1;
-		};
+		bool lcd_enabled() const {
+			return (data[0] & CTRL_LCD_ENABLED) != 0;
+		}
+
+		bool cart_enabled() const {
+			return (data[0] & CTRL_CART_ENABLED) != 0;
+		}
 	};
 
 	void reset(State&);
