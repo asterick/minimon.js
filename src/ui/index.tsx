@@ -32,7 +32,7 @@ import { usePrefersDark } from "./use-prefers-dark";
 import Screen from "./screen";
 import Registers from "./registers";
 import Memory from "./memory";
-import Disassembler from "./disassemble";
+import Debugger from "./debugger";
 import Settings from "./settings";
 import Blitter from "./blitter";
 
@@ -59,7 +59,8 @@ const components = {
 	settings: Settings,
 	registers: Registers,
 	blitter: Blitter,
-	disassembly: () => <Disassembler />,
+	// Registered under the legacy id so saved layouts keep working
+	disassembly: Debugger,
 	memory: MemoryPanel,
 };
 
@@ -78,7 +79,7 @@ const REQUIRED_PANELS = [
 function defaultLayout(api: DockviewApi) {
 	api.addPanel({ id: 'screen', component: 'screen', title: 'Screen', tabComponent: 'permanent' });
 	api.addPanel({
-		id: 'disassembly', component: 'disassembly', title: 'Disassembly',
+		id: 'disassembly', component: 'disassembly', title: 'Debugger',
 		position: { referencePanel: 'screen', direction: 'right' }
 	});
 	api.addPanel({

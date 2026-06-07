@@ -5,3 +5,10 @@ body {
 	background: var(--bg);
 	color: var(--fg);
 }
+
+// Panels that pin themselves with position: absolute (screen, debugger)
+// must anchor to the panel's content box — never the group, whose
+// height includes the tab header
+.dv-content-container {
+	position: relative;
+}

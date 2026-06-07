@@ -1,0 +1,84 @@
+// Dockview sizes the panel's content element; pin to it absolutely so
+// the listing can never outgrow the panel even when an ancestor
+// resolves height: 100% against an auto-height box
+.debugger {
+	display: flex;
+	flex-direction: column;
+	position: absolute;
+	inset: 0;
+}
+
+.toolbar {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 4px 8px;
+	flex: none;
+}
+
+.follow {
+	// Blueprint switches carry form-margin; the toolbar centers instead
+	margin: 0;
+}
+
+.listing {
+	flex: 1;
+	overflow-y: auto;
+	font-family: 'Roboto Mono', monospace;
+	font-size: 13px;
+}
+
+// Every line shares one grid so the columns stay evenly sized across
+// the whole listing: gutter | bytes | mnemonic | arguments
+.line {
+	display: grid;
+	grid-template-columns: 8ch 16ch 8ch 1fr;
+	height: 20px;
+	line-height: 20px;
+	white-space: nowrap;
+	user-select: none;
+}
+
+.line.pc {
+	background: var(--bg-selected);
+}
+
+.gutter {
+	display: inline-grid;
+	grid-template-columns: 2ch 1fr;
+}
+
+.marker {
+	color: var(--color-breakpoint);
+	text-align: center;
+}
+
+.address {
+	color: var(--color-address);
+}
+
+.bytes,
+.hex {
+	color: var(--color-data);
+
+	span {
+		margin-right: 1ch;
+	}
+}
+
+// Hex rows take the full width to the right of the gutter
+.hex {
+	grid-column: 2 / -1;
+}
+
+.hex.unknown {
+	opacity: 0.45;
+}
+
+.op {
+	font-weight: 600;
+}
+
+.args span:not(:first-child):before {
+	content: ', ';
+}
