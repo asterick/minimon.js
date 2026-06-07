@@ -16,11 +16,12 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-import { useEffect, useRef, useState } from "react";
-import { AutoSizer, List, type ListRowProps } from 'react-virtualized';
+import { useRef, useState } from "react";
+import { useVirtualizer } from '@tanstack/react-virtual';
 
 import classes from "./style.module.less";
 import { useSystem, useSystemState } from "../context";
+import { useElementSize } from "../use-element-size";
 import { toHex } from "../util";
 
 interface Measurements {
@@ -36,16 +37,11 @@ interface MemoryProps {
 
 export default function Memory({ baseAddress, memory: memoryName }: MemoryProps) {
 	const system = useSystem();
-	const version = useSystemState();
+	useSystemState();
 
 	const [measurements, setMeasurements] = useState<Measurements | null>(null);
-	const list = useRef<List>(null);
-
-	// The memory array is mutated in place by the emulation core, so the
-	// virtualized rows must be told to redraw whenever state changes
-	useEffect(() => {
-		list.current?.forceUpdateGrid();
-	}, [version]);
+	const scroller = useRef<HTMLDivElement>(null);
+	const { width } = useElementSize(scroller);
 
 	let memory: Uint8Array;
 
@@ -57,6 +53,18 @@ export default function Memory({ baseAddress, memory: memoryName }: MemoryProps)
 			memory = system.state.gpio.eeprom.data;
 			break;
 	}
+
+	const rowHeight = measurements?.rowHeight ?? 20;
+	const bytesPerRow = measurements
+		? Math.floor((width - measurements.baseWidth) / measurements.elementWidth) - 2
+		: 0;
+	const rowCount = (bytesPerRow > 0) ? Math.ceil(memory.length / bytesPerRow) : 0;
+
+	const virtualizer = useVirtualizer({
+		count: rowCount,
+		getScrollElement: () => scroller.current,
+		estimateSize: () => rowHeight,
+	});
 
 	function measure(r: HTMLDivElement | null) {
 		if (!r) return;
@@ -80,55 +88,51 @@ export default function Memory({ baseAddress, memory: memoryName }: MemoryProps)
 		}
 	}
 
-	return <AutoSizer>
-		{({width, height}) => {
-			/* Measure row / child sizes */
-			if (!measurements) {
-				return <div style={{position: 'absolute', visibility: "hidden"}} ref={measure}>
-					<div className="one-element" style={{display: 'inline-block'}}>
-						<span className={classes.address}>{toHex(0, 6)}</span>
-						<span className={classes.byteCell}>00</span>
-					</div>
-					<div className="two-element" style={{display: 'inline-block'}}>
-						<span className={classes.address}>{toHex(0, 6)}</span>
-						<span className={classes.byteCell}>00</span>
-						<span className={classes.byteCell}>00</span>
-					</div>
-				</div>;
-			}
+	/* Measure row / child sizes */
+	if (!measurements) {
+		return <div ref={scroller} className={classes.memory} style={{ width: '100%', height: '100%' }}>
+			<div style={{position: 'absolute', visibility: "hidden"}} ref={measure}>
+				<div className="one-element" style={{display: 'inline-block'}}>
+					<span className={classes.address}>{toHex(0, 6)}</span>
+					<span className={classes.byteCell}>00</span>
+				</div>
+				<div className="two-element" style={{display: 'inline-block'}}>
+					<span className={classes.address}>{toHex(0, 6)}</span>
+					<span className={classes.byteCell}>00</span>
+					<span className={classes.byteCell}>00</span>
+				</div>
+			</div>
+		</div>;
+	}
 
-			const { baseWidth, elementWidth, rowHeight } = measurements;
+	return (
+		<div ref={scroller} className={classes.memory} style={{ width: '100%', height: '100%', overflowY: 'auto' }}>
+			<div style={{ height: `${virtualizer.getTotalSize()}px`, position: 'relative' }}>
+				{virtualizer.getVirtualItems().map((row) => {
+					const address = row.index * bytesPerRow;
+					const data = [];
 
-			const bytesPerRow = Math.floor((width - baseWidth) / elementWidth) - 2;
-			if (bytesPerRow <= 0) return null;
+					for (let i = 0, a = address; i < bytesPerRow && a < memory.length; i++, a++)
+						data.push(<span key={a} className={classes.byteCell}>{toHex(memory[a], 2)}</span>);
 
-			function rowRenderer({ key, style, index }: ListRowProps) {
-				const address = index * bytesPerRow;
-				const data = [];
-
-				for (let i = 0, a = address; i < bytesPerRow && a < memory.length; i++, a++)
-					data.push(<span key={a} className={classes.byteCell}>{toHex(memory[a], 2)}</span>);
-
-				return (
-					<div className={classes.dataRow} key={key} style={style}>
-						<span className={classes.address}>{toHex(address + baseAddress, 6)}</span>
-						{ data }
-					</div>
-				)
-			}
-
-			return (
-				<List
-					className={classes.memory}
-					ref={list}
-
-					width={width}
-					height={height}
-					rowCount={Math.ceil(memory.length / bytesPerRow)}
-					rowHeight={rowHeight}
-					rowRenderer={rowRenderer}
-					/>
-			);
-		}}
-	</AutoSizer>
+					return (
+						<div
+							className={classes.dataRow}
+							key={row.key}
+							style={{
+								position: 'absolute',
+								top: 0,
+								left: 0,
+								width: '100%',
+								height: `${row.size}px`,
+								transform: `translateY(${row.start}px)`
+							}}>
+							<span className={classes.address}>{toHex(address + baseAddress, 6)}</span>
+							{ data }
+						</div>
+					);
+				})}
+			</div>
+		</div>
+	);
 }
