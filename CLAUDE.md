@@ -20,7 +20,9 @@ minimon.js is a Pokemon Mini emulator: a C++ emulation core compiled to WebAssem
 - `npm run preview` — serve the production `dist/` build.
 - `npm run retroarch` — build and test the libretro core (`core/libretro/`).
 
-There are no tests and no linter. Type checking is `npm run check` (not part of the build — Vite/esbuild only transpiles). The entire `src/` tree is strict TypeScript; run `npm run check` after changing any `.ts`/`.tsx` file.
+Type checking is `npm run check` (not part of the build — Vite/esbuild only transpiles). The entire `src/` tree is strict TypeScript; run `npm run check` after changing any `.ts`/`.tsx` file. There is no linter.
+
+The core has a regression harness in `core/test/`: `make -C core/test check` builds the core natively and diffs per-virtual-second hashes of semantic machine state (registers + RAM + LCD gddram — never raw struct bytes) against checked-in baselines, for a BIOS-only boot and a synthetic peripheral workout (blitter map+sprites, timers in both widths, audio, input edge IRQs). Run it after any core change; CI runs it on every PR. An intentional behavior change means regenerating with `make -C core/test baseline` and calling out the diff in the PR. The synthetic runs don't cover cartridge-driven code paths — for layout or behavior-sensitive changes, also verify a real ROM locally: `core/test/harness rom.min 30` diffed before vs after.
 
 Building the WASM core uses the system WASI toolchain: `clang` (wasm32 backend), `wasm-ld`, and the wasi-libc sysroot — `apt install lld wasi-libc` on Debian/Ubuntu. A non-standard sysroot location can be passed via `WASI_SYSROOT`/`WASI_LIBDIR` (see `core/wasm/Makefile`).
 
@@ -56,6 +58,6 @@ The libretro front-end (`core/libretro/libretro.cc`) wraps the same core; it doe
 
 Agreed ongoing work, one branch/PR per item (see Workflow). Update this list as items land.
 
-**Core portability** — COMPLETE: the core is compiler- and platform-generic — no endianness assumptions, no packed bitfields or type-punning unions, just plain fields and explicit bit math. CPU register state (PR #39), peripheral register files incl. the Timer reflection fixes (PR #48), guest-memory overlays (PR #49), layout `static_assert`s + libretro `link.T` (PR #50). When changing core state layout, verify bit-identical behavior: build the core natively, run ROMs headless, hash semantic state (register values + RAM + LCD gddram — never raw struct bytes) per virtual second, and diff against a pre-change baseline (see PR #39 for the recipe). Note that layout changes invalidate raw-`memcpy` libretro savestates; there is no savestate versioning.
+**Core portability** — COMPLETE: the core is compiler- and platform-generic — no endianness assumptions, no packed bitfields or type-punning unions, just plain fields and explicit bit math. CPU register state (PR #39), peripheral register files incl. the Timer reflection fixes (PR #48), guest-memory overlays (PR #49), layout `static_assert`s + libretro `link.T` (PR #50). When changing core state layout, verify bit-identical behavior with the regression harness in `core/test/` (see Commands). Note that layout changes invalidate raw-`memcpy` libretro savestates; there is no savestate versioning.
 
 **UI modernization** — COMPLETE: Vite (PR #35), strict-TS system layer (PR #37), hooks/`useSyncExternalStore` refactor (PR #41), library swaps (`@tanstack/react-virtual` PR #42, native controls PR #43, dockview PR #44), AudioWorklet (PR #45), GitHub Actions CI (PR #47). CI runs a type check plus the full build (instruction table, WASM core, Vite) on every PR and push to main — see `.github/workflows/ci.yml`.
