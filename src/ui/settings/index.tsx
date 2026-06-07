@@ -64,9 +64,6 @@ export default function Settings() {
 			<Toggle checked={system.running} onText="Running" offText="Stopped" onChange={(v) => {
 				system.running = v;
 			}} />
-			<Toggle checked={system.tracing} onText="Tracing on" offText="Tracing off" onChange={(v) => {
-				system.tracing = v;
-			}} />
 		</div>
 	);
 }

@@ -59,11 +59,22 @@ interface CoreExports {
 	cpu_step(machine: number): void;
 	cpu_read(machine: number, address: number): number;
 	cpu_write(machine: number, data: number, address: number): void;
+	get_bios_trace(): number;
+	get_cartridge_trace(): number;
 }
+
+const BIOS_TRACE_SIZE = 0x1000;
+const CARTRIDGE_TRACE_SIZE = 0x200000;
 
 export class Minimon {
 	state!: MachineState;
 	breakpoints = new Set<number>();
+
+	// Classification maps maintained by the core (one TraceType flag
+	// byte per address): the BIOS map is universal, the cartridge map
+	// is cleared whenever the cartridge changes
+	biosTrace!: Uint8Array;
+	cartridgeTrace!: Uint8Array;
 
 	private _listeners = new Set<() => void>();
 	private _version = 0;
@@ -72,7 +83,6 @@ export class Minimon {
 	private _name: string;
 	private _inputState: number;
 	private _audio: Audio;
-	private _tracing = false;
 	private _running = false;
 	private _timer: ReturnType<typeof setInterval> | undefined;
 	private _exports!: CoreExports;
@@ -135,18 +145,19 @@ export class Minimon {
 		}
 	}
 
-	async init(tracing: boolean): Promise<void> {
-		this._tracing = tracing;
-
+	async init(): Promise<void> {
 		this.preserve();
 
-		const request = await fetch(tracing ? "./libminimon.tracing.wasm" : "./libminimon.wasm");
+		const request = await fetch("./libminimon.wasm");
 		const wasm = await WebAssembly.instantiate(await request.arrayBuffer(), this._wasm_environment);
 		this._exports = wasm.instance.exports as unknown as CoreExports;
 
 		this._cpu_state = this._exports.get_machine();
 		this._machineBytes = new Uint8Array(this._exports.memory.buffer);
 		this.state = struct(this._exports.memory.buffer, this._exports.get_description(), this._cpu_state) as unknown as MachineState;
+
+		this.biosTrace = new Uint8Array(this._exports.memory.buffer, this._exports.get_bios_trace(), BIOS_TRACE_SIZE);
+		this.cartridgeTrace = new Uint8Array(this._exports.memory.buffer, this._exports.get_cartridge_trace(), CARTRIDGE_TRACE_SIZE);
 
 		this._exports.set_sample_rate(this._cpu_state, this._audio.sampleRate);
 		this.reset();
@@ -168,20 +179,9 @@ export class Minimon {
 				while ((ch = this._machineBytes[a++])) str.push(String.fromCharCode(ch));
 
 				console.log(str.join(""));
-			},
-			trace_access: (cpu: number, address: number, kind: number, data: number) => this.trace(cpu, address, kind, data)
+			}
 		}
 	};
-
-	get tracing(): boolean {
-		return this._tracing;
-	}
-
-	set tracing(v: boolean) {
-		if (this._tracing == v) return;
-
-		this.init(v);
-	}
 
 	get running(): boolean {
 		return this._running;
@@ -263,10 +263,6 @@ export class Minimon {
 		});
 	}
 
-	trace(_cpu: number, _address: number, _kind: number, _data: number): void {
-
-	}
-
 	private _updateinput(): void {
 		this._exports.update_inputs(this._cpu_state, this._inputState);
 	}
@@ -287,6 +283,9 @@ export class Minimon {
 	}
 
 	eject(): void {
+		// The classification belongs to the departing cartridge
+		this.cartridgeTrace.fill(0);
+
 		this._inputState |= INPUT_CART_N;
 		this._updateinput();
 	}
