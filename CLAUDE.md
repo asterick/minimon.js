@@ -20,7 +20,7 @@ minimon.js is a Pokemon Mini emulator: a C++ emulation core compiled to WebAssem
 - `npm run preview` — serve the production `dist/` build.
 - `npm run retroarch` — build and test the libretro core (`core/libretro/`).
 
-There are no tests and no linter. Type checking is `npm run check` (not part of the build — Vite/esbuild only transpiles). `src/system/` is TypeScript (strict); `src/ui/` is still untyped JSX pending the hooks refactor (`checkJs` is off).
+There are no tests and no linter. Type checking is `npm run check` (not part of the build — Vite/esbuild only transpiles). The entire `src/` tree is strict TypeScript; run `npm run check` after changing any `.ts`/`.tsx` file.
 
 Building the WASM core uses the system WASI toolchain: `clang` (wasm32 backend), `wasm-ld`, and the wasi-libc sysroot — `apt install lld wasi-libc` on Debian/Ubuntu. A non-standard sysroot location can be passed via `WASI_SYSROOT`/`WASI_LIBDIR` (see `core/wasm/Makefile`).
 
@@ -41,13 +41,13 @@ Three layers, with the C++ core shared between two front-ends:
 
 2. **WASM bridge** — `core/wasm/main.cc` exports the C ABI (`get_machine`, `cpu_advance`, `cpu_step`, `cpu_read/write`, etc.) and, critically, `get_description`: a reflection table (`StructDecl`/`FieldDecl`) describing the entire `Machine::State` memory layout. On the JS side, `src/system/state.ts` parses that reflection blob and builds a live JS object view (DataView/typed arrays directly over WASM memory) — this is how the debugger UI reads/writes registers and hardware state without per-field glue code. The shape of that object is described by the hand-written interfaces in `src/system/machine-state.ts`. When adding fields to machine state that the UI should see, they must be added to the reflection tables in `core/wasm/main.cc` **and** mirrored in `machine-state.ts`.
 
-3. **Web UI** — `src/system/index.ts` (`Minimon` class) fetches the wasm binary (swapping between normal/tracing builds when `.tracing` is toggled), wires keyboard input, WebAudio (`src/system/audio.js`), breakpoints, and EEPROM/RTC persistence. `src/ui/` is the React debugger: rc-dock window layout + Fluent UI widgets, with panels for the screen (WebGL, shaders in `src/ui/screen/shaders/*.glsl`), disassembly, registers, memory, and blitter/sprite/map viewers. The system instance is passed through React context (`src/ui/context.jsx`).
+3. **Web UI** — `src/system/index.ts` (`Minimon` class) fetches the wasm binary (swapping between normal/tracing builds when `.tracing` is toggled), wires keyboard input, WebAudio (`src/system/audio.ts`), breakpoints, and EEPROM/RTC persistence. `src/ui/` is the React debugger: rc-dock window layout + Fluent UI widgets, with panels for the screen (WebGL, shaders in `src/ui/screen/shaders/*.glsl`), disassembly, registers, memory, and blitter/sprite/map viewers. Panels are function components; the system instance comes from React context via `useSystem()` (`src/ui/context.tsx`), and panels subscribe to machine-state changes with `useSystemState()` (`useSyncExternalStore` over a version counter on `Minimon` — machine state is a live mutable view over WASM memory, so the version number serves as the snapshot and `update()` notifies, coalesced to animation frames).
 
 The libretro front-end (`core/libretro/libretro.cc`) wraps the same core; it does not preserve EEPROM or RTC between sessions.
 
 ## Build specifics (Vite)
 
-- `index.html` at the repo root is the Vite entry; it loads `/src/index.jsx` as a module.
+- `index.html` at the repo root is the Vite entry; it loads `/src/index.tsx` as a module.
 - `*.module.less` files are CSS modules (Vite convention); plain `.less`/`.css` (including third-party styles imported from JS) load globally.
 - GLSL shaders import with the `?raw` suffix (`import shader from './x.glsl?raw'`).
 - JSX only parses in `.jsx`/`.tsx` files; there is no type checking in the build.
@@ -68,4 +68,4 @@ Verify every phase bit-identical: build the core natively, run ROMs headless, ha
 
 1. Library swaps — react-virtualized → `@tanstack/react-virtual`; drop Fluent UI (only a handful of controls used, dominates the bundle); rc-dock → dockview.
 2. CI — GitHub Actions on PRs: `npm run check` + Vite build, eventually the wasm core build.
-3. Audio — port `src/system/audio.js` from the deprecated ScriptProcessorNode to an AudioWorklet.
+3. Audio — port `src/system/audio.ts` from the deprecated ScriptProcessorNode to an AudioWorklet.
