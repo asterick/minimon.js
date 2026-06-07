@@ -23,44 +23,68 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 namespace Machine { struct State; };
 
 namespace Timers {
-	union Timer {
-		uint8_t bytes[8];
+	// lo_flags / hi_flags bits
+	const uint8_t TIMER_INPUT   = 0x01;
+	const uint8_t TIMER_PRESET  = 0x02;
+	const uint8_t TIMER_RUNNING = 0x04;
+	const uint8_t TIMER_OUTPUT  = 0x08;
+	const uint8_t TIMER_MODE16  = 0x80;	// lo_flags only
 
-		struct  __attribute__((packed)) {
-			unsigned lo_input:1;
-			unsigned lo_preset:1;
-			unsigned lo_running:1;
-			unsigned lo_output:1;
-			unsigned:3;
-			unsigned mode16:1;
+	struct Timer {
+		uint8_t lo_flags;
+		uint8_t hi_flags;
 
-			unsigned hi_input:1;
-			unsigned hi_preset:1;
-			unsigned hi_running:1;
-			unsigned hi_output:1;
-			unsigned:4;
+		uint16_t preset;
+		uint16_t compare;
+		uint16_t count;
 
-			union {
-				uint16_t preset;
-				uint8_t preset_bytes[2];
-			};
-			union {
-				uint16_t compare;
-				uint8_t compare_bytes[2];
-			};
-			union {
-				uint16_t count;
-				uint8_t count_bytes[2];
-			};
-		
-			int  lo_clock_ratio;
-			bool lo_clock_ctrl;
-			bool lo_clock_source;
+		int  lo_clock_ratio;
+		bool lo_clock_ctrl;
+		bool lo_clock_source;
 
-			int  hi_clock_ratio;
-			bool hi_clock_ctrl;
-			bool hi_clock_source;
-		};
+		int  hi_clock_ratio;
+		bool hi_clock_ctrl;
+		bool hi_clock_source;
+
+		bool mode16() const {
+			return (lo_flags & TIMER_MODE16) != 0;
+		}
+
+		bool lo_running() const {
+			return (lo_flags & TIMER_RUNNING) != 0;
+		}
+
+		bool hi_running() const {
+			return (hi_flags & TIMER_RUNNING) != 0;
+		}
+
+		// The guest's 8-byte register window (0x2030/0x2038/0x2048):
+		// flag bytes, then preset/compare/count as little-endian pairs
+		uint8_t reg_read(int index) const {
+			switch (index & 7) {
+			case 0:  return lo_flags;
+			case 1:  return hi_flags;
+			case 2:  return (uint8_t)preset;
+			case 3:  return preset >> 8;
+			case 4:  return (uint8_t)compare;
+			case 5:  return compare >> 8;
+			case 6:  return (uint8_t)count;
+			default: return count >> 8;
+			}
+		}
+
+		void reg_write(int index, uint8_t value) {
+			switch (index & 7) {
+			case 0:  lo_flags = value; break;
+			case 1:  hi_flags = value; break;
+			case 2:  preset  = (preset  & 0xFF00) | value; break;
+			case 3:  preset  = (preset  & 0x00FF) | (value << 8); break;
+			case 4:  compare = (compare & 0xFF00) | value; break;
+			case 5:  compare = (compare & 0x00FF) | (value << 8); break;
+			case 6:  count   = (count   & 0xFF00) | value; break;
+			default: count   = (count   & 0x00FF) | (value << 8); break;
+			}
+		}
 	};
 
 	struct State {

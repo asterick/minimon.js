@@ -134,7 +134,7 @@ static inline uint8_t cpu_read_reg(Machine::State& cpu, uint32_t address) {
 		// This should be handled properly
 		return 0b010000;
 	case 0x20FE ... 0x20FF:
-		if (cpu.ctrl.lcd_enabled) {
+		if (cpu.ctrl.lcd_enabled()) {
 			return LCD::read(cpu.lcd, address);
 		} else {
 			return cpu.bus_cap;
@@ -180,7 +180,7 @@ static inline void cpu_write_reg(Machine::State& cpu, uint8_t data, uint32_t add
 		Blitter::write(cpu, data, address);
 		break ;
 	case 0x20FE ... 0x20FF:
-		if (cpu.ctrl.lcd_enabled) {
+		if (cpu.ctrl.lcd_enabled()) {
 			LCD::write(cpu.lcd, data, address);
 		}
 		break ;
@@ -212,7 +212,7 @@ extern "C" uint8_t cpu_read(Machine::State& cpu, uint32_t address) {
 		case 0x2000 ... 0x20FF:
 			return cpu.bus_cap = cpu_read_reg(cpu, address);
 		default:
-			if (cpu.ctrl.cart_enabled) {
+			if (cpu.ctrl.cart_enabled()) {
 				return cpu.bus_cap = cpu_read_cart(cpu, address);		
 			} else {
 				return cpu.bus_cap;
@@ -233,7 +233,7 @@ extern "C" void cpu_write(Machine::State& cpu, uint8_t data, uint32_t address) {
 			cpu_write_reg(cpu, data, address);
 			break ;
 		default:
-			if (cpu.ctrl.cart_enabled) {
+			if (cpu.ctrl.cart_enabled()) {
 				cpu_write_cart(cpu, data, address);
 			}
 			break ;	

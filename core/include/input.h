@@ -23,21 +23,24 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 namespace Machine { struct State; };
 
 namespace Input {
-	union State {
+	// Register file at 0x2050: bytes 0-1 are the 10-bit interrupt edge
+	// directions, bytes 2-3 the 10-bit pad state (both little-endian),
+	// bytes 4-5 hold the dejitter constants (K00-K03, K04-K07, K10-K11)
+	struct State {
 		uint8_t bytes[6];
 
-		struct __attribute__((packed)) {
-			unsigned interrupt_direction:10;
-			unsigned:6;
-			unsigned input_state:10;
-			unsigned:6;
-			unsigned dejitter_k00_k03:3;
-			unsigned:1;
-			unsigned dejitter_k04_k07:3;
-			unsigned:1;
-			unsigned dejitter_k10_k11:3;
-			unsigned:1;
-		};
+		uint16_t interrupt_direction() const {
+			return bytes[0] | ((bytes[1] & 0x03) << 8);
+		}
+
+		uint16_t input_state() const {
+			return bytes[2] | ((bytes[3] & 0x03) << 8);
+		}
+
+		void set_input_state(uint16_t value) {
+			bytes[2] = (uint8_t)value;
+			bytes[3] = (value >> 8) & 0x03;
+		}
 	};
 
 	void reset(Input::State&);

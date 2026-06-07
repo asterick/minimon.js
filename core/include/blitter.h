@@ -50,40 +50,66 @@ namespace Blitter {
 		uint8_t map[0x1000 - sizeof(uint8_t[8][96]) - sizeof(Sprite[24])];
 	};
 
-	struct State {
-		union {
-			uint8_t enables;
-			struct {
-				unsigned invert_map:1;
-				unsigned enable_map:1;
-				unsigned enable_sprites:1;
-				unsigned enable_copy:1;
-				unsigned map_size:2;
-			};
-		};
-		union {
-			uint8_t rate_control;
-			struct {
-				unsigned:1;	// Unknown flag: Possible frame counter enable?
-				unsigned frame_divider:3;
-				unsigned frame_count:4;
-			};
-		};
+	// enables bits (0x2080)
+	const uint8_t ENABLES_INVERT_MAP     = 0x01;
+	const uint8_t ENABLES_MAP            = 0x02;
+	const uint8_t ENABLES_SPRITES        = 0x04;
+	const uint8_t ENABLES_COPY           = 0x08;
+	const uint8_t ENABLES_MAP_SIZE_MASK  = 0x30;
+	const int     ENABLES_MAP_SIZE_SHIFT = 4;
 
-		union {
-			unsigned int map_base;
-			uint8_t map_bytes[3];
-		};
-		union {
-			unsigned int sprite_base;
-			uint8_t sprite_bytes[3];
-		};
+	// rate_control bits (0x2081); bit 0 is an unknown flag (possibly a
+	// frame counter enable), the upper nibble reads back the divider
+	const uint8_t RATE_DIVIDER_MASK  = 0x0E;
+	const int     RATE_DIVIDER_SHIFT = 1;
+
+	struct State {
+		uint8_t enables;
+		uint8_t rate_control;
+
+		// Tile data addresses; the guest programs the low three bytes
+		// through 0x2082-4 / 0x2087-9, the high byte stays zero
+		uint32_t map_base;
+		uint32_t sprite_base;
 
 		uint8_t scroll_x;
 		uint8_t scroll_y;
 
 		// Counters
 		uint8_t divider;
+
+		bool invert_map() const {
+			return (enables & ENABLES_INVERT_MAP) != 0;
+		}
+
+		bool enable_map() const {
+			return (enables & ENABLES_MAP) != 0;
+		}
+
+		bool enable_sprites() const {
+			return (enables & ENABLES_SPRITES) != 0;
+		}
+
+		bool enable_copy() const {
+			return (enables & ENABLES_COPY) != 0;
+		}
+
+		int map_size() const {
+			return (enables & ENABLES_MAP_SIZE_MASK) >> ENABLES_MAP_SIZE_SHIFT;
+		}
+
+		int frame_divider() const {
+			return (rate_control & RATE_DIVIDER_MASK) >> RATE_DIVIDER_SHIFT;
+		}
+
+		static uint8_t base_byte(uint32_t base, int index) {
+			return base >> (8 * index);
+		}
+
+		static void set_base_byte(uint32_t& base, int index, uint8_t value) {
+			const int shift = 8 * index;
+			base = (base & ~(0xFFu << shift)) | ((uint32_t)value << shift);
+		}
 	};
 
 	void reset(Machine::State& cpu);

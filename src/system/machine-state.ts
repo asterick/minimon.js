@@ -149,8 +149,9 @@ export interface BlitterOverlay {
 }
 
 export interface TimerInstance {
-    hi_flags: WasmBool;
-    lo_flags: WasmBool;
+    /** raw flag bytes: bits 0-3 input/preset/running/output; bit 7 of lo_flags is mode16 */
+    lo_flags: number;
+    hi_flags: number;
     preset: number;
     compare: number;
     count: number;

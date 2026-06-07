@@ -85,7 +85,7 @@ void Blitter::reset(Machine::State& cpu) {
 
 void Blitter::clock(Machine::State& cpu) {
 	// Framerate divider
-	if (++cpu.blitter.divider < FRAME_DIVIDERS[cpu.blitter.frame_divider]) {
+	if (++cpu.blitter.divider < FRAME_DIVIDERS[cpu.blitter.frame_divider()]) {
 		return ;
 	}
 
@@ -94,8 +94,8 @@ void Blitter::clock(Machine::State& cpu) {
 	// Rendering loop
 	FrameBuffer target;
 
-	if (cpu.blitter.enable_map)	{
-		const MapSize& size = MAP_SIZES[cpu.blitter.map_size];
+	if (cpu.blitter.enable_map())	{
+		const MapSize& size = MAP_SIZES[cpu.blitter.map_size()];
 		int dx = min(cpu.blitter.scroll_x, size.width * 8 - SCREEN_WIDTH);
 		int dy = min(cpu.blitter.scroll_y, size.height * 8 - SCREEN_HEIGHT);
 
@@ -120,7 +120,7 @@ void Blitter::clock(Machine::State& cpu) {
 			}
 		}
 
-		if (cpu.blitter.invert_map) {
+		if (cpu.blitter.invert_map()) {
 			for (int x = 0; x < SCREEN_WIDTH; x++) target.column[x] = ~target.column[x];
 		}
 	} else {
@@ -131,7 +131,7 @@ void Blitter::clock(Machine::State& cpu) {
 		}
 	}
 
-	if (cpu.blitter.enable_sprites) {
+	if (cpu.blitter.enable_sprites()) {
 		for (int i = 23; i >= 0; i--) {
 			Sprite& sprite = cpu.overlay.oam[i];
 		
@@ -189,7 +189,7 @@ void Blitter::clock(Machine::State& cpu) {
 	}
 
 	// Send to LCD
-	if (cpu.blitter.enable_copy) {
+	if (cpu.blitter.enable_copy()) {
 		IRQ::trigger(cpu, IRQ::IRQ_BLT_COPY);
 
 		for (int p = 0, a = 0; p < 8; p++) {
@@ -216,9 +216,9 @@ uint8_t Blitter::read(Machine::State& cpu, uint32_t address) {
 		case 0x2086:
 			return cpu.blitter.scroll_x;
 		case 0x2082 ... 0x2084:
-			return cpu.blitter.map_bytes[address - 0x2082];
+			return Blitter::State::base_byte(cpu.blitter.map_base, address - 0x2082);
 		case 0x2087 ... 0x2089:
-			return cpu.blitter.sprite_bytes[address - 0x2087];
+			return Blitter::State::base_byte(cpu.blitter.sprite_base, address - 0x2087);
 		case 0x208A:
 			return LCD::get_scanline(cpu.lcd);
 
@@ -239,7 +239,7 @@ void Blitter::write(Machine::State& cpu, uint8_t data, uint32_t address) {
 			cpu.blitter.rate_control = data;
 			break ;
 		case 0x2082 ... 0x2084:
-			cpu.blitter.map_bytes[address - 0x2082] = data;
+			Blitter::State::set_base_byte(cpu.blitter.map_base, address - 0x2082, data);
 			break ;
 		case 0x2085:
 			cpu.blitter.scroll_y = data;
@@ -248,7 +248,7 @@ void Blitter::write(Machine::State& cpu, uint8_t data, uint32_t address) {
 			cpu.blitter.scroll_x = data;
 			break ;
 		case 0x2087 ... 0x2089:
-			cpu.blitter.sprite_bytes[address - 0x2087] = data;
+			Blitter::State::set_base_byte(cpu.blitter.sprite_base, address - 0x2087, data);
 			break ;
 	}
 }

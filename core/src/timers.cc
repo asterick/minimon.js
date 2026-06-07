@@ -87,16 +87,16 @@ static inline void compare(Machine::State& cpu, int vec, int ticks, int compare,
 }
 
 static inline void process_timer(Machine::State& cpu, int osc1, int osc3, Timer& timer, const TimerIRQ& vects) {
-	if (timer.mode16) {
-		if (!timer.lo_running) return ;
+	if (timer.mode16()) {
+		if (!timer.lo_running()) return ;
 
 		int adv = ticks(cpu.timers, timer.lo_clock_source, timer.lo_clock_ctrl, timer.lo_clock_ratio, osc1, osc3);
 		int count = timer.count - adv;
-		
+
 		if (count < 0) {
 			irq(cpu, vects.hi_underflow);
 			do {
-				count += timer.preset + 1;	
+				count += timer.preset + 1;
 			} while (count < 0);
 		}
 
@@ -104,32 +104,32 @@ static inline void process_timer(Machine::State& cpu, int osc1, int osc3, Timer&
 
 		timer.count = count;
 	} else {
-		if (timer.lo_running) {
+		if (timer.lo_running()) {
 			int adv = ticks(cpu.timers, timer.lo_clock_source, timer.lo_clock_ctrl, timer.lo_clock_ratio, osc1, osc3);
-			int count = timer.count_bytes[0] - adv;
+			int count = (timer.count & 0xFF) - adv;
 
 			if (count < 0) {
 				irq(cpu, vects.lo_underflow);
 				do {
-					count += timer.preset_bytes[0] + 1;
+					count += (timer.preset & 0xFF) + 1;
 				} while (count < 0);
 			}
 
-			compare(cpu, vects.lo_compare, adv, timer.compare_bytes[0], timer.preset_bytes[0], timer.count_bytes[0]);
+			compare(cpu, vects.lo_compare, adv, timer.compare & 0xFF, timer.preset & 0xFF, timer.count & 0xFF);
 
-			timer.count_bytes[0] = count;
+			timer.count = (timer.count & 0xFF00) | (uint8_t)count;
 		}
 
-		if (timer.hi_running) {
-			int count = timer.count_bytes[1] - ticks(cpu.timers, timer.hi_clock_source, timer.hi_clock_ctrl, timer.hi_clock_ratio, osc1, osc3);
+		if (timer.hi_running()) {
+			int count = (timer.count >> 8) - ticks(cpu.timers, timer.hi_clock_source, timer.hi_clock_ctrl, timer.hi_clock_ratio, osc1, osc3);
 
 			if (count < 0) {
 				irq(cpu, vects.hi_underflow);
 				do {
-					count += timer.preset_bytes[1] + 1;	
+					count += (timer.preset >> 8) + 1;
 				} while (count < 0);
 			}
-			timer.count_bytes[1] = count;
+			timer.count = (timer.count & 0x00FF) | ((uint8_t)count << 8);
 		}
 	}
 }
@@ -187,15 +187,15 @@ uint8_t Timers::read(Machine::State& cpu, uint32_t address) {
 
 	// Timer 0/1
 	case 0x2030 ... 0x2037:
-		return cpu.timers.timer[0].bytes[address & 0b111];
+		return cpu.timers.timer[0].reg_read(address & 0b111);
 
 	// Timer 2/3
 	case 0x2038 ... 0x203F:
-		return cpu.timers.timer[1].bytes[address & 0b111];
+		return cpu.timers.timer[1].reg_read(address & 0b111);
 
 	// Timer 4/5
 	case 0x2048 ... 0x204F:
-		return cpu.timers.timer[2].bytes[address & 0b111];
+		return cpu.timers.timer[2].reg_read(address & 0b111);
 	
 	default:
 		return 0xCD;
@@ -203,24 +203,22 @@ uint8_t Timers::read(Machine::State& cpu, uint32_t address) {
 }
 
 static inline void setup_timer(Timers::Timer& timer) {
-	if (timer.mode16) {
-		timer.hi_input = 0;
-		timer.hi_preset = 0;
-		timer.hi_running = 0;
+	if (timer.mode16()) {
+		timer.hi_flags &= ~(TIMER_INPUT | TIMER_PRESET | TIMER_RUNNING);
 
-		if (timer.lo_preset) {
+		if (timer.lo_flags & TIMER_PRESET) {
 			timer.count = timer.preset;
-			timer.lo_preset = 0;
+			timer.lo_flags &= ~TIMER_PRESET;
 		}
 	} else {
-		if (timer.lo_preset) {
-			timer.count_bytes[0] = timer.preset_bytes[0];
-			timer.lo_preset = 0;
+		if (timer.lo_flags & TIMER_PRESET) {
+			timer.count = (timer.count & 0xFF00) | (timer.preset & 0x00FF);
+			timer.lo_flags &= ~TIMER_PRESET;
 		}
 
-		if (timer.hi_preset) {
-			timer.count_bytes[1] = timer.preset_bytes[1];
-			timer.hi_preset = 0;
+		if (timer.hi_flags & TIMER_PRESET) {
+			timer.count = (timer.count & 0x00FF) | (timer.preset & 0xFF00);
+			timer.hi_flags &= ~TIMER_PRESET;
 		}
 	}
 }
@@ -264,29 +262,29 @@ void Timers::write(Machine::State& cpu, uint8_t data, uint32_t address) {
 
 	// Timer 0/1
 	case 0x2030 ... 0x2031:
-		cpu.timers.timer[0].bytes[address & 0b111] = data & TIMER_MASK[address & 0b111];
+		cpu.timers.timer[0].reg_write(address & 0b111, data & TIMER_MASK[address & 0b111]);
 		setup_timer(cpu.timers.timer[0]);
 		break ;
 	case 0x2032 ... 0x2035:
-		cpu.timers.timer[0].bytes[address & 0b111] = data & TIMER_MASK[address & 0b111];
+		cpu.timers.timer[0].reg_write(address & 0b111, data & TIMER_MASK[address & 0b111]);
 		break ;
 
 	// Timer 2/3
 	case 0x2038 ... 0x2039:
-		cpu.timers.timer[1].bytes[address & 0b111] = data & TIMER_MASK[address & 0b111];
+		cpu.timers.timer[1].reg_write(address & 0b111, data & TIMER_MASK[address & 0b111]);
 		setup_timer(cpu.timers.timer[1]);
 		break ;
 	case 0x203A ... 0x203D:
-		cpu.timers.timer[1].bytes[address & 0b111] = data & TIMER_MASK[address & 0b111];
+		cpu.timers.timer[1].reg_write(address & 0b111, data & TIMER_MASK[address & 0b111]);
 		break ;
 
 	// Timer 4/5
 	case 0x2048 ... 0x2049:
-		cpu.timers.timer[2].bytes[address & 0b111] = data & TIMER_MASK[address & 0b111];
+		cpu.timers.timer[2].reg_write(address & 0b111, data & TIMER_MASK[address & 0b111]);
 		setup_timer(cpu.timers.timer[2]);
 		break ;
 	case 0x204A ... 0x204D:
-		cpu.timers.timer[2].bytes[address & 0b111] = data & TIMER_MASK[address & 0b111];
+		cpu.timers.timer[2].reg_write(address & 0b111, data & TIMER_MASK[address & 0b111]);
 		break ;
 	}
 }
