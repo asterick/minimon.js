@@ -1,8 +1,11 @@
+// Dockview sizes the panel's content element; pin to it absolutely so
+// the listing can never outgrow the panel even when an ancestor
+// resolves height: 100% against an auto-height box
 .debugger {
 	display: flex;
 	flex-direction: column;
-	width: 100%;
-	height: 100%;
+	position: absolute;
+	inset: 0;
 }
 
 .toolbar {
