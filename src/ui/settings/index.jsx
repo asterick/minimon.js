@@ -17,9 +17,9 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
 import React, { Component } from "react";
-import { Toggle } from 'office-ui-fabric-react/lib/Toggle';
-import { Stack } from 'office-ui-fabric-react/lib/Stack';
-import { DefaultButton } from 'office-ui-fabric-react';
+import { Toggle } from '@fluentui/react/lib/Toggle';
+import { Stack } from '@fluentui/react/lib/Stack';
+import { DefaultButton } from '@fluentui/react/lib/Button';
 
 import SystemContext from "../context";
 

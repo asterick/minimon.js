@@ -45,5 +45,5 @@ The libretro front-end (`core/libretro/libretro.cc`) wraps the same core; it doe
 
 ## Webpack specifics
 
-- `.less` files load as CSS modules; `.glsl` via raw-loader.
-- Babel handles `.js/.jsx/.ts/.tsx` (`@babel/preset-typescript` + `@babel/preset-react`), but `resolve.extensions` only lists `.js`/`.jsx` — imports of TS files spell out the extension (e.g. `import * as Table from "./table.ts"`).
+- `.less` files load as CSS modules; plain `.css` (third-party styles, imported from JS) loads globally without modules; `.glsl` via webpack's built-in `asset/source`.
+- Babel handles `.js/.jsx/.ts/.tsx` (`@babel/preset-typescript` + `@babel/preset-react`). There is no type checking in the build.
