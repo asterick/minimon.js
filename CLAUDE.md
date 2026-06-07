@@ -21,7 +21,7 @@ minimon.js is a Pokemon Mini emulator: a C++ emulation core compiled to WebAssem
 
 There are no tests and no linter. There is no tsc typecheck step — TypeScript/JSX is transpiled by Vite/esbuild only (the repo is mid-migration from JS to TS).
 
-Building the WASM core requires `clang` with the wasm32 target, `wasm-ld` (falls back to `wasm-ld-10`), python3, and the `core/wasm/wasi-libc` git submodule (checked out and prebuilt; its Makefile invocation is commented out in `core/wasm/Makefile`).
+Building the WASM core uses the system WASI toolchain: `clang` (wasm32 backend), `wasm-ld`, and the wasi-libc sysroot — `apt install lld wasi-libc` on Debian/Ubuntu. A non-standard sysroot location can be passed via `WASI_SYSROOT`/`WASI_LIBDIR` (see `core/wasm/Makefile`).
 
 ## Generated files (do not edit by hand)
 
