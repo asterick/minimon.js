@@ -12,13 +12,14 @@ minimon.js is a Pokemon Mini emulator: a C++ emulation core compiled to WebAssem
 
 ## Commands
 
-- `npm start` — regenerate the instruction table, then run webpack-dev-server on port 9000. Note: this does **not** rebuild the WASM core; run `npm run core` first if core C++ changed.
+- `npm start` — regenerate the instruction table, then run the Vite dev server on port 9000. Note: this does **not** rebuild the WASM core; run `npm run core` first if core C++ changed.
 - `npm run core` — build the WASM core (`core/ && make wasm`) → outputs `public/libminimon.wasm` and `public/libminimon.tracing.wasm` (same code compiled with `-D TRACING`).
 - `npm run table` — regenerate `src/system/table.ts` via `tools/convert.py`.
-- `npm run build` — table + core + production webpack bundle into `public/`.
+- `npm run build` — table + core + production Vite build into `dist/` (contents of `public/`, including the wasm binaries, are copied in).
+- `npm run preview` — serve the production `dist/` build.
 - `npm run retroarch` — build and test the libretro core (`core/libretro/`).
 
-There are no tests and no linter. There is no tsc typecheck step — TypeScript/JSX is transpiled by Babel only (the repo is mid-migration from JS to TS).
+There are no tests and no linter. There is no tsc typecheck step — TypeScript/JSX is transpiled by Vite/esbuild only (the repo is mid-migration from JS to TS).
 
 Building the WASM core requires `clang` with the wasm32 target, `wasm-ld` (falls back to `wasm-ld-10`), python3, and the `core/wasm/wasi-libc` git submodule (checked out and prebuilt; its Makefile invocation is commented out in `core/wasm/Makefile`).
 
@@ -29,7 +30,7 @@ Building the WASM core requires `clang` with the wasm32 target, `wasm-ld` (falls
 - `tools/table.py` → `core/table.h` (consumed by the C++ core; rebuilt by `core/Makefile`)
 - `tools/convert.py` → `src/system/table.ts` (consumed by the JS disassembler; rebuilt by `npm run table`)
 
-Both outputs are gitignored. `public/` is also gitignored except `index.html` and `favicon.png` — everything else there is build output.
+Both outputs are gitignored. `public/` (Vite's static dir, where the wasm binaries are built) is gitignored except `favicon.png`, and `dist/` (Vite's build output) is gitignored entirely.
 
 ## Architecture
 
@@ -43,7 +44,9 @@ Three layers, with the C++ core shared between two front-ends:
 
 The libretro front-end (`core/libretro/libretro.cc`) wraps the same core; it does not preserve EEPROM or RTC between sessions.
 
-## Webpack specifics
+## Build specifics (Vite)
 
-- `.less` files load as CSS modules; plain `.css` (third-party styles, imported from JS) loads globally without modules; `.glsl` via webpack's built-in `asset/source`.
-- Babel handles `.js/.jsx/.ts/.tsx` (`@babel/preset-typescript` + `@babel/preset-react`). There is no type checking in the build.
+- `index.html` at the repo root is the Vite entry; it loads `/src/index.jsx` as a module.
+- `*.module.less` files are CSS modules (Vite convention); plain `.less`/`.css` (including third-party styles imported from JS) load globally.
+- GLSL shaders import with the `?raw` suffix (`import shader from './x.glsl?raw'`).
+- JSX only parses in `.jsx`/`.tsx` files; there is no type checking in the build.
