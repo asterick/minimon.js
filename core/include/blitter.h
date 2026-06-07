@@ -23,23 +23,43 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 namespace Machine { struct State; };
 
 namespace Blitter {
-	union Sprite {
+	// Sprite flag bits (byte 3 of an OAM entry)
+	const uint8_t SPRITE_X_FLIP = 0x01;
+	const uint8_t SPRITE_Y_FLIP = 0x02;
+	const uint8_t SPRITE_INVERT = 0x04;
+	const uint8_t SPRITE_ENABLE = 0x08;
+
+	// A view over a 4-byte guest OAM entry: x, y (7 bits each), tile, flags
+	struct Sprite {
 		uint8_t bytes[4];
-		struct {
-			unsigned x:7;
-			unsigned:1;
 
-			unsigned y:7;
-			unsigned:1;
+		int x() const {
+			return bytes[0] & 0x7F;
+		}
 
-			unsigned tile:8;
+		int y() const {
+			return bytes[1] & 0x7F;
+		}
 
-			unsigned x_flip: 1;
-			unsigned y_flip: 1;
-			unsigned invert: 1;
-			unsigned enable: 1;
-			unsigned:4;
-		};
+		int tile() const {
+			return bytes[2];
+		}
+
+		bool x_flip() const {
+			return (bytes[3] & SPRITE_X_FLIP) != 0;
+		}
+
+		bool y_flip() const {
+			return (bytes[3] & SPRITE_Y_FLIP) != 0;
+		}
+
+		bool invert() const {
+			return (bytes[3] & SPRITE_INVERT) != 0;
+		}
+
+		bool enable() const {
+			return (bytes[3] & SPRITE_ENABLE) != 0;
+		}
 	};
 
 	struct Overlay {
