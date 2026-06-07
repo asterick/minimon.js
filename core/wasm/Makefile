@@ -3,13 +3,18 @@ BUILDDIR=obj
 
 SOURCES=$(filter-out $(SRCDIR)/retroarch.cc, $(wildcard $(SRCDIR)/*.cc))
 OBJECTS=$(patsubst $(SRCDIR)/%.cc,$(BUILDDIR)/%.o,$(SOURCES)) $(BUILDDIR)/main.o
-TRACE_OBJECTS=$(patsubst $(SRCDIR)/%.cc,$(BUILDDIR)/%.to,$(SOURCES)) $(BUILDDIR)/main.o
+TRACE_OBJECTS=$(patsubst $(SRCDIR)/%.cc,$(BUILDDIR)/%.to,$(SOURCES)) $(BUILDDIR)/main.to
 TARGET=../../public/libminimon.wasm
 TRACE_TARGET=../../public/libminimon.tracing.wasm
 
-LD=$(if $(shell which wasm-ld),wasm-ld,wasm-ld-10)
+# Uses the system WASI toolchain: clang with the wasm32 backend, wasm-ld
+# from lld, and the wasi-libc sysroot (apt install lld wasi-libc on
+# Debian/Ubuntu; installs to /usr/include/wasm32-wasi + /usr/lib/wasm32-wasi)
+LD=wasm-ld
 DUMP=llvm-dwarfdump
 CC=clang
+WASI_SYSROOT?=/usr
+WASI_LIBDIR?=$(WASI_SYSROOT)/lib/wasm32-wasi
 
 EXPORTS = \
 	--export get_machine \
@@ -22,24 +27,21 @@ EXPORTS = \
 	--export cpu_write \
 	--export get_description
 
-CPPFLAGS = --target=wasm32-wasm -O2 -I. -I../include -std=c++17 --sysroot=./wasi-libc/sysroot -g -Wall
-LDFLAGS = --no-entry --allow-undefined -L ./wasi-libc/sysroot/lib/wasm32-wasi -lc $(EXPORTS)
+CPPFLAGS = --target=wasm32-wasi -O2 -I. -I../include -std=c++17 --sysroot=$(WASI_SYSROOT) -g -Wall
+LDFLAGS = --no-entry --allow-undefined -L $(WASI_LIBDIR) -lc $(EXPORTS)
 
-all: wasi-libc $(BUILDDIR) $(TARGET) $(TRACE_TARGET)
+all: $(BUILDDIR) $(TARGET) $(TRACE_TARGET)
 
 clean:
 	rm -Rf $(TARGET) $(TRACE_TARGET) $(BUILDDIR)
 
-wasi-libc:
-	# make -C wasi-libc
-
 retroarch: $(BUILDDIR)
 	make -f Make.retroarch
 
-$(TARGET): wasi-libc $(OBJECTS)
+$(TARGET): $(OBJECTS)
 	$(LD) $(LDFLAGS) $(OBJECTS) -o $@
 
-$(TRACE_TARGET): wasi-libc $(TRACE_OBJECTS)
+$(TRACE_TARGET): $(TRACE_OBJECTS)
 	$(LD) $(LDFLAGS) $(TRACE_OBJECTS) -o $@
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.cc ../include/*.h
@@ -57,4 +59,4 @@ $(BUILDDIR)/main.to: main.cc ../include/*.h
 $(BUILDDIR):
 	mkdir -p $(BUILDDIR)
 
-.PHONY: all clean disassembly wasi-libc
+.PHONY: all clean disassembly
