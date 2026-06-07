@@ -65,6 +65,10 @@ export class Minimon {
 	state!: MachineState;
 	breakpoints: number[] = [];
 
+	private _listeners = new Set<() => void>();
+	private _version = 0;
+	private _notifyScheduled = false;
+
 	private _name: string;
 	private _inputState: number;
 	private _audio: Audio;
@@ -227,13 +231,36 @@ export class Minimon {
 		this.update();
 	}
 
-	// Trigger an update to the UI (overridden by the screen panel)
+	// Pushes a finished frame to the display (overridden by the screen panel)
 	repaint(_memory: Uint8Array, _address: number): void {
 
 	}
 
+	// Store contract for React's useSyncExternalStore
+	subscribe = (listener: () => void): (() => void) => {
+		this._listeners.add(listener);
+		return () => this._listeners.delete(listener);
+	};
+
+	// The state object is a live view over WASM memory, so a monotonic
+	// version number stands in for an immutable snapshot
+	getVersion = (): number => {
+		return this._version;
+	};
+
+	// Notify the UI that machine state has changed. Notifications are
+	// coalesced to animation frames so the emulation tick (setInterval at
+	// 0ms) doesn't force a React render per event-loop turn
 	update(): void {
-		// This will be overidden elsewhere
+		this._version++;
+
+		if (this._notifyScheduled) return;
+		this._notifyScheduled = true;
+
+		requestAnimationFrame(() => {
+			this._notifyScheduled = false;
+			for (const listener of this._listeners) listener();
+		});
 	}
 
 	trace(_cpu: number, _address: number, _kind: number, _data: number): void {
