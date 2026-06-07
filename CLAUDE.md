@@ -64,7 +64,4 @@ Agreed ongoing work, one branch/PR per item (see Workflow). Update this list as 
 
 Verify every phase bit-identical: build the core natively, run ROMs headless, hash semantic state (register values + RAM + LCD gddram — never raw struct bytes) per virtual second, and diff against a pre-change baseline (see PR #39 for the recipe). Note that layout changes invalidate raw-`memcpy` libretro savestates; there is no savestate versioning.
 
-**UI modernization** — done: Vite (PR #35), strict-TS system layer (PR #37), hooks/`useSyncExternalStore` refactor (PR #41), library swaps (`@tanstack/react-virtual` PR #42, native controls PR #43, dockview). Remaining:
-
-1. CI — GitHub Actions on PRs: `npm run check` + Vite build, eventually the wasm core build.
-2. Audio — port `src/system/audio.ts` from the deprecated ScriptProcessorNode to an AudioWorklet.
+**UI modernization** — COMPLETE: Vite (PR #35), strict-TS system layer (PR #37), hooks/`useSyncExternalStore` refactor (PR #41), library swaps (`@tanstack/react-virtual` PR #42, native controls PR #43, dockview PR #44), AudioWorklet (PR #45), GitHub Actions CI (PR #47). CI runs a type check plus the full build (instruction table, WASM core, Vite) on every PR and push to main — see `.github/workflows/ci.yml`.
