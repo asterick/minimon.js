@@ -28,7 +28,6 @@ import Blitter from "./blitter";
 
 import 'normalize.css/normalize.css';
 import 'rc-dock/dist/rc-dock.css';
-import 'react-virtualized/styles.css';
 import "./style.less";
 
 const screen_tab: TabData = {

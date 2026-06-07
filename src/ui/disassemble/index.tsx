@@ -16,11 +16,11 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-import { useEffect, useState } from "react";
-import { AutoSizer } from 'react-virtualized';
+import { useEffect, useRef, useState } from "react";
 
 import classes from "./style.module.less";
 import { useSystem, useSystemState } from "../context";
+import { useElementSize } from "../use-element-size";
 import { toHex } from "../util";
 
 import { Disassembler } from "../../system/disassemble";
@@ -34,6 +34,9 @@ export default function Disassembly({ follow_pc = true }: DisassemblyProps) {
 	useSystemState();
 
 	const [address, setAddress] = useState(0);
+
+	const container = useRef<HTMLDivElement>(null);
+	const { width, height } = useElementSize(container);
 
 	// Keep the program counter centered in the visible window
 	useEffect(() => {
@@ -67,29 +70,26 @@ export default function Disassembly({ follow_pc = true }: DisassemblyProps) {
 	}
 
 	const target = system.state.cpu.pc;
+	const rowCount = Math.floor(height / 20);
+
+	const disasm = new Disassembler(system);
+	const lines = (rowCount > 0) ? disasm.process(address, rowCount) : [];
 
 	return (
-		<AutoSizer className={classes.disasm}>
-			{({ height, width }) => {
-				const rowCount = Math.floor(height / 20);
-
-				const disasm = new Disassembler(system);
-				const lines = disasm.process(address, rowCount);
-
-				return <table style={{width: `${width}px`, height: `${height}px`}}>
-					<tbody>
-						{
-						lines.map(line =>
-							<tr onClick={() => onClick(line.address)} key={line.address} className={(target == line.address) ? classes['active'] : ''}>
-								<td className={classes["address"]}>{toHex(line.address, 6)}</td>
-								<td>{line.data.map((v, i) => <span className={classes['byte-cell']} key={i}>{toHex(v, 2)}</span>)}</td>
-								<td className={system.breakpoints.indexOf(line.address) >= 0 ? classes['breakpoint'] : ''}>{line.op}</td>
-								<td>{line.args.map((s, i) => <span key={i}>{s}</span>)}</td>
-							</tr>)
-						}
-					</tbody>
-				</table>
-			}}
-		</AutoSizer>
+		<div ref={container} className={classes.disasm} style={{width: '100%', height: '100%', overflow: 'hidden'}}>
+			<table style={{width: `${width}px`, height: `${height}px`}}>
+				<tbody>
+					{
+					lines.map(line =>
+						<tr onClick={() => onClick(line.address)} key={line.address} className={(target == line.address) ? classes['active'] : ''}>
+							<td className={classes["address"]}>{toHex(line.address, 6)}</td>
+							<td>{line.data.map((v, i) => <span className={classes['byte-cell']} key={i}>{toHex(v, 2)}</span>)}</td>
+							<td className={system.breakpoints.indexOf(line.address) >= 0 ? classes['breakpoint'] : ''}>{line.op}</td>
+							<td>{line.args.map((s, i) => <span key={i}>{s}</span>)}</td>
+						</tr>)
+					}
+				</tbody>
+			</table>
+		</div>
 	);
 }
