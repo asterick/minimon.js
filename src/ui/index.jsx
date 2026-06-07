@@ -28,6 +28,10 @@ import Settings from "./settings";
 import Blitter from "./blitter";
 
 import { IconButton } from '@fluentui/react/lib/Button';
+
+import 'normalize.css/normalize.css';
+import 'rc-dock/dist/rc-dock.css';
+import 'react-virtualized/styles.css';
 import style from "./style.less";
 
 let screen_tab = { 

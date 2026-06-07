@@ -11,24 +11,25 @@ module.exports = {
         filename: 'app.js',
     },
     devServer: {
-        contentBase: path.join(__dirname, 'public'),
+        static: {
+            directory: path.join(__dirname, 'public')
+        },
         compress: true,
         port: 9000
     },
     plugins: [
-        new webpack.IgnorePlugin(/^text-encoding$/),
-        new webpack.IgnorePlugin(/^fs$/)
+        new webpack.IgnorePlugin({ resourceRegExp: /^text-encoding$/ }),
+        new webpack.IgnorePlugin({ resourceRegExp: /^fs$/ })
     ],
     module: {
         rules: [
             {
                 test: /\.glsl$/,
-                use: [
-                    {
-                        loader: 'raw-loader',
-                        options: {}
-                    }
-                ],
+                type: 'asset/source'
+            },
+            {
+                test: /\.css$/,
+                use: [ 'style-loader', 'css-loader' ],
             },
             {
                 test: /\.less$/,
@@ -58,6 +59,6 @@ module.exports = {
         ]
     },
     resolve: {
-        extensions: ['.js', '.jsx']
+        extensions: ['.js', '.jsx', '.ts', '.tsx']
     }
 };
