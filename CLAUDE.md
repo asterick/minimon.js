@@ -41,7 +41,7 @@ Three layers, with the C++ core shared between two front-ends:
 
 2. **WASM bridge** — `core/wasm/main.cc` exports the C ABI (`get_machine`, `cpu_advance`, `cpu_step`, `cpu_read/write`, etc.) and, critically, `get_description`: a reflection table (`StructDecl`/`FieldDecl`) describing the entire `Machine::State` memory layout. On the JS side, `src/system/state.ts` parses that reflection blob and builds a live JS object view (DataView/typed arrays directly over WASM memory) — this is how the debugger UI reads/writes registers and hardware state without per-field glue code. The shape of that object is described by the hand-written interfaces in `src/system/machine-state.ts`. When adding fields to machine state that the UI should see, they must be added to the reflection tables in `core/wasm/main.cc` **and** mirrored in `machine-state.ts`.
 
-3. **Web UI** — `src/system/index.ts` (`Minimon` class) fetches the wasm binary (swapping between normal/tracing builds when `.tracing` is toggled), wires keyboard input, WebAudio (`src/system/audio.ts`), breakpoints, and EEPROM/RTC persistence. `src/ui/` is the React debugger: rc-dock window layout + Fluent UI widgets, with panels for the screen (WebGL, shaders in `src/ui/screen/shaders/*.glsl`), disassembly, registers, memory, and blitter/sprite/map viewers. Panels are function components; the system instance comes from React context via `useSystem()` (`src/ui/context.tsx`), and panels subscribe to machine-state changes with `useSystemState()` (`useSyncExternalStore` over a version counter on `Minimon` — machine state is a live mutable view over WASM memory, so the version number serves as the snapshot and `update()` notifies, coalesced to animation frames).
+3. **Web UI** — `src/system/index.ts` (`Minimon` class) fetches the wasm binary (swapping between normal/tracing builds when `.tracing` is toggled), wires keyboard input, WebAudio (`src/system/audio.ts`), breakpoints, and EEPROM/RTC persistence. `src/ui/` is the React debugger: a dockview window layout with native controls, with panels for the screen (WebGL, shaders in `src/ui/screen/shaders/*.glsl`), disassembly, registers, memory (virtualized via `@tanstack/react-virtual`), and blitter/sprite/map viewers. Panels are function components; the system instance comes from React context via `useSystem()` (`src/ui/context.tsx`), and panels subscribe to machine-state changes with `useSystemState()` (`useSyncExternalStore` over a version counter on `Minimon` — machine state is a live mutable view over WASM memory, so the version number serves as the snapshot and `update()` notifies, coalesced to animation frames).
 
 The libretro front-end (`core/libretro/libretro.cc`) wraps the same core; it does not preserve EEPROM or RTC between sessions.
 
@@ -64,8 +64,7 @@ Agreed ongoing work, one branch/PR per item (see Workflow). Update this list as 
 
 Verify every phase bit-identical: build the core natively, run ROMs headless, hash semantic state (register values + RAM + LCD gddram — never raw struct bytes) per virtual second, and diff against a pre-change baseline (see PR #39 for the recipe). Note that layout changes invalidate raw-`memcpy` libretro savestates; there is no savestate versioning.
 
-**UI modernization** — done: Vite (PR #35), strict-TS system layer (PR #37), hooks/`useSyncExternalStore` refactor. Remaining:
+**UI modernization** — done: Vite (PR #35), strict-TS system layer (PR #37), hooks/`useSyncExternalStore` refactor (PR #41), library swaps (`@tanstack/react-virtual` PR #42, native controls PR #43, dockview). Remaining:
 
-1. Library swaps — react-virtualized → `@tanstack/react-virtual`; drop Fluent UI (only a handful of controls used, dominates the bundle); rc-dock → dockview.
-2. CI — GitHub Actions on PRs: `npm run check` + Vite build, eventually the wasm core build.
-3. Audio — port `src/system/audio.ts` from the deprecated ScriptProcessorNode to an AudioWorklet.
+1. CI — GitHub Actions on PRs: `npm run check` + Vite build, eventually the wasm core build.
+2. Audio — port `src/system/audio.ts` from the deprecated ScriptProcessorNode to an AudioWorklet.
