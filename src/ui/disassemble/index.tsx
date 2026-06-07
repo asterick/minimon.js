@@ -60,10 +60,10 @@ export default function Disassembly({ follow_pc = true }: DisassemblyProps) {
 	});
 
 	function onClick(target: number) {
-		if (system.breakpoints.indexOf(target) >= 0) {
-			system.breakpoints = system.breakpoints.filter((v) => v != target);
+		if (system.breakpoints.has(target)) {
+			system.breakpoints.delete(target);
 		} else {
-			system.breakpoints.push(target);
+			system.breakpoints.add(target);
 		}
 
 		system.update();
@@ -84,7 +84,7 @@ export default function Disassembly({ follow_pc = true }: DisassemblyProps) {
 						<tr onClick={() => onClick(line.address)} key={line.address} className={(target == line.address) ? classes['active'] : ''}>
 							<td className={classes["address"]}>{toHex(line.address, 6)}</td>
 							<td>{line.data.map((v, i) => <span className={classes['byte-cell']} key={i}>{toHex(v, 2)}</span>)}</td>
-							<td className={system.breakpoints.indexOf(line.address) >= 0 ? classes['breakpoint'] : ''}>{line.op}</td>
+							<td className={system.breakpoints.has(line.address) ? classes['breakpoint'] : ''}>{line.op}</td>
 							<td>{line.args.map((s, i) => <span key={i}>{s}</span>)}</td>
 						</tr>)
 					}

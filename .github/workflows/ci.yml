@@ -53,8 +53,8 @@ jobs:
 
       - run: npm ci
 
-      # npm run build chains its steps with `;`, which would mask a core
-      # build failure; run them individually so each failure fails the job
+      # Equivalent to npm run build, but as separate steps so a failure
+      # is attributed to the right stage in the job UI
       - name: Generate instruction table
         run: npm run table
 

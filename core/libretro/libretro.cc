@@ -110,7 +110,7 @@ bool retro_unserialize(const void *data, size_t size) {
     if (size != sizeof(machine_state)) return false;
 
     memcpy(&machine_state, data, size);
-    return false;
+    return true;
 }
 
 // End of retrolib

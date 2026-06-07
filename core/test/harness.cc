@@ -98,6 +98,9 @@ static void exercise(Machine::State& m) {
 
 	// Audio: enabled, mid volume
 	cpu_write(m, 0b000, 0x2070); cpu_write(m, 0b010, 0x2071);
+
+	// RTC: running (value ticks once per 0x8000 osc1 cycles)
+	cpu_write(m, 0b01, 0x2008);
 }
 
 int main(int argc, char** argv) {
@@ -154,9 +157,10 @@ int main(int argc, char** argv) {
 		}
 
 		cpu_advance(machine, CPU_SPEED);
-		printf("%3d %016llx pc=%02x:%04x status=%d ctrl=%02x\n", s,
+		printf("%3d %016llx pc=%02x:%04x status=%d ctrl=%02x rtc=%06x+%04x\n", s,
 			(unsigned long long)hash_state(machine),
-			machine.reg.cb, machine.reg.pc, machine.status, machine.ctrl.data[0]);
+			machine.reg.cb, machine.reg.pc, machine.status, machine.ctrl.data[0],
+			machine.rtc.value & 0xFFFFFF, machine.rtc.prescale & 0xFFFF);
 	}
 
 	return 0;
