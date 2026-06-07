@@ -25,28 +25,28 @@ CSV_LOCATION = os.path.join(os.path.abspath(os.path.dirname(__file__)), 's1c88.c
 op0s, op1s, op2s = [None] * 0x100, [None] * 0x100, [None] * 0x100
 
 CONDITIONS = {
-    'C': 'cpu.reg.flag.c',
-    'NC': '!cpu.reg.flag.c',
-    'Z': 'cpu.reg.flag.z',
-    'NZ': '!cpu.reg.flag.z',
-    'V': 'cpu.reg.flag.v',
-    'NV': '!cpu.reg.flag.v',
-    'M': 'cpu.reg.flag.n',
-    'P': '!cpu.reg.flag.n',
+    'C': 'cpu.reg.flag(CPU::SC_C)',
+    'NC': '!cpu.reg.flag(CPU::SC_C)',
+    'Z': 'cpu.reg.flag(CPU::SC_Z)',
+    'NZ': '!cpu.reg.flag(CPU::SC_Z)',
+    'V': 'cpu.reg.flag(CPU::SC_V)',
+    'NV': '!cpu.reg.flag(CPU::SC_V)',
+    'M': 'cpu.reg.flag(CPU::SC_N)',
+    'P': '!cpu.reg.flag(CPU::SC_N)',
 
-    'LT': 'cpu.reg.flag.n != cpu.reg.flag.v',
-    'LE': '(cpu.reg.flag.n != cpu.reg.flag.v) || cpu.reg.flag.z',
-    'GT': '(cpu.reg.flag.n == cpu.reg.flag.v) && !cpu.reg.flag.z',
-    'GE': 'cpu.reg.flag.n == cpu.reg.flag.v',
+    'LT': 'cpu.reg.flag(CPU::SC_N) != cpu.reg.flag(CPU::SC_V)',
+    'LE': '(cpu.reg.flag(CPU::SC_N) != cpu.reg.flag(CPU::SC_V)) || cpu.reg.flag(CPU::SC_Z)',
+    'GT': '(cpu.reg.flag(CPU::SC_N) == cpu.reg.flag(CPU::SC_V)) && !cpu.reg.flag(CPU::SC_Z)',
+    'GE': 'cpu.reg.flag(CPU::SC_N) == cpu.reg.flag(CPU::SC_V)',
 
-    'F0': 'cpu.reg.flag.f0',
-    'F1': 'cpu.reg.flag.f1',
-    'F2': 'cpu.reg.flag.f2',
-    'F3': 'cpu.reg.flag.f3',
-    'NF0': '!cpu.reg.flag.f0',
-    'NF1': '!cpu.reg.flag.f1',
-    'NF2': '!cpu.reg.flag.f2',
-    'NF3': '!cpu.reg.flag.f3',
+    'F0': '(cpu.reg.cc & CPU::CC_F0) != 0',
+    'F1': '(cpu.reg.cc & CPU::CC_F1) != 0',
+    'F2': '(cpu.reg.cc & CPU::CC_F2) != 0',
+    'F3': '(cpu.reg.cc & CPU::CC_F3) != 0',
+    'NF0': '(cpu.reg.cc & CPU::CC_F0) == 0',
+    'NF1': '(cpu.reg.cc & CPU::CC_F1) == 0',
+    'NF2': '(cpu.reg.cc & CPU::CC_F2) == 0',
+    'NF3': '(cpu.reg.cc & CPU::CC_F3) == 0',
 }
 
 ARGUMENTS = {
@@ -126,11 +126,15 @@ OPERATIONS = {
     'SWAP': (8, 'ReadWrite')
 }
 
+# Virtual register pairs: stored as individual bytes in CPU::State and
+# accessed through ba()/set_ba() style accessors rather than as lvalues
+PAIR_REGS = {'ba', 'hl'}
+
 def get_name(*args):
     return "inst_%s" % '_'.join([arg.lower() for arg in args if arg])
 
 def format_arg(i, siz, mem, ind, nam):
-    if mem:
+    if mem or nam in PAIR_REGS:
         return "data%i" % i
     else:
         return "cpu.reg.%s" % nam
@@ -169,6 +173,11 @@ def format(cycles, op, *args):
                     print ("\tuint%i_t data%i;" % (size, i))
             elif mem:
                 print ("\tconst uint%i_t data%i = cpu_imm%i(cpu);" % (size, i, siz))
+            elif nam in PAIR_REGS:
+                if "Read" in directions[i]:
+                    print ("\tuint%i_t data%i = cpu.reg.%s();" % (siz, i, nam))
+                else:
+                    print ("\tuint%i_t data%i;" % (siz, i))
 
         if condition:
             print ("\tif (!(%s)) {" % CONDITIONS[condition])
@@ -182,6 +191,8 @@ def format(cycles, op, *args):
         for i, (siz, mem, ind, nam) in enumerate(args):
             if ind and "Write" in directions[i]:
                 print ("\tcpu_write%s(cpu, data%i, addr%i);" % (size, i, i))
+            elif nam in PAIR_REGS and "Write" in directions[i]:
+                print ("\tcpu.reg.set_%s(data%i);" % (nam, i))
             if nam in ['sc', 'nb'] and "Write" in directions[i]:
                 block = True
 

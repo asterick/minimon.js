@@ -41,42 +41,30 @@ const auto TICK_SPEED	= 1000;
 const auto CPU_SPEED	= 1000000;
 
 namespace CPU {
+	// SC register flag bits
+	const uint8_t SC_Z = 0x01;	// Zero
+	const uint8_t SC_C = 0x02;	// Carry
+	const uint8_t SC_V = 0x04;	// Overflow
+	const uint8_t SC_N = 0x08;	// Negative
+	const uint8_t SC_D = 0x10;	// Decimal mode
+	const uint8_t SC_U = 0x20;	// Unpack (nibble) mode
+	const uint8_t SC_I_MASK = 0xC0;	// Interrupt priority level
+	const int     SC_I_SHIFT = 6;
+
+	// CC register flag bits
+	const uint8_t CC_F0 = 0x01;
+	const uint8_t CC_F1 = 0x02;
+	const uint8_t CC_F2 = 0x04;
+	const uint8_t CC_F3 = 0x08;
+
 	struct State {
-		union {
-			struct {
-				uint8_t sc;
-				uint8_t cc;
-			};
+		uint8_t sc;
+		uint8_t cc;
 
-			struct {
-				unsigned int z:1;
-				unsigned int c:1;
-				unsigned int v:1;
-				unsigned int n:1;
-				unsigned int d:1;
-				unsigned int u:1;
-				unsigned int i:2;
-
-				unsigned int f0:1;
-				unsigned int f1:1;
-				unsigned int f2:1;
-				unsigned int f3:1;
-			} flag;
-		};
-
-		union {
-			struct {
-				uint8_t a;
-				uint8_t b;
-				uint8_t l;
-				uint8_t h;
-			};
-
-			struct {
-				uint16_t ba;
-				uint16_t hl;
-			};
-		};
+		uint8_t a;
+		uint8_t b;
+		uint8_t l;
+		uint8_t h;
 
 		uint16_t pc;
 		uint16_t sp;
@@ -90,6 +78,40 @@ namespace CPU {
 
 		uint8_t cb;
 		uint8_t nb;
+
+		uint16_t ba() const {
+			return (b << 8) | a;
+		}
+
+		void set_ba(uint16_t value) {
+			a = (uint8_t)value;
+			b = value >> 8;
+		}
+
+		uint16_t hl() const {
+			return (h << 8) | l;
+		}
+
+		void set_hl(uint16_t value) {
+			l = (uint8_t)value;
+			h = value >> 8;
+		}
+
+		bool flag(uint8_t mask) const {
+			return (sc & mask) != 0;
+		}
+
+		void set_flag(uint8_t mask, bool value) {
+			sc = value ? (sc | mask) : (sc & ~mask);
+		}
+
+		int priority() const {
+			return (sc & SC_I_MASK) >> SC_I_SHIFT;
+		}
+
+		void set_priority(int value) {
+			sc = (sc & ~SC_I_MASK) | ((value << SC_I_SHIFT) & SC_I_MASK);
+		}
 	};
 };
 

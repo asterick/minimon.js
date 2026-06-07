@@ -66,13 +66,13 @@ static inline void fire(Machine::State& cpu, Vector irq, uint8_t priority) {
 
 	cpu_clock(cpu, 7);
 	cpu.reg.pc = cpu_read16(cpu, 2 * (int) irq);
-	cpu.reg.flag.i = priority;
+	cpu.reg.set_priority(priority);
 
 	trace_access(cpu, calc_pc(cpu), TRACE_INSTRUCTION | TRACE_BRANCH_TARGET);
 }
 
 void IRQ::manage(Machine::State& cpu) {
-	if (cpu.reg.flag.i < cpu.irq.next_priority) {
+	if (cpu.reg.priority() < cpu.irq.next_priority) {
 		fire(cpu, cpu.irq.next_irq, cpu.irq.next_priority);
 	}
 }
