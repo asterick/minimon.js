@@ -16,8 +16,15 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-import { useRef } from "react";
-import DockLayout, { type LayoutData, type LayoutBase, type TabData } from 'rc-dock'
+import {
+	DockviewReact,
+	DockviewDefaultTab,
+	themeLight,
+	type DockviewApi,
+	type DockviewReadyEvent,
+	type IDockviewPanelProps,
+	type IDockviewPanelHeaderProps,
+} from 'dockview';
 
 import Screen from "./screen";
 import Registers from "./registers";
@@ -27,118 +34,120 @@ import Settings from "./settings";
 import Blitter from "./blitter";
 
 import 'normalize.css/normalize.css';
-import 'rc-dock/dist/rc-dock.css';
+import 'dockview/dist/styles/dockview.css';
 import "./style.less";
 
-const screen_tab: TabData = {
-	id: 'screen',
-	minWidth: 96,
-	minHeight: 64,
-	title: 'Screen',
-	content: <Screen />,
-	closable: false
+const LAYOUT_KEY = "minimon-dockview";
+
+interface MemoryParams {
+	baseAddress: number;
+	memory: 'ram' | 'eeprom';
+}
+
+function MemoryPanel(props: IDockviewPanelProps<MemoryParams>) {
+	return <Memory baseAddress={props.params.baseAddress} memory={props.params.memory} />;
+}
+
+const components = {
+	screen: Screen,
+	settings: Settings,
+	registers: Registers,
+	blitter: Blitter,
+	disassembly: () => <Disassembler />,
+	memory: MemoryPanel,
 };
-const settings_tab: TabData = {id: 'settings', title: 'Settings', content: <Settings />, closable: false };
 
-const blitter_tab: TabData = {id: 'blitter', title: 'Blitter', content: <Blitter />, closable: true };
-const registers_tab: TabData = {id: 'registers', title: 'Registers', content: <Registers />, closable: true };
-const disassembly_tab: TabData = {id: 'disassembly', title: 'Disassembly', content: <Disassembler />, closable: true };
-const memory_tab: TabData = {id: 'memory', title: 'Memory', content: <Memory baseAddress={0x1000} memory='ram' />, closable: false };
-const eeprom_tab: TabData = {id: 'eeprom', title: 'EEPROM', content: <Memory baseAddress={0} memory='eeprom' />, closable: true };
+const tabComponents = {
+	permanent: (props: IDockviewPanelHeaderProps) => <DockviewDefaultTab hideClose {...props} />,
+};
 
-const all_tabs = [
-	screen_tab,
-	registers_tab,
-	disassembly_tab,
-	memory_tab,
-	eeprom_tab,
-	settings_tab,
-	blitter_tab
+// Panels the user can't close; restored as floating windows if a saved
+// layout is missing them
+const REQUIRED_PANELS = [
+	{ id: 'screen', component: 'screen', title: 'Screen' },
+	{ id: 'settings', component: 'settings', title: 'Settings' },
+	{ id: 'memory', component: 'memory', title: 'Memory', params: { baseAddress: 0x1000, memory: 'ram' } },
 ];
 
-const defaultLayout: LayoutData = {
-	dockbox: {
-		mode: 'horizontal',
-		children: [
-			{
-				mode: 'vertical',
-				children: [
-					{
-						tabs: [screen_tab],
-					},
-					{
-						tabs: [settings_tab],
-					},
-					{
-						tabs: [registers_tab, blitter_tab],
-					}
-				]
-			},
-			{
-				mode: 'vertical',
-				children: [
-					{
-						mode: 'vertical',
-						children: [
-							{ tabs: [disassembly_tab, memory_tab, eeprom_tab] }
-						]
-					}
-				]
+function defaultLayout(api: DockviewApi) {
+	api.addPanel({ id: 'screen', component: 'screen', title: 'Screen', tabComponent: 'permanent' });
+	api.addPanel({
+		id: 'disassembly', component: 'disassembly', title: 'Disassembly',
+		position: { referencePanel: 'screen', direction: 'right' }
+	});
+	api.addPanel({
+		id: 'memory', component: 'memory', title: 'Memory', tabComponent: 'permanent',
+		params: { baseAddress: 0x1000, memory: 'ram' },
+		position: { referencePanel: 'disassembly' }
+	});
+	api.addPanel({
+		id: 'eeprom', component: 'memory', title: 'EEPROM',
+		params: { baseAddress: 0, memory: 'eeprom' },
+		position: { referencePanel: 'disassembly' }
+	});
+	api.addPanel({
+		id: 'settings', component: 'settings', title: 'Settings', tabComponent: 'permanent',
+		position: { referencePanel: 'screen', direction: 'below' }
+	});
+	api.addPanel({
+		id: 'registers', component: 'registers', title: 'Registers',
+		position: { referencePanel: 'settings', direction: 'below' }
+	});
+	api.addPanel({
+		id: 'blitter', component: 'blitter', title: 'Blitter',
+		position: { referencePanel: 'registers' }
+	});
 
-			}
-		]
-	}
-};
-
-interface SavedNode {
-	tabs?: { id?: string }[];
-	children?: SavedNode[];
+	api.getPanel('registers')?.api.setActive();
+	api.getPanel('disassembly')?.api.setActive();
 }
 
-function findTabs(node: SavedNode): string[] {
-	if (node.tabs) {
-		return node.tabs.map((t) => t.id).filter((id): id is string => id !== undefined);
-	} else if (node.children) {
-		return node.children.flatMap(findTabs);
+function onReady(event: DockviewReadyEvent) {
+	const api = event.api;
+
+	// The rc-dock layout format is incompatible; drop any stale copy
+	window.localStorage.removeItem("minimon-layout");
+
+	const preserved = window.localStorage.getItem(LAYOUT_KEY);
+	let restored = false;
+
+	if (preserved) {
+		try {
+			api.fromJSON(JSON.parse(preserved));
+			restored = true;
+		} catch (e) {
+			console.warn("Could not restore saved layout", e);
+			api.clear();
+		}
 	}
 
-	return [];
-}
+	if (!restored) {
+		defaultLayout(api);
+	} else {
+		// Re-add any non-closable panels missing from the saved layout
+		REQUIRED_PANELS
+			.filter((panel) => !api.getPanel(panel.id))
+			.forEach((panel, i) => {
+				api.addPanel({
+					...panel,
+					tabComponent: 'permanent',
+					floating: { x: 16 * (i + 1), y: 16 * (i + 1), width: 300, height: 200 }
+				});
+			});
+	}
 
-function preserveLayout(layout: LayoutBase) {
-	window.localStorage.setItem("minimon-layout", JSON.stringify(layout));
+	api.onDidLayoutChange(() => {
+		window.localStorage.setItem(LAYOUT_KEY, JSON.stringify(api.toJSON()));
+	});
 }
 
 export default function UI() {
-	const loaded = useRef(false);
-
-	function reloadLayout(r: DockLayout | null) {
-		if (loaded.current || !r) return;
-
-		loaded.current = true;
-
-		const preserved = window.localStorage.getItem("minimon-layout");
-
-		if (!preserved) return;
-
-		const layout = JSON.parse(preserved);
-
-		/* This will shove tabs not found in arbitrary places */
-		const found_tabs = [layout.dockbox, layout.floatbox, layout.windowbox, layout.maxbox]
-			.filter(Boolean)
-			.flatMap(findTabs);
-		const add = all_tabs.filter((t) => (!t.closable && found_tabs.indexOf(t.id!) < 0));
-
-		layout.floatbox.children.push(... add.map((v, i) => ({ tabs: [v], x: 16*i, y: 16*i, w: 300, h: 200 }) ));
-
-		/* Give the layout to our manager */
-		r.loadLayout(layout);
-	}
-
-	return <DockLayout
-		ref={reloadLayout}
-		defaultLayout={defaultLayout}
-		onLayoutChange={preserveLayout}
-		style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0}}
-		/>;
+	return <div style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0}}>
+		<DockviewReact
+			components={components}
+			tabComponents={tabComponents}
+			theme={themeLight}
+			onReady={onReady}
+			/>
+	</div>;
 }
