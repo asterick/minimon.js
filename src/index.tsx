@@ -26,7 +26,7 @@ import SystemContext from "./ui/context";
 
 async function main() {
 	const system = new Minimon("default");
-	await system.init(false);
+	await system.init();
 	system.running = true;
 
 	createRoot(document.querySelector(".container")!).render(
