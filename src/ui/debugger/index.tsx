@@ -17,7 +17,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Button, ButtonGroup, HTMLSelect, Switch } from "@blueprintjs/core";
+import { Button, ButtonGroup, HTMLSelect, InputGroup, Switch } from "@blueprintjs/core";
 import { useVirtualizer } from '@tanstack/react-virtual';
 
 import classes from "./style.module.less";
@@ -121,13 +121,37 @@ export default function Debugger() {
 		}
 	}, [followPC, pcLine, virtualizer]);
 
-	function toggleBreakpoint(line: DocumentLine) {
-		if (line.kind !== 'code') return;
+	function goTo(text: string) {
+		const address = parseInt(text.trim().replace(/^0x/i, "").replace(/h$/i, ""), 16);
+		if (isNaN(address) || address < 0 || address > 0xFFFF) return;
 
-		if (system.breakpoints.has(line.physical)) {
-			system.breakpoints.delete(line.physical);
-		} else {
+		// A manual jump means the user wants to look around
+		setFollowPC(false);
+		// Rows are fixed-height, so the offset is exact (scrollToIndex
+		// works from estimates and can land a row short)
+		virtualizer.scrollToOffset(doc.lineAt(address) * ROW_HEIGHT);
+	}
+
+	// A line carries a marker if any of its bytes has a breakpoint —
+	// notably, halting at a breakpoint prevents that byte from being
+	// classified as code, so the marker must show on hex rows too
+	function lineBreakpoints(line: DocumentLine): number[] {
+		const hits = [];
+		for (let i = 0; i < line.length; i++) {
+			if (system.breakpoints.has(line.physical + i)) hits.push(line.physical + i);
+		}
+		return hits;
+	}
+
+	function toggleBreakpoint(line: DocumentLine) {
+		const existing = lineBreakpoints(line);
+
+		if (existing.length) {
+			for (const address of existing) system.breakpoints.delete(address);
+		} else if (line.kind === 'code') {
 			system.breakpoints.add(line.physical);
+		} else {
+			return;
 		}
 
 		system.update();
@@ -164,6 +188,14 @@ export default function Debugger() {
 					className={classes.follow}
 					onChange={(e) => setFollowPC(e.currentTarget.checked)}
 				/>
+
+				<InputGroup
+					placeholder="Go to…"
+					className={classes.goto}
+					onKeyDown={(e) => {
+						if (e.key === 'Enter') goTo(e.currentTarget.value);
+					}}
+				/>
 			</div>
 
 			<div ref={scroller} className={classes.listing}>
@@ -187,7 +219,7 @@ export default function Debugger() {
 									document={doc}
 									line={line}
 									atPC={row.index === pcLine}
-									hasBreakpoint={line.kind === 'code' && system.breakpoints.has(line.physical)}
+									hasBreakpoint={lineBreakpoints(line).length > 0}
 									onToggleBreakpoint={toggleBreakpoint}
 								/>
 							</div>
