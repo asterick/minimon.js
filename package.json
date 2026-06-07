@@ -23,11 +23,7 @@
     "url": "https://github.com/asterick/minimon.js/issues"
   },
   "homepage": "https://github.com/asterick/minimon.js#readme",
-  "overrides": {
-    "uuid": "^11.1.1"
-  },
   "dependencies": {
-    "@fluentui/react": "^8.123.0",
     "normalize.css": "^8.0.1",
     "rc-dock": "^3.3.1",
     "react": "^18.3.1",
@@ -35,6 +31,8 @@
     "react-virtualized": "^9.22.6"
   },
   "devDependencies": {
+    "@types/react": "^18.3.31",
+    "@types/react-dom": "^18.3.7",
     "@types/react-virtualized": "^9.22.3",
     "@vitejs/plugin-react": "^4.3.4",
     "less": "^4.2.2",
