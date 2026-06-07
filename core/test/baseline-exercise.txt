@@ -1,30 +1,30 @@
-  1 48d0c551a2c1c4f2 pc=01:0d5e status=0 ctrl=7f
-  2 6945c239e639f2f4 pc=01:0d5b status=0 ctrl=7f
-  3 c0c942444ac88b66 pc=01:0d5b status=0 ctrl=7f
-  4 b5a691312af211dd pc=01:0d5e status=0 ctrl=7f
-  5 c1d49c8bab4cb69b pc=01:07e6 status=1 ctrl=7f
-  6 c1d49c8bab4cb69b pc=01:07e6 status=1 ctrl=7f
-  7 c1d49c8bab4cb69b pc=01:07e6 status=1 ctrl=7f
-  8 c1d49c8bab4cb69b pc=01:07e6 status=1 ctrl=7f
-  9 c1d49c8bab4cb69b pc=01:07e6 status=1 ctrl=7f
- 10 c1d49c8bab4cb69b pc=01:07e6 status=1 ctrl=7f
- 11 c1d49c8bab4cb69b pc=01:07e6 status=1 ctrl=7f
- 12 c1d49c8bab4cb69b pc=01:07e6 status=1 ctrl=7f
- 13 c1d49c8bab4cb69b pc=01:07e6 status=1 ctrl=7f
- 14 c1d49c8bab4cb69b pc=01:07e6 status=1 ctrl=7f
- 15 c1d49c8bab4cb69b pc=01:07e6 status=1 ctrl=7f
- 16 c1d49c8bab4cb69b pc=01:07e6 status=1 ctrl=7f
- 17 c1d49c8bab4cb69b pc=01:07e6 status=1 ctrl=7f
- 18 c1d49c8bab4cb69b pc=01:07e6 status=1 ctrl=7f
- 19 c1d49c8bab4cb69b pc=01:07e6 status=1 ctrl=7f
- 20 c1d49c8bab4cb69b pc=01:07e6 status=1 ctrl=7f
- 21 c1d49c8bab4cb69b pc=01:07e6 status=1 ctrl=7f
- 22 c1d49c8bab4cb69b pc=01:07e6 status=1 ctrl=7f
- 23 c1d49c8bab4cb69b pc=01:07e6 status=1 ctrl=7f
- 24 c1d49c8bab4cb69b pc=01:07e6 status=1 ctrl=7f
- 25 c1d49c8bab4cb69b pc=01:07e6 status=1 ctrl=7f
- 26 c1d49c8bab4cb69b pc=01:07e6 status=1 ctrl=7f
- 27 c1d49c8bab4cb69b pc=01:07e6 status=1 ctrl=7f
- 28 c1d49c8bab4cb69b pc=01:07e6 status=1 ctrl=7f
- 29 c1d49c8bab4cb69b pc=01:07e6 status=1 ctrl=7f
- 30 c1d49c8bab4cb69b pc=01:07e6 status=1 ctrl=7f
+  1 48d0c551a2c1c4f2 pc=01:0d5e status=0 ctrl=7f rtc=000000+4000
+  2 6945c239e639f2f4 pc=01:0d5b status=0 ctrl=7f rtc=000000+6000
+  3 c0c942444ac88b66 pc=01:0d5b status=0 ctrl=7f rtc=000001+0000
+  4 b5a691312af211dd pc=01:0d5e status=0 ctrl=7f rtc=000001+2000
+  5 c1d49c8bab4cb69b pc=01:07e6 status=1 ctrl=7f rtc=000001+4000
+  6 c1d49c8bab4cb69b pc=01:07e6 status=1 ctrl=7f rtc=000001+6000
+  7 c1d49c8bab4cb69b pc=01:07e6 status=1 ctrl=7f rtc=000002+0000
+  8 c1d49c8bab4cb69b pc=01:07e6 status=1 ctrl=7f rtc=000002+2000
+  9 c1d49c8bab4cb69b pc=01:07e6 status=1 ctrl=7f rtc=000002+4000
+ 10 c1d49c8bab4cb69b pc=01:07e6 status=1 ctrl=7f rtc=000002+6000
+ 11 c1d49c8bab4cb69b pc=01:07e6 status=1 ctrl=7f rtc=000003+0000
+ 12 c1d49c8bab4cb69b pc=01:07e6 status=1 ctrl=7f rtc=000003+2000
+ 13 c1d49c8bab4cb69b pc=01:07e6 status=1 ctrl=7f rtc=000003+4000
+ 14 c1d49c8bab4cb69b pc=01:07e6 status=1 ctrl=7f rtc=000003+6000
+ 15 c1d49c8bab4cb69b pc=01:07e6 status=1 ctrl=7f rtc=000004+0000
+ 16 c1d49c8bab4cb69b pc=01:07e6 status=1 ctrl=7f rtc=000004+2000
+ 17 c1d49c8bab4cb69b pc=01:07e6 status=1 ctrl=7f rtc=000004+4000
+ 18 c1d49c8bab4cb69b pc=01:07e6 status=1 ctrl=7f rtc=000004+6000
+ 19 c1d49c8bab4cb69b pc=01:07e6 status=1 ctrl=7f rtc=000005+0000
+ 20 c1d49c8bab4cb69b pc=01:07e6 status=1 ctrl=7f rtc=000005+2000
+ 21 c1d49c8bab4cb69b pc=01:07e6 status=1 ctrl=7f rtc=000005+4000
+ 22 c1d49c8bab4cb69b pc=01:07e6 status=1 ctrl=7f rtc=000005+6000
+ 23 c1d49c8bab4cb69b pc=01:07e6 status=1 ctrl=7f rtc=000006+0000
+ 24 c1d49c8bab4cb69b pc=01:07e6 status=1 ctrl=7f rtc=000006+2000
+ 25 c1d49c8bab4cb69b pc=01:07e6 status=1 ctrl=7f rtc=000006+4000
+ 26 c1d49c8bab4cb69b pc=01:07e6 status=1 ctrl=7f rtc=000006+6000
+ 27 c1d49c8bab4cb69b pc=01:07e6 status=1 ctrl=7f rtc=000007+0000
+ 28 c1d49c8bab4cb69b pc=01:07e6 status=1 ctrl=7f rtc=000007+2000
+ 29 c1d49c8bab4cb69b pc=01:07e6 status=1 ctrl=7f rtc=000007+4000
+ 30 c1d49c8bab4cb69b pc=01:07e6 status=1 ctrl=7f rtc=000007+6000

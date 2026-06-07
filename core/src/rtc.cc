@@ -30,9 +30,9 @@ void RTC::clock(Machine::State& cpu, int osc1) {
 	if (cpu.rtc.running) {
 		cpu.rtc.prescale += osc1;
 
-		while (cpu.rtc.prescale >= 0x8000)	 {
+		while (cpu.rtc.prescale >= 0x8000) {
 			cpu.rtc.value ++;
-			cpu.rtc.prescale -= cpu.rtc.prescale;
+			cpu.rtc.prescale -= 0x8000;
 		}
 	}
 }

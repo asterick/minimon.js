@@ -63,7 +63,7 @@ interface CoreExports {
 
 export class Minimon {
 	state!: MachineState;
-	breakpoints: number[] = [];
+	breakpoints = new Set<number>();
 
 	private _listeners = new Set<() => void>();
 	private _version = 0;
@@ -200,11 +200,11 @@ export class Minimon {
 
 			time = now;
 
-			if (this.breakpoints.length) {
+			if (this.breakpoints.size) {
 				this.state.clocks += delta;	// advance our clock
 
 				while (this.state.clocks > 0) {
-					if (this.breakpoints.indexOf(this.translate(this.state.cpu.pc)) >= 0) {
+					if (this.breakpoints.has(this.translate(this.state.cpu.pc))) {
 						this.running = false;
 						break;
 					}

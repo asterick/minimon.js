@@ -6,11 +6,11 @@
     "core": "cd core; make wasm",
     "retroarch": "cd core/libretro; make test",
     "table": "python3 ./tools/convert.py > ./src/system/table.ts.tmp && mv ./src/system/table.ts.tmp ./src/system/table.ts",
-    "check": "npm run table; tsc --noEmit",
-    "start": "npm run table; vite",
-    "build": "npm run table; npm run core; vite build",
+    "check": "npm run table && tsc --noEmit",
+    "start": "npm run table && vite",
+    "build": "npm run table && npm run core && vite build",
     "preview": "vite preview",
-    "deploy": "npm run build; scp -r dist/* node@scyl.us:~/minimon/"
+    "deploy": "npm run build && scp -r dist/* node@scyl.us:~/minimon/"
   },
   "keywords": [],
   "author": "Bryon Vandiver",
