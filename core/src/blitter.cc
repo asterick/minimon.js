@@ -22,8 +22,9 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 static const int SCREEN_WIDTH = 96;
 static const int SCREEN_HEIGHT = 64;
 
-union FrameBuffer {
-	uint8_t  bytes[SCREEN_WIDTH][8];
+// Working render target: one 64-pixel column per screen X, with guest
+// framebuffer byte y occupying bits 8y..8y+7 (LSB = topmost pixel)
+struct FrameBuffer {
 	uint64_t column[SCREEN_WIDTH];
 };
 
@@ -125,23 +126,27 @@ void Blitter::clock(Machine::State& cpu) {
 		}
 	} else {
 		for (int x = 0; x < SCREEN_WIDTH; x++) {
+			uint64_t column = 0;
+
 			for (int y = 0; y < 8; y++) {
-				target.bytes[x][y] = cpu.overlay.framebuffer[y][x];
+				column |= (uint64_t)cpu.overlay.framebuffer[y][x] << (8 * y);
 			}
+
+			target.column[x] = column;
 		}
 	}
 
 	if (cpu.blitter.enable_sprites()) {
 		for (int i = 23; i >= 0; i--) {
 			Sprite& sprite = cpu.overlay.oam[i];
-		
-			if (!sprite.enable) continue ;
 
-			auto address = cpu.blitter.sprite_base + sprite.tile * (8 * 8);
-			int dx = sprite.x - 16;
-			int dy = sprite.y - 16;
+			if (!sprite.enable()) continue ;
 
-			int invert = sprite.x_flip ? 0b0100111 : 0;
+			auto address = cpu.blitter.sprite_base + sprite.tile() * (8 * 8);
+			int dx = sprite.x() - 16;
+			int dy = sprite.y() - 16;
+
+			int invert = sprite.x_flip() ? 0b0100111 : 0;
 
 			if (dy <= -16 || dy >= SCREEN_HEIGHT) continue ;
 
@@ -162,12 +167,12 @@ void Blitter::clock(Machine::State& cpu) {
 					trace_access(cpu, (address^invert)+16, TRACE_SPRITE_DATA);
 					trace_access(cpu, (address^invert)+24, TRACE_SPRITE_DATA);
 
-					if (sprite.y_flip) {
+					if (sprite.y_flip()) {
 						mask = rev(mask);
 						draw = rev(draw);
 					}
 
-					if (sprite.invert) {
+					if (sprite.invert()) {
 						draw = ~draw;
 					}
 
@@ -184,7 +189,7 @@ void Blitter::clock(Machine::State& cpu) {
 	// Copy back to ram
 	for (int x = 0; x < SCREEN_WIDTH; x++) {
 		for (int y = 0; y < 8; y++) {
-			cpu.overlay.framebuffer[y][x] = target.bytes[x][y];
+			cpu.overlay.framebuffer[y][x] = (uint8_t)(target.column[x] >> (8 * y));
 		}
 	}
 
