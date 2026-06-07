@@ -4,5 +4,6 @@ node_modules
 dist
 public
 src/system/table.ts
+src/system/table.ts.tmp
 !public/favicon.png
 table.h
