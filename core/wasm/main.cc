@@ -57,6 +57,39 @@ extern "C" Machine::State* const get_machine() {
 	return &machine_state;
 }
 
+/*
+ * Classification maps for the debugger: every traced access ORs its
+ * TraceType flags into the byte for that address, classifying it as
+ * code (TRACE_INSTRUCTION), data (reads/writes/immediates/tile/sprite),
+ * or unknown (never touched). Keeping them inside the core means no
+ * wasm->JS call per memory access; the JS side reads them as typed
+ * array views.
+ *
+ * Two maps, two lifetimes: the BIOS never changes, so its map is
+ * persisted by the front-end across sessions; the cartridge map is
+ * cleared by the front-end whenever the cartridge changes. RAM and
+ * hardware registers (0x1000-0x20FF) are always data and aren't
+ * tracked.
+ */
+static uint8_t bios_trace[0x1000];
+static uint8_t cartridge_trace[0x200000];
+
+extern "C" void trace_access(Machine::State& cpu, uint32_t address, uint32_t kind, uint8_t data) {
+	if (address < 0x1000) {
+		bios_trace[address] |= (uint8_t)kind;
+	} else if (address >= 0x2100) {
+		cartridge_trace[address % sizeof(cartridge_trace)] |= (uint8_t)kind;
+	}
+}
+
+extern "C" uint8_t* get_bios_trace() {
+	return bios_trace;
+}
+
+extern "C" uint8_t* get_cartridge_trace() {
+	return cartridge_trace;
+}
+
 static const StructDecl CpuState = {
 	sizeof(CPU::State),
 	(const FieldDecl[]) {
