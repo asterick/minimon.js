@@ -17,14 +17,11 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
 import { createRoot } from "react-dom/client";
-import { initializeIcons } from '@fluentui/react/lib/Icons';
 
 import { Minimon } from "./system";
 
 import UI from "./ui";
 import SystemContext from "./ui/context";
-
-initializeIcons();
 
 async function main() {
 	const system = new Minimon("default");

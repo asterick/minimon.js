@@ -1,0 +1,81 @@
+@import "../settings.less";
+
+.settings {
+	padding: 10px;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	align-items: flex-start;
+}
+
+.row {
+	display: flex;
+	gap: 10px;
+}
+
+.settings button {
+	padding: 5px 16px;
+	border: 1px solid @grey-medium;
+	border-radius: 2px;
+	background: @white;
+	font: inherit;
+	cursor: pointer;
+
+	&:hover {
+		background: @grey-light;
+	}
+
+	&:active {
+		background: @original;
+	}
+}
+
+.toggle {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	cursor: pointer;
+	user-select: none;
+
+	input {
+		position: absolute;
+		opacity: 0;
+		pointer-events: none;
+	}
+
+	input:focus-visible + .track {
+		outline: 2px solid @blue;
+		outline-offset: 1px;
+	}
+
+	input:checked + .track {
+		background: @blue;
+		border-color: @blue;
+
+		.thumb {
+			left: 21px;
+			background: @white;
+		}
+	}
+}
+
+.track {
+	width: 40px;
+	height: 20px;
+	border: 1px solid @grey-medium;
+	border-radius: 10px;
+	position: relative;
+	background: @white;
+	transition: background 0.1s;
+}
+
+.thumb {
+	position: absolute;
+	top: 3px;
+	left: 3px;
+	width: 12px;
+	height: 12px;
+	border-radius: 50%;
+	background: @grey-medium;
+	transition: left 0.1s, background 0.1s;
+}
