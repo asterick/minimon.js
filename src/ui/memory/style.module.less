@@ -1,5 +1,3 @@
-@import "../settings.less";
-
 .memory {
 	text-align: center;
 	font-family: 'Roboto Mono', monospace;
@@ -22,16 +20,12 @@
 	width: calc(6ch + 4px);
 	text-align: left;
 	display: inline-block;
-	color: @green;
+	color: var(--color-address);
 }
 
 .byteCell {
 	width: calc(2ch + 3px);
 	text-align: center;
 	display: inline-block;
-	color: @violet;
-}
-
-.changed {
-	color: @magenta;
+	color: var(--color-data);
 }

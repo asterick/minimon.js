@@ -20,11 +20,14 @@ import {
 	DockviewReact,
 	DockviewDefaultTab,
 	themeLight,
+	themeDark,
 	type DockviewApi,
 	type DockviewReadyEvent,
 	type IDockviewPanelProps,
 	type IDockviewPanelHeaderProps,
 } from 'dockview';
+
+import { usePrefersDark } from "./use-prefers-dark";
 
 import Screen from "./screen";
 import Registers from "./registers";
@@ -33,7 +36,10 @@ import Disassembler from "./disassemble";
 import Settings from "./settings";
 import Blitter from "./blitter";
 
+import { Classes } from "@blueprintjs/core";
+
 import 'normalize.css/normalize.css';
+import '@blueprintjs/core/lib/css/blueprint.css';
 import 'dockview/dist/styles/dockview.css';
 import "./style.less";
 
@@ -142,11 +148,15 @@ function onReady(event: DockviewReadyEvent) {
 }
 
 export default function UI() {
-	return <div style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0}}>
+	const prefersDark = usePrefersDark();
+
+	return <div
+		className={prefersDark ? Classes.DARK : undefined}
+		style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0}}>
 		<DockviewReact
 			components={components}
 			tabComponents={tabComponents}
-			theme={themeLight}
+			theme={prefersDark ? themeDark : themeLight}
 			onReady={onReady}
 			/>
 	</div>;

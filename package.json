@@ -24,6 +24,8 @@
   },
   "homepage": "https://github.com/asterick/minimon.js#readme",
   "dependencies": {
+    "@blueprintjs/core": "^6.15.0",
+    "@blueprintjs/icons": "^6.10.0",
     "@tanstack/react-virtual": "^3.14.2",
     "dockview": "^6.6.1",
     "normalize.css": "^8.0.1",
