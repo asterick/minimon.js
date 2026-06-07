@@ -19,6 +19,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #pragma once
 
 #include <stdint.h>
+#include <stddef.h>
 
 namespace Machine { struct State; };
 
@@ -69,6 +70,14 @@ namespace Blitter {
 		// a union arm are not portable C++)
 		uint8_t map[0x1000 - sizeof(uint8_t[8][96]) - sizeof(Sprite[24])];
 	};
+
+	// Overlay is a view over the guest's 4KB RAM window (it shares a
+	// union with Machine::State::ram); pin the layout so a compiler
+	// that pads these structs fails loudly instead of corrupting state
+	static_assert(sizeof(Sprite) == 4, "OAM entries are 4 guest bytes");
+	static_assert(sizeof(Overlay) == 0x1000, "Overlay must span the RAM window exactly");
+	static_assert(offsetof(Overlay, oam) == 768, "OAM must directly follow the framebuffer");
+	static_assert(offsetof(Overlay, map) == 864, "map data must directly follow OAM");
 
 	// enables bits (0x2080)
 	const uint8_t ENABLES_INVERT_MAP     = 0x01;

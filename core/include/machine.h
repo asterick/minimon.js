@@ -141,6 +141,9 @@ namespace Machine {
 		int osc1_overflow;
 		Status status;
 
+		// The blitter's overlay is a structured view over guest RAM;
+		// both arms are plain byte arrays of identical size (asserted
+		// in blitter.h), so the aliasing is layout-deterministic
 		union {
 			uint8_t ram[0x1000];
 		 	Blitter::Overlay overlay;
