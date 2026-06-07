@@ -29,6 +29,9 @@ async function main() {
 	await system.init();
 	system.running = true;
 
+	// Console access for poking at the machine while debugging
+	(window as unknown as { minimon: Minimon }).minimon = system;
+
 	createRoot(document.querySelector(".container")!).render(
 		<BlueprintProvider>
 			<SystemContext.Provider value={system}>

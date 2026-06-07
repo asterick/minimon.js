@@ -137,10 +137,18 @@ export class Minimon {
 
 		window.localStorage.setItem(`${this._name}-eeprom`, encoded);
 		window.localStorage.setItem(`${this._name}-rtc`, JSON.stringify({ prescale, running, value, timestamp: +Date.now() }));
+		window.localStorage.setItem(`${this._name}-breakpoints`, JSON.stringify([...this.breakpoints]));
 	}
 
 	restore(): void {
 		if (!this.state) return;
+
+		try {
+			const breakpoints = JSON.parse(window.localStorage.getItem(`${this._name}-breakpoints`) ?? "[]");
+			this.breakpoints = new Set(breakpoints.filter((v: unknown) => typeof v === "number"));
+		} catch (e) {
+			console.log("Could not restore breakpoints");
+		}
 
 		try {
 			const encoded = window.localStorage.getItem(`${this._name}-eeprom`)!;
