@@ -37,7 +37,7 @@ static inline uint32_t calc_absBR(Machine::State& cpu) {
 }
 
 static inline uint32_t calc_absHL(Machine::State& cpu) {
-	return (cpu.reg.ep << 16) | cpu.reg.hl;
+	return (cpu.reg.ep << 16) | cpu.reg.hl();
 }
 
 static inline uint32_t calc_absIX(Machine::State& cpu) {
@@ -74,7 +74,7 @@ static inline uint32_t calc_indIIY(Machine::State& cpu) {
  **/
 
 static inline uint8_t add8(Machine::State& cpu, uint8_t t, uint8_t s, int carry) {
-	if (cpu.reg.flag.u) {
+	if (cpu.reg.flag(CPU::SC_U)) {
 		t <<= 4;
 		s <<= 4;
 		carry <<= 4;
@@ -82,23 +82,23 @@ static inline uint8_t add8(Machine::State& cpu, uint8_t t, uint8_t s, int carry)
 
 	int o = t + s + carry;
 
-	if (cpu.reg.flag.d) {
+	if (cpu.reg.flag(CPU::SC_D)) {
 		int h = (t & 0xF) + (s & 0xF) + carry;
 
 		if (h >= 0x0A) o += 0x6;
 		if (o >= 0xA0) o += 0x60;
 
-		cpu.reg.flag.v = 0;
-		cpu.reg.flag.n = 0;
+		cpu.reg.set_flag(CPU::SC_V, 0);
+		cpu.reg.set_flag(CPU::SC_N, 0);
 	} else {
-		cpu.reg.flag.v = ((t ^ ~s) & (t ^ o) & 0x80) != 0;
-		cpu.reg.flag.n = (o & 0x80) != 0;
+		cpu.reg.set_flag(CPU::SC_V, ((t ^ ~s) & (t ^ o) & 0x80) != 0);
+		cpu.reg.set_flag(CPU::SC_N, (o & 0x80) != 0);
 	}
 
-	cpu.reg.flag.c = o >= 0x100;
-	cpu.reg.flag.z = (o & 0xFF) == 0;
+	cpu.reg.set_flag(CPU::SC_C, o >= 0x100);
+	cpu.reg.set_flag(CPU::SC_Z, (o & 0xFF) == 0);
 
-	if (cpu.reg.flag.u) {
+	if (cpu.reg.flag(CPU::SC_U)) {
 		return (o & 0xF0) >> 4;
 	} else {
 		return o & 0xFF;
@@ -106,7 +106,7 @@ static inline uint8_t add8(Machine::State& cpu, uint8_t t, uint8_t s, int carry)
 }
 
 static inline uint8_t sub8(Machine::State& cpu, uint8_t t, uint8_t s, int carry) {
-	if (cpu.reg.flag.u) {
+	if (cpu.reg.flag(CPU::SC_U)) {
 		t <<= 4;
 		s <<= 4;
 		carry <<= 4;
@@ -114,23 +114,23 @@ static inline uint8_t sub8(Machine::State& cpu, uint8_t t, uint8_t s, int carry)
 
 	int o = t - s - carry;
 
-	if (cpu.reg.flag.d) {
+	if (cpu.reg.flag(CPU::SC_D)) {
 		int h = (t & 0xF) - (s & 0xF) - carry;
 
 		if (h < 0) o -= 0x6;
 		if (o < 0) o -= 0x60;
 
-		cpu.reg.flag.v = 0;
-		cpu.reg.flag.n = 0;
+		cpu.reg.set_flag(CPU::SC_V, 0);
+		cpu.reg.set_flag(CPU::SC_N, 0);
 	} else {
-		cpu.reg.flag.v = ((t ^ s) & (t ^ o) & 0x80) != 0;
-		cpu.reg.flag.n = (o & 0x80) != 0;
+		cpu.reg.set_flag(CPU::SC_V, ((t ^ s) & (t ^ o) & 0x80) != 0);
+		cpu.reg.set_flag(CPU::SC_N, (o & 0x80) != 0);
 	}
 
-	cpu.reg.flag.c = o < 0;
-	cpu.reg.flag.z = (o & 0xFF) == 0;
+	cpu.reg.set_flag(CPU::SC_C, o < 0);
+	cpu.reg.set_flag(CPU::SC_Z, (o & 0xFF) == 0);
 
-	if (cpu.reg.flag.u) {
+	if (cpu.reg.flag(CPU::SC_U)) {
 		return (o & 0xF0) >> 4;
 	} else {
 		return o & 0xFF;
@@ -174,7 +174,7 @@ static inline void op_add8(Machine::State& cpu, uint8_t& t, uint8_t s) {
 }
 
 static inline void op_adc8(Machine::State& cpu, uint8_t& t, uint8_t s) {
-	t = add8(cpu, t, s, cpu.reg.flag.c);
+	t = add8(cpu, t, s, cpu.reg.flag(CPU::SC_C));
 }
 
 static inline void op_sub8(Machine::State& cpu, uint8_t& t, uint8_t s) {
@@ -182,57 +182,57 @@ static inline void op_sub8(Machine::State& cpu, uint8_t& t, uint8_t s) {
 }
 
 static inline void op_sbc8(Machine::State& cpu, uint8_t& t, uint8_t s) {
-	t = sub8(cpu, t, s, cpu.reg.flag.c);
+	t = sub8(cpu, t, s, cpu.reg.flag(CPU::SC_C));
 }
 
 static inline void op_and8(Machine::State& cpu, uint8_t& t, uint8_t s) {
 	uint8_t out = t & s;
-	cpu.reg.flag.z = (out == 0);
-	cpu.reg.flag.n = (out & 0x80) != 0;
+	cpu.reg.set_flag(CPU::SC_Z, (out == 0));
+	cpu.reg.set_flag(CPU::SC_N, (out & 0x80) != 0);
 	t = out;
 }
 
 static inline void op_or8(Machine::State& cpu, uint8_t& t, uint8_t s) {
 	uint8_t out = t | s;
-	cpu.reg.flag.z = (out == 0);
-	cpu.reg.flag.n = (out & 0x80) != 0;
+	cpu.reg.set_flag(CPU::SC_Z, (out == 0));
+	cpu.reg.set_flag(CPU::SC_N, (out & 0x80) != 0);
 	t = out;
 }
 
 static inline void op_xor8(Machine::State& cpu, uint8_t& t, uint8_t s) {
 	uint8_t out = t ^ s;
-	cpu.reg.flag.z = (out == 0);
-	cpu.reg.flag.n = (out & 0x80) != 0;
+	cpu.reg.set_flag(CPU::SC_Z, (out == 0));
+	cpu.reg.set_flag(CPU::SC_N, (out & 0x80) != 0);
 	t = out;
 }
 
 static inline void op_cp8(Machine::State& cpu, uint8_t t, uint8_t s) {
 	int uo = t - s;
 
-	cpu.reg.flag.v = ((t ^ s) & (t ^ uo) & 0x80) != 0;
-	cpu.reg.flag.z = (uo & 0xFF) == 0;
-	cpu.reg.flag.c = uo < 0;
-	cpu.reg.flag.n = (uo & 0x80) != 0;
+	cpu.reg.set_flag(CPU::SC_V, ((t ^ s) & (t ^ uo) & 0x80) != 0);
+	cpu.reg.set_flag(CPU::SC_Z, (uo & 0xFF) == 0);
+	cpu.reg.set_flag(CPU::SC_C, uo < 0);
+	cpu.reg.set_flag(CPU::SC_N, (uo & 0x80) != 0);
 }
 
 static inline void op_bit8(Machine::State& cpu, uint8_t t, uint8_t s) {
 	auto v = t & s;
-	cpu.reg.flag.z = (v == 0);
-	cpu.reg.flag.n = (v & 0x80) != 0;
+	cpu.reg.set_flag(CPU::SC_Z, (v == 0));
+	cpu.reg.set_flag(CPU::SC_N, (v & 0x80) != 0);
 }
 
 static inline void op_inc8(Machine::State& cpu, uint8_t& t) {
-	cpu.reg.flag.z = (0 == ++t);
+	cpu.reg.set_flag(CPU::SC_Z, (0 == ++t));
 }
 
 static inline void op_dec8(Machine::State& cpu, uint8_t& t) {
-	cpu.reg.flag.z = (0 == --t);
+	cpu.reg.set_flag(CPU::SC_Z, (0 == --t));
 }
 
 static inline void op_cpl8(Machine::State& cpu, uint8_t& t) {
 	t = ~t;
-	cpu.reg.flag.z = (t == 0);
-	cpu.reg.flag.n = (t & 0x80) != 0;
+	cpu.reg.set_flag(CPU::SC_Z, (t == 0));
+	cpu.reg.set_flag(CPU::SC_N, (t & 0x80) != 0);
 }
 
 static inline void op_neg8(Machine::State& cpu, uint8_t& t) {
@@ -240,12 +240,12 @@ static inline void op_neg8(Machine::State& cpu, uint8_t& t) {
 }
 
 static inline void inst_mlt(Machine::State& cpu) {
-	cpu.reg.hl = (unsigned int)cpu.reg.l * (unsigned int)cpu.reg.a;
+	cpu.reg.set_hl((unsigned int)cpu.reg.l * (unsigned int)cpu.reg.a);
 
-	cpu.reg.flag.z = cpu.reg.hl == 0;
-	cpu.reg.flag.c = 0;
-	cpu.reg.flag.v = 0;
-	cpu.reg.flag.n = (cpu.reg.hl & 0x8000) != 0;
+	cpu.reg.set_flag(CPU::SC_Z, cpu.reg.hl() == 0);
+	cpu.reg.set_flag(CPU::SC_C, 0);
+	cpu.reg.set_flag(CPU::SC_V, 0);
+	cpu.reg.set_flag(CPU::SC_N, (cpu.reg.hl() & 0x8000) != 0);
 }
 
 static inline void inst_div(Machine::State& cpu) {
@@ -254,19 +254,19 @@ static inline void inst_div(Machine::State& cpu) {
 		return ;
 	}
 
-	int div = cpu.reg.hl / cpu.reg.a;
+	int div = cpu.reg.hl() / cpu.reg.a;
 
-	cpu.reg.flag.c = 0;
+	cpu.reg.set_flag(CPU::SC_C, 0);
 
 	if (div < 0x100) {
-		cpu.reg.h = cpu.reg.hl % cpu.reg.a;
+		cpu.reg.h = cpu.reg.hl() % cpu.reg.a;
 		cpu.reg.l = (uint8_t)div;
-		cpu.reg.flag.n = (div & 0x80) != 0;
-		cpu.reg.flag.z = cpu.reg.l == 0;	// Not sure when this is calculated
-		cpu.reg.flag.v = 0;
+		cpu.reg.set_flag(CPU::SC_N, (div & 0x80) != 0);
+		cpu.reg.set_flag(CPU::SC_Z, cpu.reg.l == 0);	// Not sure when this is calculated
+		cpu.reg.set_flag(CPU::SC_V, 0);
 	} else {
-		cpu.reg.flag.n = 1;
-		cpu.reg.flag.v = 1;
+		cpu.reg.set_flag(CPU::SC_N, 1);
+		cpu.reg.set_flag(CPU::SC_V, 1);
 	}
 }
 
@@ -277,59 +277,59 @@ static inline void inst_div(Machine::State& cpu) {
 static inline void op_add16(Machine::State& cpu, uint16_t& t, uint16_t s) {
 	int uo = t + s;
 
-	cpu.reg.flag.v = ((t ^ ~s) & (t ^ uo) & 0x8000) != 0;
-	cpu.reg.flag.c = uo >= 0x10000;
-	cpu.reg.flag.n = (uo & 0x8000) != 0;
+	cpu.reg.set_flag(CPU::SC_V, ((t ^ ~s) & (t ^ uo) & 0x8000) != 0);
+	cpu.reg.set_flag(CPU::SC_C, uo >= 0x10000);
+	cpu.reg.set_flag(CPU::SC_N, (uo & 0x8000) != 0);
 	t = (uint16_t)uo;
-	cpu.reg.flag.z = t == 0;
+	cpu.reg.set_flag(CPU::SC_Z, t == 0);
 }
 
 static inline void op_adc16(Machine::State& cpu, uint16_t& t, uint16_t s) {
-	int uo = t + s + cpu.reg.flag.c;
+	int uo = t + s + cpu.reg.flag(CPU::SC_C);
 
-	cpu.reg.flag.v = ((t ^ ~s) & (t ^ uo) & 0x8000) != 0;
-	cpu.reg.flag.c = uo >= 0x10000;
-	cpu.reg.flag.n = (uo & 0x8000) != 0;
+	cpu.reg.set_flag(CPU::SC_V, ((t ^ ~s) & (t ^ uo) & 0x8000) != 0);
+	cpu.reg.set_flag(CPU::SC_C, uo >= 0x10000);
+	cpu.reg.set_flag(CPU::SC_N, (uo & 0x8000) != 0);
 	t = (uint16_t)uo;
-	cpu.reg.flag.z = t == 0;
+	cpu.reg.set_flag(CPU::SC_Z, t == 0);
 }
 
 static inline void op_sub16(Machine::State& cpu, uint16_t& t, uint16_t s) {
 	int uo = t - s;
 
-	cpu.reg.flag.v = ((t ^ s) & (t ^ uo) & 0x8000) != 0;
-	cpu.reg.flag.c = uo < 0;
-	cpu.reg.flag.n = (uo & 0x8000) != 0;
+	cpu.reg.set_flag(CPU::SC_V, ((t ^ s) & (t ^ uo) & 0x8000) != 0);
+	cpu.reg.set_flag(CPU::SC_C, uo < 0);
+	cpu.reg.set_flag(CPU::SC_N, (uo & 0x8000) != 0);
 	t = (uint16_t)uo;
-	cpu.reg.flag.z = t == 0;
+	cpu.reg.set_flag(CPU::SC_Z, t == 0);
 }
 
 static inline void op_sbc16(Machine::State& cpu, uint16_t& t, uint16_t s) {
-	int uo = t - s - cpu.reg.flag.c;
+	int uo = t - s - cpu.reg.flag(CPU::SC_C);
 
-	cpu.reg.flag.v = ((t ^ s) & (t ^ uo) & 0x8000) != 0;
-	cpu.reg.flag.c = uo < 0;
-	cpu.reg.flag.n = (uo & 0x8000) != 0;
+	cpu.reg.set_flag(CPU::SC_V, ((t ^ s) & (t ^ uo) & 0x8000) != 0);
+	cpu.reg.set_flag(CPU::SC_C, uo < 0);
+	cpu.reg.set_flag(CPU::SC_N, (uo & 0x8000) != 0);
 	t = (uint16_t)uo;
-	cpu.reg.flag.z = t == 0;
+	cpu.reg.set_flag(CPU::SC_Z, t == 0);
 }
 
 static inline void op_cp16(Machine::State& cpu, uint16_t t, uint16_t s) {
 	int uo = t - s;
 
-	cpu.reg.flag.v = ((t ^ s) & (t ^ uo) & 0x8000) != 0;
-	cpu.reg.flag.c = uo < 0;
-	cpu.reg.flag.n = (uo & 0x8000) != 0;
+	cpu.reg.set_flag(CPU::SC_V, ((t ^ s) & (t ^ uo) & 0x8000) != 0);
+	cpu.reg.set_flag(CPU::SC_C, uo < 0);
+	cpu.reg.set_flag(CPU::SC_N, (uo & 0x8000) != 0);
 	t = (uint16_t)uo;
-	cpu.reg.flag.z = t == 0;
+	cpu.reg.set_flag(CPU::SC_Z, t == 0);
 }
 
 static inline void op_inc16(Machine::State& cpu, uint16_t& t) {
-	cpu.reg.flag.z = (0 == ++t);
+	cpu.reg.set_flag(CPU::SC_Z, (0 == ++t));
 }
 
 static inline void op_dec16(Machine::State& cpu, uint16_t& t) {
-	cpu.reg.flag.z = (0 == --t);
+	cpu.reg.set_flag(CPU::SC_Z, (0 == --t));
 }
 
 /**
@@ -355,63 +355,63 @@ static inline void inst_sep(Machine::State& cpu) {
 
 static inline void op_rl8(Machine::State& cpu, uint8_t& t) {
 	auto old = t;
-	t = (t << 1) | cpu.reg.flag.c;
-	cpu.reg.flag.c = (old & 0x80) != 0;
-	cpu.reg.flag.z = (t == 0);
-	cpu.reg.flag.n = (t & 0x80) != 0;
+	t = (t << 1) | cpu.reg.flag(CPU::SC_C);
+	cpu.reg.set_flag(CPU::SC_C, (old & 0x80) != 0);
+	cpu.reg.set_flag(CPU::SC_Z, (t == 0));
+	cpu.reg.set_flag(CPU::SC_N, (t & 0x80) != 0);
 }
 
 static inline void op_rlc8(Machine::State& cpu, uint8_t& t) {
-	cpu.reg.flag.c = (t & 0x80) != 0;
+	cpu.reg.set_flag(CPU::SC_C, (t & 0x80) != 0);
 	t = (t << 1) | (t >> 7);
-	cpu.reg.flag.z = (t == 0);
-	cpu.reg.flag.n = (t & 0x80) != 0;
+	cpu.reg.set_flag(CPU::SC_Z, (t == 0));
+	cpu.reg.set_flag(CPU::SC_N, (t & 0x80) != 0);
 }
 
 static inline void op_rr8(Machine::State& cpu, uint8_t& t) {
 	auto old = t;
-	t = (t >> 1) | (cpu.reg.flag.c << 7);
-	cpu.reg.flag.c = (old & 1) != 0;
-	cpu.reg.flag.z = (t == 0);
-	cpu.reg.flag.n = (t & 0x80) != 0;
+	t = (t >> 1) | (cpu.reg.flag(CPU::SC_C) << 7);
+	cpu.reg.set_flag(CPU::SC_C, (old & 1) != 0);
+	cpu.reg.set_flag(CPU::SC_Z, (t == 0));
+	cpu.reg.set_flag(CPU::SC_N, (t & 0x80) != 0);
 }
 
 static inline void op_rrc8(Machine::State& cpu, uint8_t& t) {
-	cpu.reg.flag.c = (t & 1) != 0;
+	cpu.reg.set_flag(CPU::SC_C, (t & 1) != 0);
 	t = (t >> 1) | (t << 7);
-	cpu.reg.flag.z = (t == 0);
-	cpu.reg.flag.n = (t & 0x80) != 0;
+	cpu.reg.set_flag(CPU::SC_Z, (t == 0));
+	cpu.reg.set_flag(CPU::SC_N, (t & 0x80) != 0);
 }
 
 static inline void op_sla8(Machine::State& cpu, uint8_t& t) {
 	auto old = t;
 	t = t << 1;
-	cpu.reg.flag.c = (old & 0x80) != 0;
-	cpu.reg.flag.v = ((t ^ old) & 0x80) != 0;
-	cpu.reg.flag.z = (t == 0);
-	cpu.reg.flag.n = (t & 0x80) != 0;
+	cpu.reg.set_flag(CPU::SC_C, (old & 0x80) != 0);
+	cpu.reg.set_flag(CPU::SC_V, ((t ^ old) & 0x80) != 0);
+	cpu.reg.set_flag(CPU::SC_Z, (t == 0));
+	cpu.reg.set_flag(CPU::SC_N, (t & 0x80) != 0);
 }
 
 static inline void op_sll8(Machine::State& cpu, uint8_t& t) {
-	cpu.reg.flag.c = (t & 0x80) != 0;
+	cpu.reg.set_flag(CPU::SC_C, (t & 0x80) != 0);
 	t = t << 1;
-	cpu.reg.flag.z = (t == 0);
-	cpu.reg.flag.n = (t & 0x80) != 0;
+	cpu.reg.set_flag(CPU::SC_Z, (t == 0));
+	cpu.reg.set_flag(CPU::SC_N, (t & 0x80) != 0);
 }
 
 static inline void op_sra8(Machine::State& cpu, uint8_t& t) {
-	cpu.reg.flag.c = (t & 1) != 0;
+	cpu.reg.set_flag(CPU::SC_C, (t & 1) != 0);
 	t = (t >> 1) | (t & 0x80);
-	cpu.reg.flag.v = 0;
-	cpu.reg.flag.z = (t == 0);
-	cpu.reg.flag.n = (t & 0x80) != 0;
+	cpu.reg.set_flag(CPU::SC_V, 0);
+	cpu.reg.set_flag(CPU::SC_Z, (t == 0));
+	cpu.reg.set_flag(CPU::SC_N, (t & 0x80) != 0);
 }
 
 static inline void op_srl8(Machine::State& cpu, uint8_t& t) {
-	cpu.reg.flag.c = (t & 1) != 0;
+	cpu.reg.set_flag(CPU::SC_C, (t & 1) != 0);
 	t = t >> 1;
-	cpu.reg.flag.z = (t == 0);
-	cpu.reg.flag.n = 0;
+	cpu.reg.set_flag(CPU::SC_Z, (t == 0));
+	cpu.reg.set_flag(CPU::SC_N, 0);
 }
 
 /**
@@ -432,8 +432,8 @@ static inline void inst_push_ip(Machine::State& cpu) {
 }
 
 static inline void inst_push_all(Machine::State& cpu) {
-	cpu_push16(cpu, cpu.reg.ba);
-	cpu_push16(cpu, cpu.reg.hl);
+	cpu_push16(cpu, cpu.reg.ba());
+	cpu_push16(cpu, cpu.reg.hl());
 	cpu_push16(cpu, cpu.reg.ix);
 	cpu_push16(cpu, cpu.reg.iy);
 	cpu_push8(cpu, cpu.reg.br);
@@ -462,8 +462,8 @@ static inline void inst_pop_all(Machine::State& cpu) {
 	cpu.reg.br = cpu_pop8(cpu);
 	cpu.reg.iy = cpu_pop16(cpu);
 	cpu.reg.ix = cpu_pop16(cpu);
-	cpu.reg.hl = cpu_pop16(cpu);
-	cpu.reg.ba = cpu_pop16(cpu);
+	cpu.reg.set_hl(cpu_pop16(cpu));
+	cpu.reg.set_ba(cpu_pop16(cpu));
 }
 
 static inline void inst_pop_ale(Machine::State& cpu) {
@@ -493,8 +493,8 @@ static inline void op_jrl16(Machine::State& cpu, uint16_t t) {
 static inline void inst_djr_nz_rr(Machine::State& cpu) {
 	int8_t off = cpu_imm8(cpu);
 
-	cpu.reg.flag.z = 0 == --cpu.reg.b;
-	if (!cpu.reg.flag.z) {
+	cpu.reg.set_flag(CPU::SC_Z, 0 == --cpu.reg.b);
+	if (!cpu.reg.flag(CPU::SC_Z)) {
 		cpu.reg.cb = cpu.reg.nb;
 		cpu.reg.pc += off - 1;
 

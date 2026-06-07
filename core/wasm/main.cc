@@ -72,8 +72,10 @@ static const StructDecl CpuState = {
 		FIELD( "b", CPU::State,  b,  TYPE_UINT8),
 		FIELD( "l", CPU::State,  l,  TYPE_UINT8),
 		FIELD( "h", CPU::State,  h,  TYPE_UINT8),
-		FIELD("ba", CPU::State, ba, TYPE_UINT16),
-		FIELD("hl", CPU::State, hl, TYPE_UINT16),
+		// WASM linear memory is little-endian by spec, so the BA/HL register
+		// pairs can be exposed as 16-bit views over their component bytes
+		FIELD("ba", CPU::State,  a, TYPE_UINT16),
+		FIELD("hl", CPU::State,  l, TYPE_UINT16),
 		FIELD("pc", CPU::State, pc, TYPE_UINT16),
 		FIELD("sp", CPU::State, sp, TYPE_UINT16),
 		FIELD("ix", CPU::State, ix, TYPE_UINT16),

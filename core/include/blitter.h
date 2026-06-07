@@ -45,7 +45,9 @@ namespace Blitter {
 	struct Overlay {
 		uint8_t framebuffer[8][96];
 		Sprite  oam[24];
-		uint8_t map[];
+		// Remainder of the 4KB RAM window (flexible array members inside
+		// a union arm are not portable C++)
+		uint8_t map[0x1000 - sizeof(uint8_t[8][96]) - sizeof(Sprite[24])];
 	};
 
 	struct State {
