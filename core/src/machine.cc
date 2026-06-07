@@ -29,6 +29,13 @@ extern "C" const char* get_version() {
 	return "0.1.0";
 }
 
+// Read-only view of the embedded BIOS for the debugger: rendering must
+// not go through cpu_read, which captures the bus (and so perturbs
+// open-bus behavior)
+extern "C" const uint8_t* get_bios() {
+	return bios;
+}
+
 extern "C" void cpu_reset(Machine::State& cpu) {
 	cpu.reg.pc = cpu_read16(cpu, 0x0000);
 	cpu.reg.sc = 0xC0;

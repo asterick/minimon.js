@@ -25,7 +25,8 @@ EXPORTS = \
 	--export cpu_write \
 	--export get_description \
 	--export get_bios_trace \
-	--export get_cartridge_trace
+	--export get_cartridge_trace \
+	--export get_bios
 
 # The tracing core is the only build: classification maps live in wasm
 # memory (see main.cc) so the per-access trace hook never crosses into JS

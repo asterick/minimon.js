@@ -155,6 +155,7 @@ namespace Machine {
 
 // Library functions
 extern "C" Machine::State* const get_machine();
+extern "C" const uint8_t* get_bios();
 
 extern "C" uint8_t cpu_read(Machine::State& cpu, uint32_t address);
 extern "C" void cpu_write(Machine::State& cpu, uint8_t data, uint32_t address);

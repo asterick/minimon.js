@@ -18,7 +18,13 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 import * as Table from "./table.ts";
 
-import type { Minimon } from "./index";
+// Anything that can serve byte fetches: Minimon satisfies this (reading
+// through the live CPU bus), and the debugger document model supplies a
+// side-effect-free reader with an explicit bank mapping instead
+export interface MemoryAccess {
+	read(address: number): number;
+	translate(address: number): number;
+}
 
 interface Instruction {
 	op: string;
@@ -43,11 +49,11 @@ function toHex(v: number, c: number): string {
 }
 
 export class Disassembler {
-	private _system: Minimon;
+	private _system: MemoryAccess;
 	private _address = 0;
 	private _data: number[] = [];
 
-	constructor(system: Minimon) {
+	constructor(system: MemoryAccess) {
 		this._system = system;
 	}
 

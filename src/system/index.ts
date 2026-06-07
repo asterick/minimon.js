@@ -18,6 +18,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 import struct from "./state";
 import Audio from "./audio";
+import { loadMap, saveMap, cartridgeKey, BIOS_KEY } from "./trace-store";
 
 import type { MachineState } from "./machine-state";
 
@@ -61,10 +62,13 @@ interface CoreExports {
 	cpu_write(machine: number, data: number, address: number): void;
 	get_bios_trace(): number;
 	get_cartridge_trace(): number;
+	get_bios(): number;
 }
 
 const BIOS_TRACE_SIZE = 0x1000;
 const CARTRIDGE_TRACE_SIZE = 0x200000;
+const BIOS_SIZE = 0x1000;
+const TRACE_SAVE_INTERVAL = 10000;
 
 export class Minimon {
 	state!: MachineState;
@@ -75,6 +79,12 @@ export class Minimon {
 	// is cleared whenever the cartridge changes
 	biosTrace!: Uint8Array;
 	cartridgeTrace!: Uint8Array;
+
+	// Read-only view of the embedded BIOS, for side-effect-free
+	// debugger rendering
+	bios!: Uint8Array;
+
+	private _cartKey: string | null = null;
 
 	private _listeners = new Set<() => void>();
 	private _version = 0;
@@ -97,6 +107,13 @@ export class Minimon {
 		window.addEventListener("beforeunload", () => {
 			this.preserve();
 		}, false);
+
+		// IndexedDB writes are async and can't ride beforeunload, so
+		// classification persists on an interval and when the tab hides
+		setInterval(() => this.preserveTrace(), TRACE_SAVE_INTERVAL);
+		document.addEventListener("visibilitychange", () => {
+			if (document.visibilityState === "hidden") this.preserveTrace();
+		});
 
 		document.body.addEventListener('keydown', (e) => {
 			this._inputState &= ~(KEYBOARD_CODES[e.keyCode] ?? 0);
@@ -158,10 +175,33 @@ export class Minimon {
 
 		this.biosTrace = new Uint8Array(this._exports.memory.buffer, this._exports.get_bios_trace(), BIOS_TRACE_SIZE);
 		this.cartridgeTrace = new Uint8Array(this._exports.memory.buffer, this._exports.get_cartridge_trace(), CARTRIDGE_TRACE_SIZE);
+		this.bios = new Uint8Array(this._exports.memory.buffer, this._exports.get_bios(), BIOS_SIZE);
+
+		// The BIOS classification is universal; pick up where any
+		// previous session left off
+		try {
+			const saved = await loadMap(BIOS_KEY);
+			if (saved && saved.length === this.biosTrace.length) {
+				this.biosTrace.set(saved);
+			}
+		} catch (e) {
+			console.warn("Could not restore BIOS classification", e);
+		}
 
 		this._exports.set_sample_rate(this._cpu_state, this._audio.sampleRate);
 		this.reset();
 		this.restore();
+	}
+
+	// Classification maps persist across sessions: the BIOS map always,
+	// the cartridge map keyed by ROM hash
+	preserveTrace(): void {
+		if (!this.biosTrace) return;
+
+		void saveMap(BIOS_KEY, this.biosTrace).catch(() => {});
+		if (this._cartKey) {
+			void saveMap(this._cartKey, this.cartridgeTrace).catch(() => {});
+		}
 	}
 
 	private _wasm_environment = {
@@ -273,8 +313,21 @@ export class Minimon {
 		const hasHeader = (bytes[0] != 0x50 || bytes[1] != 0x4D);
 		const offset = hasHeader ? 0 : 0x2100;
 
-		setTimeout(() => {
+		setTimeout(async () => {
 			for (let i = bytes.length - 1; i >= 0; i--) this.state.cartridge[(i + offset) & 0x1FFFFF] = bytes[i];
+
+			// Restore this cartridge's classification, if it has
+			// visited before
+			this._cartKey = cartridgeKey(this.state.cartridge);
+			try {
+				const saved = await loadMap(this._cartKey);
+				if (saved && saved.length === this.cartridgeTrace.length) {
+					this.cartridgeTrace.set(saved);
+				}
+			} catch (e) {
+				console.warn("Could not restore cartridge classification", e);
+			}
+
 			this._inputState &= ~INPUT_CART_N;
 			this._updateinput();
 		}, 100);
@@ -283,7 +336,13 @@ export class Minimon {
 	}
 
 	eject(): void {
-		// The classification belongs to the departing cartridge
+		// The classification belongs to the departing cartridge: save
+		// it under that cartridge's key, then clear. Snapshot before
+		// clearing — the save commits asynchronously.
+		if (this._cartKey) {
+			void saveMap(this._cartKey, this.cartridgeTrace.slice()).catch(() => {});
+			this._cartKey = null;
+		}
 		this.cartridgeTrace.fill(0);
 
 		this._inputState |= INPUT_CART_N;
