@@ -39,6 +39,27 @@ export default class Audio {
 		this._sample = 0.0;
 
 		this.node.connect(this.context.destination);
+
+		// Autoplay policy: an AudioContext created without a user gesture
+		// starts (and stays) suspended. Resume it on the first interaction.
+		document.addEventListener("pointerdown", this._resume);
+		document.addEventListener("keydown", this._resume);
+		this.context.addEventListener("statechange", () => {
+			if (this.context.state === "running") {
+				document.removeEventListener("pointerdown", this._resume);
+				document.removeEventListener("keydown", this._resume);
+			}
+		});
+	}
+
+	private _resume = () => {
+		this.resume();
+	};
+
+	resume(): void {
+		if (this.context.state === "suspended") {
+			void this.context.resume();
+		}
 	}
 
 	get sampleRate(): number {
