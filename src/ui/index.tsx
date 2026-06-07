@@ -36,7 +36,10 @@ import Disassembler from "./disassemble";
 import Settings from "./settings";
 import Blitter from "./blitter";
 
+import { Classes } from "@blueprintjs/core";
+
 import 'normalize.css/normalize.css';
+import '@blueprintjs/core/lib/css/blueprint.css';
 import 'dockview/dist/styles/dockview.css';
 import "./style.less";
 
@@ -147,7 +150,9 @@ function onReady(event: DockviewReadyEvent) {
 export default function UI() {
 	const prefersDark = usePrefersDark();
 
-	return <div style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0}}>
+	return <div
+		className={prefersDark ? Classes.DARK : undefined}
+		style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0}}>
 		<DockviewReact
 			components={components}
 			tabComponents={tabComponents}

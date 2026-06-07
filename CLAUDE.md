@@ -51,7 +51,8 @@ The libretro front-end (`core/libretro/libretro.cc`) wraps the same core; it doe
 
 - `index.html` at the repo root is the Vite entry; it loads `/src/index.tsx` as a module.
 - `*.module.less` files are CSS modules (Vite convention); plain `.less`/`.css` (including third-party styles imported from JS) load globally.
-- All color comes from the design tokens in `src/ui/tokens.less` (CSS custom properties with light/dark variants following `prefers-color-scheme`) — never hardcode a color in a panel stylesheet. JS consumers track the scheme with `usePrefersDark()` (`src/ui/use-prefers-dark.ts`), which drives dockview's `themeLight`/`themeDark`. There is no component framework by choice: native controls styled from tokens.
+- **Blueprint.js (`@blueprintjs/core`) is the component library for the entire UI** — chosen for its data-dense desktop-tool design and active maintenance; never hand-roll a control (button, select, switch, dialog, toast, …) that Blueprint provides. Custom CSS is only for the genuinely bespoke debugger views (hex grids, disasm rows, canvases), whose colors come from the design tokens in `src/ui/tokens.less` (CSS custom properties with light/dark variants following `prefers-color-scheme`).
+- Dark mode: `usePrefersDark()` (`src/ui/use-prefers-dark.ts`) tracks the system scheme and drives both Blueprint's `Classes.DARK` on the app root and dockview's `themeLight`/`themeDark`; the token stylesheet switches via its own media query.
 - GLSL shaders import with the `?raw` suffix (`import shader from './x.glsl?raw'`).
 - JSX only parses in `.jsx`/`.tsx` files; there is no type checking in the build.
 

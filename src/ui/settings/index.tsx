@@ -17,26 +17,10 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
 import { useRef } from "react";
+import { Button, ButtonGroup, Switch } from "@blueprintjs/core";
 
 import classes from "./style.module.less";
 import { useSystem, useSystemState } from "../context";
-
-interface ToggleProps {
-	checked: boolean;
-	onText: string;
-	offText: string;
-	onChange: (checked: boolean) => void;
-}
-
-function Toggle({ checked, onText, offText, onChange }: ToggleProps) {
-	return (
-		<label className={classes.toggle}>
-			<input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} />
-			<span className={classes.track}><span className={classes.thumb} /></span>
-			{checked ? onText : offText}
-		</label>
-	);
-}
 
 export default function Settings() {
 	const system = useSystem();
@@ -54,18 +38,15 @@ export default function Settings() {
 	return (
 		<div className={classes.settings}>
 			<input ref={fileDialog} type="file" style={{display:'none'}} onChange={load} />
-			<div className={classes.row}>
-				<button onClick={() => system.reset()}>Reset</button>
-				<button onClick={() => system.eject()}>Eject</button>
-				<button onClick={() => system.step()}>Step</button>
-				<button onClick={() => fileDialog.current?.click()}>Load</button>
-			</div>
+			<ButtonGroup>
+				<Button icon="reset" text="Reset" onClick={() => system.reset()} />
+				<Button icon="eject" text="Eject" onClick={() => system.eject()} />
+				<Button icon="step-forward" text="Step" onClick={() => system.step()} />
+				<Button icon="folder-open" text="Load" onClick={() => fileDialog.current?.click()} />
+			</ButtonGroup>
 
-			<Toggle checked={system.running} onText="Running" offText="Stopped" onChange={(v) => {
-				system.running = v;
-			}} />
-			<Toggle checked={system.tracing} onText="Tracing on" offText="Tracing off" onChange={(v) => {
-				system.tracing = v;
+			<Switch checked={system.running} innerLabel="stopped" innerLabelChecked="running" label="Execution" onChange={(e) => {
+				system.running = e.currentTarget.checked;
 			}} />
 		</div>
 	);

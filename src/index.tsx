@@ -17,6 +17,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
 import { createRoot } from "react-dom/client";
+import { BlueprintProvider } from "@blueprintjs/core";
 
 import { Minimon } from "./system";
 
@@ -29,9 +30,11 @@ async function main() {
 	system.running = true;
 
 	createRoot(document.querySelector(".container")!).render(
-		<SystemContext.Provider value={system}>
-			<UI />
-		</SystemContext.Provider>
+		<BlueprintProvider>
+			<SystemContext.Provider value={system}>
+				<UI />
+			</SystemContext.Provider>
+		</BlueprintProvider>
 	);
 }
 
