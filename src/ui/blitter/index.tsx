@@ -68,7 +68,7 @@ export default function Blitter() {
             position: 'relative',
             width: `${96*3 + 16}px`,
             height: `${64*3 + 16}px`,
-            background: '#aaa'
+            background: 'var(--bg-selected)'
             }}>
             <Map style={{
                 position: 'absolute',

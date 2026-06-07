@@ -20,11 +20,14 @@ import {
 	DockviewReact,
 	DockviewDefaultTab,
 	themeLight,
+	themeDark,
 	type DockviewApi,
 	type DockviewReadyEvent,
 	type IDockviewPanelProps,
 	type IDockviewPanelHeaderProps,
 } from 'dockview';
+
+import { usePrefersDark } from "./use-prefers-dark";
 
 import Screen from "./screen";
 import Registers from "./registers";
@@ -142,11 +145,13 @@ function onReady(event: DockviewReadyEvent) {
 }
 
 export default function UI() {
+	const prefersDark = usePrefersDark();
+
 	return <div style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0}}>
 		<DockviewReact
 			components={components}
 			tabComponents={tabComponents}
-			theme={themeLight}
+			theme={prefersDark ? themeDark : themeLight}
 			onReady={onReady}
 			/>
 	</div>;

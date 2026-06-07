@@ -1,5 +1,3 @@
-@import "../settings.less";
-
 .settings {
 	padding: 10px;
 	display: flex;
@@ -15,18 +13,19 @@
 
 .settings button {
 	padding: 5px 16px;
-	border: 1px solid @grey-medium;
+	border: 1px solid var(--border);
 	border-radius: 2px;
-	background: @white;
+	background: var(--bg-control);
+	color: var(--fg);
 	font: inherit;
 	cursor: pointer;
 
 	&:hover {
-		background: @grey-light;
+		background: var(--bg-control-hover);
 	}
 
 	&:active {
-		background: @original;
+		background: var(--bg-control-active);
 	}
 }
 
@@ -44,17 +43,17 @@
 	}
 
 	input:focus-visible + .track {
-		outline: 2px solid @blue;
+		outline: 2px solid var(--accent);
 		outline-offset: 1px;
 	}
 
 	input:checked + .track {
-		background: @blue;
-		border-color: @blue;
+		background: var(--accent);
+		border-color: var(--accent);
 
 		.thumb {
 			left: 21px;
-			background: @white;
+			background: var(--on-accent);
 		}
 	}
 }
@@ -62,10 +61,10 @@
 .track {
 	width: 40px;
 	height: 20px;
-	border: 1px solid @grey-medium;
+	border: 1px solid var(--border);
 	border-radius: 10px;
 	position: relative;
-	background: @white;
+	background: var(--bg-control);
 	transition: background 0.1s;
 }
 
@@ -76,6 +75,6 @@
 	width: 12px;
 	height: 12px;
 	border-radius: 50%;
-	background: @grey-medium;
+	background: var(--border);
 	transition: left 0.1s, background 0.1s;
 }

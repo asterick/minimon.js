@@ -1,0 +1,59 @@
+/*
+ * Design tokens — the single source of truth for color across the
+ * debugger. Panels consume these as CSS custom properties (runtime
+ * values, so the scheme follows the system light/dark preference);
+ * never hardcode a color in a panel stylesheet.
+ *
+ * The dark scheme is the project's original Monokai-ish palette; the
+ * light scheme uses darkened equivalents of the same hues.
+ */
+
+:root {
+	color-scheme: light dark;
+
+	/* Surfaces */
+	--bg: #fdfdfd;
+	--bg-panel: #f6f6f6;
+	--bg-selected: #d9dce0;
+	--fg: #1a1a1a;
+	--border: #b9b9b9;
+
+	/* Controls */
+	--bg-control: #ffffff;
+	--bg-control-hover: #e6e6e6;
+	--bg-control-active: #d4d4d4;
+	--accent: #1e96c8;
+	--on-accent: #ffffff;
+
+	/* Debugger semantics */
+	--color-address: #5c8a00;
+	--color-data: #7048c8;
+	--color-breakpoint: #d61f5e;
+	--color-flag-set: #5c8a00;
+	--color-flag-clear: #1e96c8;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		/* Surfaces */
+		--bg: #1e1f1c;
+		--bg-panel: #282923;
+		--bg-selected: #595959;
+		--fg: #e6e6e6;
+		--border: #6d6e6a;
+
+		/* Controls */
+		--bg-control: #33342e;
+		--bg-control-hover: #45463f;
+		--bg-control-active: #595959;
+		--accent: #84d7ec;
+		--on-accent: #1e1f1c;
+
+		/* Debugger semantics */
+		--color-address: #a6e22a;
+		--color-data: #ae81ff;
+		--color-breakpoint: #f92672;
+		--color-flag-set: #a6e22a;
+		--color-flag-clear: #84d7ec;
+	}
+}
