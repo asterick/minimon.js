@@ -26,7 +26,8 @@ export default class Blitter extends Component {
         const system = this.context.system;
         const oam = system.state.overlay.oam;
 
-        const { scroll_x, scroll_y, sprite_base, enables } = system.state.blitter;
+        let { scroll_x, scroll_y } = system.state.blitter;
+        const { sprite_base, enables } = system.state.blitter;
         const { map } = system.state.overlay;
         let rows = [];
         

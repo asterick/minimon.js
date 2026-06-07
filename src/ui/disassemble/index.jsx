@@ -19,7 +19,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 import React, { Component } from "react";
 import { AutoSizer } from 'react-virtualized';
 
-import classes from "./style.less";
+import classes from "./style.module.less";
 import SystemContext from "../context";
 
 import { Disassembler } from "../../system/disassemble.js";

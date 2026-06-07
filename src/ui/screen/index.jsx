@@ -18,10 +18,10 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 import React, { Component } from "react";
 
-import VertexShader from "./shaders/vertex.glsl";
-import FragmentShader from "./shaders/fragment.glsl";
+import VertexShader from "./shaders/vertex.glsl?raw";
+import FragmentShader from "./shaders/fragment.glsl?raw";
 
-import classes from "./style.less";
+import classes from "./style.module.less";
 
 import SystemContext from "../context";
 
