@@ -216,6 +216,9 @@ export class Minimon {
 		this._running = v;
 
 		if (v) {
+			// Usually reached from a click (settings toggle), which is a
+			// valid gesture to lift the autoplay suspension
+			this._audio.resume();
 			this._timer = setInterval(_tick, 0);
 		} else {
 			clearInterval(this._timer);
