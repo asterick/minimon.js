@@ -94,7 +94,7 @@ export class Minimon {
 	private _inputState: number;
 	private _audio: Audio;
 	private _running = false;
-	private _timer: ReturnType<typeof setInterval> | undefined;
+	private _animation: number | undefined;
 	private _exports!: CoreExports;
 	private _cpu_state!: number;
 	private _machineBytes!: Uint8Array;
@@ -238,12 +238,16 @@ export class Minimon {
 	set running(v: boolean) {
 		if (this._running == v) return;
 
-		let time = Date.now();
+		// The loop is paced by the display: one advance per animation
+		// frame, sized by the elapsed time (capped so a long stall —
+		// or returning from a hidden tab, where rAF pauses entirely —
+		// skips ahead instead of fast-forwarding the machine)
+		let time = performance.now();
 
 		const _tick = () => {
 			if (!this._running) return;
 
-			const now = Date.now();
+			const now = performance.now();
 			const delta = Math.floor(Math.min(200, now - time) * CPU_FREQ / 1000);
 
 			time = now;
@@ -262,7 +266,13 @@ export class Minimon {
 			} else {
 				this._exports.cpu_advance(this._cpu_state, delta);
 			}
+
 			this.update();
+
+			// A breakpoint hit flips running mid-tick; don't reschedule
+			if (this._running) {
+				this._animation = requestAnimationFrame(_tick);
+			}
 		};
 
 		this._running = v;
@@ -271,9 +281,10 @@ export class Minimon {
 			// Usually reached from a click (settings toggle), which is a
 			// valid gesture to lift the autoplay suspension
 			this._audio.resume();
-			this._timer = setInterval(_tick, 0);
-		} else {
-			clearInterval(this._timer);
+			this._animation = requestAnimationFrame(_tick);
+		} else if (this._animation !== undefined) {
+			cancelAnimationFrame(this._animation);
+			this._animation = undefined;
 		}
 
 		this.update();
